@@ -17,7 +17,7 @@ setup(
         "Levenshtein==0.27.3",
         "rdflib==7.5.0",
         "langchain_ollama==1.0.1",
-        "SPARQLWrapper==3.3.1",
+        "SPARQLWrapper==2.0.0",
     ],
     long_description=long_description,
     long_description_content_type="text/markdown",
