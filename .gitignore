@@ -205,3 +205,14 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+
+# VS Code settings 
+.vscode/
+
+
+# t2s-metrics 
+res/datasets/db25
+res/db25
+res/results
+res/sciqa

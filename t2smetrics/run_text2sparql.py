@@ -1,0 +1,147 @@
+import json
+import time
+from t2smetrics.core.experiment import Experiment
+from t2smetrics.core.dataset import JsonlDataset
+from t2smetrics.execution.rdflib_backend import RDFLibBackend
+
+from t2smetrics.execution.sparql_endpoint_backend import SparqlEndpointBackend
+from t2smetrics.llm.ollama_backend import OllamaBackend
+from t2smetrics.measures.answer_set.f1 import AnswerSetF1
+from t2smetrics.measures.answer_set.precision import AnswerSetPrecision
+from t2smetrics.measures.answer_set.precision_qald import PrecisionQALD
+from t2smetrics.measures.answer_set.recall import AnswerSetRecall
+from t2smetrics.measures.answer_set.recall_qald import RecallQALD
+from t2smetrics.measures.exact import QueryExactMatch
+from t2smetrics.measures.codebleu.codebleu import CodeBLEU
+from t2smetrics.measures.answer_set.f1_qald import F1QALD
+from t2smetrics.measures.answer_set.f1_spinach import F1Spinach
+from t2smetrics.measures.answer_set.mrr import MRR
+from t2smetrics.measures.answer_set.hit_at_5 import HitAt5
+from t2smetrics.measures.answer_set.ndcg import NDCG
+from t2smetrics.measures.answer_set.p_at_1 import PrecisionAt1
+from t2smetrics.measures.canonical import CanonicalBLEU, CanonicalF1
+from t2smetrics.measures.distance import (
+    LevenshteinDistance,
+    JaccardSimilarity,
+    CosineSimilarity,
+    EuclideanDistance,
+)
+from t2smetrics.measures.llm_judge import LLMJudge
+from t2smetrics.measures.text_metrics import Bleu4, RougeN, Meteor
+from t2smetrics.measures.uri.uri_hallucination import URIHallucination
+from t2smetrics.measures.query_execution import QueryExecution
+from t2smetrics.measures.token import TokenRecall, TokenPrecision, TokenF1
+import logging
+import warnings
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+)
+warnings.filterwarnings("ignore", category=RuntimeWarning, module="SPARQLWrapper")
+logging.getLogger("SPARQLWrapper").disabled = True
+
+# Suppress specific loggers likely used by LangGraph / ChatLLaMA
+logging.getLogger("langgraph").setLevel(logging.WARNING)
+logging.getLogger("httpx").setLevel(logging.WARNING)  # if using httpx
+logging.getLogger("urllib3").setLevel(logging.WARNING)  # if using requests
+logging.getLogger("uvicorn").setLevel(logging.WARNING)  # sometimes used for servers
+
+# Optional: completely silence a specific logger
+logging.getLogger("langgraph.server").propagate = False
+
+question_answering_systems = [
+    # "AIFB",
+    # "DBPEDIA-CG",
+    # "DBPEDIA-CL",
+    # "DBPEDIA-SC",
+    # "FRANZ",
+    # "IIS-L",
+    # "IIS-Q",
+    "INFAI",
+    # "LABIC",
+    # "LACODAM",
+    # "MIPT",
+    # "WSE",
+    # "WSE_C",
+]
+
+# dataset_name = "db25"
+# endpoint_url = "http://localhost:8887/"
+
+dataset_name = "ck25"
+endpoint_url = "http://localhost:8888/"
+
+all_qa_results = []
+
+for qa in question_answering_systems:
+
+    start_time = time.time()
+
+    dataset = JsonlDataset(f"./res/{dataset_name}/{qa}.jsonl")
+    # execution_backend = RDFLibBackend("./res/ck25/dataset.ttl")
+
+    execution_backend = SparqlEndpointBackend(endpoint_url)
+    llm_backend = OllamaBackend()
+
+    measures = [
+        AnswerSetPrecision(),  # OK
+        AnswerSetRecall(),  # OK
+        AnswerSetF1(),  # OK
+        Bleu4(),  # OK
+        CanonicalBLEU(),
+        CanonicalF1(),
+        CodeBLEU(),  # OK
+        CosineSimilarity(),  # OK
+        EuclideanDistance(),  # OK
+        F1QALD(),  # OK
+        PrecisionQALD(),  # OK
+        RecallQALD(),  # OK
+        F1Spinach(),
+        HitAt5(),  # OK
+        JaccardSimilarity(),  # OK
+        LLMJudge(),  # OK
+        LevenshteinDistance(),  # OK
+        MRR(),  # OK
+        Meteor(),  # OK
+        NDCG(),  # OK
+        PrecisionAt1(),  # OK
+        QueryExecution(),  # OK
+        QueryExactMatch(),  # OK
+        RougeN(1),  # OK
+        RougeN(2),  # OK
+        RougeN(3),  # OK
+        RougeN(4),  # OK
+        TokenF1(),  # OK
+        TokenPrecision(),  # OK
+        TokenRecall(),  # OK
+        URIHallucination(),  # OK
+    ]
+
+    experiment = Experiment(
+        dataset=dataset,
+        measures=measures,
+        execution_backend=execution_backend,
+        llm_backend=llm_backend,
+        verbose=True,
+    )
+
+    results, summary = experiment.run()
+
+    print("=== PER QUERY RESULTS ===")
+    for r in results:
+        print(r)
+
+    end_time = time.time()
+
+    # logging.info(f"Execution time: {int(end_time - start_time)} seconds")
+    print(f"== SUMMARY {qa} ===")
+    for k, v in summary.items():
+        print(f"{k}: {v:.4f}")
+
+    all_qa_results.append(
+        {"dataset": dataset_name, "system_name": qa, "metrics": summary}
+    )
+
+with open(f"./res/results/{dataset_name}.json", "w") as f:
+    json.dump(all_qa_results, f, indent=2)

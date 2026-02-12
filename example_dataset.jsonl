@@ -1,0 +1,2 @@
+{  "id": "q1",  "golden": "SELECT ?x WHERE { ?x a <http://example.org/Person> }",  "generated": "SELECT ?y WHERE { ?y a <http://example.org/Person> }", "order_matters": false}
+{  "id": "q2",  "golden": "SELECT ?x WHERE { ?x <http://example.org/age> 30 }",  "generated": "SELECT ?x WHERE { ?x <http://example.org/age> 40 }", "order_matters": true}
