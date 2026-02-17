@@ -16,7 +16,6 @@ from t2smetrics.measures.answer_set.mrr import MRR
 from t2smetrics.measures.answer_set.hit_at_5 import HitAt5
 from t2smetrics.measures.answer_set.ndcg import NDCG
 from t2smetrics.measures.answer_set.p_at_1 import PrecisionAt1
-from t2smetrics.measures.canonical import CanonicalBLEU, CanonicalF1
 from t2smetrics.measures.distance import (
     LevenshteinDistance,
     JaccardSimilarity,
@@ -41,8 +40,6 @@ measures = [
     AnswerSetRecall(),
     AnswerSetF1(),
     Bleu4(),
-    CanonicalBLEU(),
-    CanonicalF1(),
     CodeBLEU(),
     CosineSimilarity(),
     EuclideanDistance(),

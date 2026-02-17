@@ -5,6 +5,8 @@ from t2smetrics.core.result import EvaluationResult
 class F1Spinach(AnswerSetMeasure):
     name = "f1_spinach"
 
+    # TODO : check the official implementation at https://github.com/stanford-oval/spinach/blob/8bb2d9cfa7f54b7b63ba5e6acd8264fdb7f8ecf9/eval.py#L108 
+
     def compute(self, case, context):
         gold, pred = self._get_answer_lists(case, context)
 

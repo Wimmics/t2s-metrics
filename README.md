@@ -7,7 +7,7 @@ SPARQL endpoints.
 ## Features
 
 - Metrics for query exact match, token overlap, answer-set quality, BLEU/ROUGE,
-  CodeBLEU, canonicalization, and more.
+  CodeBLEU, and more.
 - Execution backends for local RDF (RDFLib) and remote SPARQL endpoints.
 - Pluggable LLM-based judging via an Ollama backend.
 - CLI and Python API for quick experiments.

@@ -35,7 +35,7 @@ def normalize_iris(q: str) -> str:
     return re.sub(r"<[^>]+>", "<IRI>", q)
 
 
-CANONICAL_PREPROCESSOR = Preprocessor([
+NORMALIZER_PREPROCESSOR = Preprocessor([
     normalize_whitespace,
     normalize_variables,
     normalize_iris

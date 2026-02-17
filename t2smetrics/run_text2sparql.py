@@ -2,8 +2,6 @@ import json
 import time
 from t2smetrics.core.experiment import Experiment
 from t2smetrics.core.dataset import JsonlDataset
-from t2smetrics.execution.rdflib_backend import RDFLibBackend
-
 from t2smetrics.execution.sparql_endpoint_backend import SparqlEndpointBackend
 from t2smetrics.llm.ollama_backend import OllamaBackend
 from t2smetrics.measures.answer_set.f1 import AnswerSetF1
@@ -19,7 +17,6 @@ from t2smetrics.measures.answer_set.mrr import MRR
 from t2smetrics.measures.answer_set.hit_at_5 import HitAt5
 from t2smetrics.measures.answer_set.ndcg import NDCG
 from t2smetrics.measures.answer_set.p_at_1 import PrecisionAt1
-from t2smetrics.measures.canonical import CanonicalBLEU, CanonicalF1
 from t2smetrics.measures.distance import (
     LevenshteinDistance,
     JaccardSimilarity,
@@ -89,8 +86,6 @@ for qa in question_answering_systems:
         AnswerSetRecall(),  # OK
         AnswerSetF1(),  # OK
         Bleu4(),  # OK
-        CanonicalBLEU(),
-        CanonicalF1(),
         CodeBLEU(),  # OK
         CosineSimilarity(),  # OK
         EuclideanDistance(),  # OK
