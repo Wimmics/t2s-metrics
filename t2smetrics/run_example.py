@@ -23,7 +23,7 @@ from t2smetrics.measures.distance import (
     EuclideanDistance,
 )
 from t2smetrics.measures.llm_judge import LLMJudge
-from t2smetrics.measures.text_metrics import Bleu4, RougeN, Meteor
+from t2smetrics.measures.text_metrics import Bleu, RougeN, Meteor
 from t2smetrics.measures.uri.uri_hallucination import URIHallucination
 from t2smetrics.measures.query_execution import QueryExecution
 from t2smetrics.measures.token import TokenRecall, TokenPrecision, TokenF1
@@ -39,7 +39,7 @@ measures = [
     AnswerSetPrecision(),
     AnswerSetRecall(),
     AnswerSetF1(),
-    Bleu4(),
+    Bleu(),
     CodeBLEU(),
     CosineSimilarity(),
     EuclideanDistance(),

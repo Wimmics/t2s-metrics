@@ -24,7 +24,7 @@ from t2smetrics.measures.distance import (
     EuclideanDistance,
 )
 from t2smetrics.measures.llm_judge import LLMJudge
-from t2smetrics.measures.text_metrics import Bleu4, RougeN, Meteor
+from t2smetrics.measures.text_metrics import Bleu, RougeN, Meteor
 from t2smetrics.measures.uri.uri_hallucination import URIHallucination
 from t2smetrics.measures.query_execution import QueryExecution
 from t2smetrics.measures.token import TokenRecall, TokenPrecision, TokenF1
@@ -48,18 +48,18 @@ logging.getLogger("uvicorn").setLevel(logging.WARNING)  # sometimes used for ser
 logging.getLogger("langgraph.server").propagate = False
 
 question_answering_systems = [
-    # "AIFB",
-    # "DBPEDIA-CG",
-    # "DBPEDIA-CL",
-    # "DBPEDIA-SC",
-    # "FRANZ",
-    # "IIS-L",
-    # "IIS-Q",
+    "AIFB",
+    "DBPEDIA-CG",
+    "DBPEDIA-CL",
+    "DBPEDIA-SC",
+    "FRANZ",
+    "IIS-L",
+    "IIS-Q",
     "INFAI",
-    # "LABIC",
-    # "LACODAM",
-    # "MIPT",
-    # "WSE",
+    "LABIC",
+    "LACODAM",
+    "MIPT",
+    "WSE",
     # "WSE_C",
 ]
 
@@ -85,24 +85,24 @@ for qa in question_answering_systems:
         AnswerSetPrecision(),  # OK
         AnswerSetRecall(),  # OK
         AnswerSetF1(),  # OK
-        Bleu4(),  # OK
+        Bleu(),  # OK
         CodeBLEU(),  # OK
         CosineSimilarity(),  # OK
         EuclideanDistance(),  # OK
         F1QALD(),  # OK
-        PrecisionQALD(),  # OK
-        RecallQALD(),  # OK
-        F1Spinach(),
+        # F1Spinach(),
         HitAt5(),  # OK
         JaccardSimilarity(),  # OK
-        LLMJudge(),  # OK
+        # LLMJudge(),  # OK
         LevenshteinDistance(),  # OK
         MRR(),  # OK
         Meteor(),  # OK
         NDCG(),  # OK
         PrecisionAt1(),  # OK
+        PrecisionQALD(),  # OK
         QueryExecution(),  # OK
         QueryExactMatch(),  # OK
+        RecallQALD(),  # OK
         RougeN(1),  # OK
         RougeN(2),  # OK
         RougeN(3),  # OK

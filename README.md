@@ -61,7 +61,7 @@ from t2smetrics.measures.answer_set.precision import AnswerSetPrecision
 from t2smetrics.measures.answer_set.recall import AnswerSetRecall
 from t2smetrics.measures.exact import QueryExactMatch
 from t2smetrics.measures.codebleu.codebleu import CodeBLEU
-from t2smetrics.measures.text_metrics import Bleu4, RougeN, Meteor
+from t2smetrics.measures.text_metrics import Bleu, RougeN, Meteor
 from t2smetrics.measures.query_execution import QueryExecution
 from t2smetrics.measures.token import TokenRecall, TokenPrecision, TokenF1
 
@@ -73,7 +73,7 @@ measures = [
 	AnswerSetPrecision(),
 	AnswerSetRecall(),
 	AnswerSetF1(),
-	Bleu4(),
+	Bleu(),
 	CodeBLEU(),
 	Meteor(),
 	QueryExecution(),

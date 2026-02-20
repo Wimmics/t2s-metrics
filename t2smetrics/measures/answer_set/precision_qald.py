@@ -8,8 +8,8 @@ class PrecisionQALD(AnswerSetMeasure):
     def compute(self, case, context):
         gold, pred = self._get_answer_sets(case, context)
 
-        if gold is not None and len(gold) > 0 and pred is not None and len(pred) == 0:
-            return EvaluationResult(case.id, self.name, 1.0)
+        if not self._validate(gold, pred):
+            return EvaluationResult(case.id, self.name, 0.0)
 
         tp = len(gold & pred)
         fp = len(pred - gold)
