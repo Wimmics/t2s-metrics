@@ -14,9 +14,9 @@ from t2smetrics.measures.codebleu.codebleu import CodeBLEU
 from t2smetrics.measures.answer_set.f1_qald import F1QALD
 from t2smetrics.measures.answer_set.f1_spinach import F1Spinach
 from t2smetrics.measures.answer_set.mrr import MRR
-from t2smetrics.measures.answer_set.hit_at_5 import HitAt5
+from t2smetrics.measures.answer_set.hit_at_k import HitAtK
 from t2smetrics.measures.answer_set.ndcg import NDCG
-from t2smetrics.measures.answer_set.p_at_1 import PrecisionAt1
+from t2smetrics.measures.answer_set.p_at_k import PrecisionAtK
 from t2smetrics.measures.distance import (
     LevenshteinDistance,
     JaccardSimilarity,
@@ -91,21 +91,20 @@ for qa in question_answering_systems:
         EuclideanDistance(),  # OK
         F1QALD(),  # OK
         # F1Spinach(),
-        HitAt5(),  # OK
+        # SPBleu(),  
+        # SPF1(),  
+        HitAtK(k=1),  # OK
         JaccardSimilarity(),  # OK
-        # LLMJudge(),  # OK
+        LLMJudge(),  # OK
         LevenshteinDistance(),  # OK
         MRR(),  # OK
         Meteor(),  # OK
         NDCG(),  # OK
-        PrecisionAt1(),  # OK
+        PrecisionAtK(k=1),  # OK
         PrecisionQALD(),  # OK
         QueryExecution(),  # OK
         QueryExactMatch(),  # OK
         RecallQALD(),  # OK
-        RougeN(1),  # OK
-        RougeN(2),  # OK
-        RougeN(3),  # OK
         RougeN(4),  # OK
         TokenF1(),  # OK
         TokenPrecision(),  # OK
@@ -138,5 +137,6 @@ for qa in question_answering_systems:
         {"dataset": dataset_name, "system_name": qa, "metrics": summary}
     )
 
-with open(f"./res/results/{dataset_name}.json", "w") as f:
+current_time = time.strftime("%Y%m%d-%H%M%S")
+with open(f"./res/results/{dataset_name}-{current_time}.json", "w") as f:
     json.dump(all_qa_results, f, indent=2)

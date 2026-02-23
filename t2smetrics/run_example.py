@@ -13,9 +13,9 @@ from t2smetrics.measures.codebleu.codebleu import CodeBLEU
 from t2smetrics.measures.answer_set.f1_qald import F1QALD
 from t2smetrics.measures.answer_set.f1_spinach import F1Spinach
 from t2smetrics.measures.answer_set.mrr import MRR
-from t2smetrics.measures.answer_set.hit_at_5 import HitAt5
+from t2smetrics.measures.answer_set.hit_at_k import HitAtK
 from t2smetrics.measures.answer_set.ndcg import NDCG
-from t2smetrics.measures.answer_set.p_at_1 import PrecisionAt1
+from t2smetrics.measures.answer_set.p_at_k import PrecisionAtK
 from t2smetrics.measures.distance import (
     LevenshteinDistance,
     JaccardSimilarity,
@@ -47,14 +47,14 @@ measures = [
     PrecisionQALD(),
     RecallQALD(),
     F1Spinach(),
-    HitAt5(),
+    HitAtK(k=5),
     JaccardSimilarity(),
     LLMJudge(),
     LevenshteinDistance(),
     MRR(),
     Meteor(),
     NDCG(),
-    PrecisionAt1(),
+    PrecisionAtK(k=1),
     QueryExecution(),
     QueryExactMatch(),
     RougeN(1),
