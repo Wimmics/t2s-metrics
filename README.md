@@ -126,14 +126,18 @@ There are no automated tests yet. If you add tests, run them with:
 python -m pytest
 ```
 
-## Contributing
+# License
 
-- Open an issue for bugs, feature requests, or questions.
-- Fork the repository and create a feature branch.
-- Submit a pull request with a clear description and reproduction steps where
-  relevant.
+See the [LICENSE file](./LICENSE).
 
-## License
+## Cite this work
 
 ...
 
+
+<details>
+<summary>See BibTex</summary>
+@inproceedings{,
+...
+}
+</details>
