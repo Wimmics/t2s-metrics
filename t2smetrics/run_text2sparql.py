@@ -24,10 +24,10 @@ from t2smetrics.measures.distance import (
     EuclideanDistance,
 )
 from t2smetrics.measures.llm_judge import LLMJudge
-from t2smetrics.measures.text_metrics import Bleu, RougeN, Meteor
+from t2smetrics.measures.text_metrics import Bleu, RougeN, Meteor, SPBleu
 from t2smetrics.measures.uri.uri_hallucination import URIHallucination
 from t2smetrics.measures.query_execution import QueryExecution
-from t2smetrics.measures.token import TokenRecall, TokenPrecision, TokenF1
+from t2smetrics.measures.token import SPF1, TokenRecall, TokenPrecision, TokenF1
 import logging
 import warnings
 
@@ -91,8 +91,8 @@ for qa in question_answering_systems:
         EuclideanDistance(),  # OK
         F1QALD(),  # OK
         F1Spinach(),  # OK
-        # SPBleu(),
-        # SPF1(),
+        SPBleu(),  # OK
+        SPF1(),  # OK
         HitAtK(k=1),  # OK
         JaccardSimilarity(),  # OK
         LLMJudge(),  # OK

@@ -1,0 +1,6 @@
+{  "id": "q1",  "golden": "SELECT ?x WHERE { ?x a <http://example.org/Person> }",  "generated": "", "order_matters": false}
+{  "id": "q2",  "golden": "SELECT ?x WHERE { ?x <http://example.org/age> 30 }",  "generated": "SELECT ?x WHERE { ?x <http://example.org/age> 30 }", "order_matters": false}
+{  "id": "q3",  "golden": "SELECT ?x WHERE { ?x <http://example.org/age> 30 }",  "generated": "SELECT ?x WHERE { ?x <http://example.org/age> 40 }", "order_matters": false}
+{  "id": "q4",  "golden": "\n\n SELECT  ?x  WHERE \n  { \n  ?x   <http://example.org/age>   30 \n}\n",  "generated": "SELECT ?x WHERE { ?x <http://example.org/age> 30 }", "order_matters": false}
+{  "id": "q5",  "golden": "SELECT ?x ?y WHERE { ?x <http://example.org/hasFriend> ?y . ?y <http://example.org/hasFriend> ?x . }",  "generated": "SELECT ?v0 ?v1 WHERE { ?v0 <http://example.org/hasFriend> ?v1 . ?v1 <http://example.org/hasFriend> ?v0 . }", "order_matters": false}
+{  "id": "q6",  "golden": "\n\nSELECT  ?x  ?y  WHERE \n {  \n ?x <http://example.org/hasFriend> ?y . \n\n ?y <http://example.org/hasFriend> ?x . \n}",  "generated": "SELECT ?v0 ?v1 WHERE { ?v0 <http://example.org/hasFriend> ?v1 . ?v1 <http://example.org/hasFriend> ?v0 . }", "order_matters": false}

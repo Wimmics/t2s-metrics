@@ -27,8 +27,8 @@ from t2smetrics.measures.distance import (
 )
 from t2smetrics.measures.exact import QueryExactMatch
 from t2smetrics.measures.query_execution import QueryExecution
-from t2smetrics.measures.text_metrics import Bleu, Meteor, RougeN
-from t2smetrics.measures.token import TokenF1, TokenPrecision, TokenRecall
+from t2smetrics.measures.text_metrics import Bleu, Meteor, RougeN, SPBleu
+from t2smetrics.measures.token import SPF1, TokenF1, TokenPrecision, TokenRecall
 from t2smetrics.measures.uri.uri_hallucination import URIHallucination
 
 DATA_DIR = Path(__file__).parent / "data"
@@ -69,6 +69,8 @@ def str_to_measure(measure_name: str) -> Measure:
         # "LevenshteinDistance": LevenshteinDistance(),
         # "URIHallucination": URIHallucination(),
         "Bleu": Bleu(),
+        "SP-Bleu": SPBleu(),
+        "SP-F1": SPF1(),
         # "Meteor": Meteor(),
         # "RougeN": RougeN(n=2),
         # "TokenPrecision": TokenPrecision(),

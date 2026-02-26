@@ -40,6 +40,6 @@ class EvaluationEngine:
                 if measure.requires_llm and self.context.llm_backend is None:
                     raise RuntimeError(f"{measure.name} requires an LLM backend")
 
-                results.append(measure.compute(case, self.context))
+                results.append(measure.run(case, self.context))
 
         return results

@@ -1,6 +1,7 @@
 from collections import Counter
 from t2smetrics.measures.base import Measure
 from t2smetrics.core.result import EvaluationResult
+from t2smetrics.representation.preprocessing import SP_NORMALIZER_PREPROCESSOR
 
 
 def precision_recall_f1(gold, pred):
@@ -19,8 +20,7 @@ class TokenPrecision(Measure):
 
     def compute(self, case, context=None):
         p, _, _ = precision_recall_f1(
-            Counter(case.golden.tokens),
-            Counter(case.generated.tokens)
+            Counter(case.golden.tokens), Counter(case.generated.tokens)
         )
         return EvaluationResult(case.id, self.name, p)
 
@@ -30,8 +30,7 @@ class TokenRecall(Measure):
 
     def compute(self, case, context=None):
         _, r, _ = precision_recall_f1(
-            Counter(case.golden.tokens),
-            Counter(case.generated.tokens)
+            Counter(case.golden.tokens), Counter(case.generated.tokens)
         )
         return EvaluationResult(case.id, self.name, r)
 
@@ -41,7 +40,16 @@ class TokenF1(Measure):
 
     def compute(self, case, context=None):
         _, _, f1 = precision_recall_f1(
-            Counter(case.golden.tokens),
-            Counter(case.generated.tokens)
+            Counter(case.golden.tokens), Counter(case.generated.tokens)
         )
         return EvaluationResult(case.id, self.name, f1)
+
+
+class SPF1(TokenF1):
+
+    def __init__(self, context=None):
+        self.name = "sp-f1"
+        self.preprocessor = SP_NORMALIZER_PREPROCESSOR
+
+    def compute(self, case, context=None):
+        return super().compute(case, context)

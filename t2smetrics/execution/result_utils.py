@@ -10,7 +10,7 @@ def normalize_answer_set_basic(result):
     return set(tuple(row) for row in result)
 
 
-def normalize_answer_set_set(result):
+def normalize_answer_set_list(result):
     """
     Normalize execution results to a set of strings.
     Handles ASK and SELECT queries.

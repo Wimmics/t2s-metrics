@@ -23,10 +23,10 @@ from t2smetrics.measures.distance import (
     EuclideanDistance,
 )
 from t2smetrics.measures.llm_judge import LLMJudge
-from t2smetrics.measures.text_metrics import Bleu, RougeN, Meteor
+from t2smetrics.measures.text_metrics import Bleu, RougeN, Meteor, SPBleu
 from t2smetrics.measures.uri.uri_hallucination import URIHallucination
 from t2smetrics.measures.query_execution import QueryExecution
-from t2smetrics.measures.token import TokenRecall, TokenPrecision, TokenF1
+from t2smetrics.measures.token import SPF1, TokenRecall, TokenPrecision, TokenF1
 
 
 dataset = JsonlDataset("./example_dataset.jsonl")
@@ -40,6 +40,7 @@ measures = [
     AnswerSetRecall(),
     AnswerSetF1(),
     Bleu(),
+    SPBleu(),
     CodeBLEU(),
     CosineSimilarity(),
     EuclideanDistance(),
@@ -62,6 +63,7 @@ measures = [
     RougeN(3),
     RougeN(4),
     TokenF1(),
+    SPF1(),
     TokenPrecision(),
     TokenRecall(),
     URIHallucination(),
