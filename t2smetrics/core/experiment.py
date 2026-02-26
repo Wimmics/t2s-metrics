@@ -1,13 +1,14 @@
 from t2smetrics.core.context import EvaluationContext
 from t2smetrics.core.engine import EvaluationEngine
 from t2smetrics.aggregation.aggregator import MeanAggregator
+from t2smetrics.measures.base import Measure
 
 
 class Experiment:
     def __init__(
         self,
         dataset,
-        measures,
+        measures: list[Measure],
         execution_backend=None,
         llm_backend=None,
         cache=None,

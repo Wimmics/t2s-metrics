@@ -90,9 +90,9 @@ for qa in question_answering_systems:
         CosineSimilarity(),  # OK
         EuclideanDistance(),  # OK
         F1QALD(),  # OK
-        # F1Spinach(),
-        # SPBleu(),  
-        # SPF1(),  
+        F1Spinach(),  # OK
+        # SPBleu(),
+        # SPF1(),
         HitAtK(k=1),  # OK
         JaccardSimilarity(),  # OK
         LLMJudge(),  # OK

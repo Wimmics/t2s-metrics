@@ -20,7 +20,11 @@ class SparqlEndpointBackend(ExecutionBackend):
         self.default_graph = default_graph
         self.headers = headers or {}
 
-    def execute(self, query: str):
+    def execute(self, query: str, return_type: str = "tuples"):
+
+        if return_type not in {"tuples", "json"}:
+            raise ValueError(f"Invalid return_type: {return_type}")
+
         sparql = SPARQLWrapper(self.endpoint_url)
         sparql.setQuery(query)
         sparql.setReturnFormat(JSON)
@@ -45,14 +49,18 @@ class SparqlEndpointBackend(ExecutionBackend):
         vars_ = response["head"]["vars"]
         rows = []
 
-        for binding in response["results"]["bindings"]:
-            if binding is None:
-                continue
-            elif len(binding) == 0:
-                continue
-            row = tuple(
-                binding[var]["value"] if var in binding else None for var in vars_
-            )
-            rows.append(row)
+        if return_type == "json":
+            return response["results"]["bindings"]
 
-        return rows
+        else:
+            for binding in response["results"]["bindings"]:
+                if binding is None:
+                    continue
+                elif len(binding) == 0:
+                    continue
+                row = tuple(
+                    binding[var]["value"] if var in binding else None for var in vars_
+                )
+                rows.append(row)
+
+            return rows

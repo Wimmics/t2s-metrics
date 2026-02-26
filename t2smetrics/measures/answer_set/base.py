@@ -6,6 +6,12 @@ from t2smetrics.measures.base import Measure
 class AnswerSetMeasure(Measure):
     requires_execution = True
 
+    def _get_answer_json_whitout_normalisation(self, case, context: EvaluationContext):
+        gold_result = context.execution_backend.execute(case.golden.raw, return_type="json")
+        pred_result = context.execution_backend.execute(case.generated.raw, return_type="json")
+
+        return gold_result, pred_result
+    
     def _get_answer_lists(self, case, context: EvaluationContext):
         gold_result = context.execution_backend.execute(case.golden.raw)
         pred_result = context.execution_backend.execute(case.generated.raw)

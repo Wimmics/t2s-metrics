@@ -18,6 +18,7 @@ setup(
         "rdflib==7.5.0",
         "langchain_ollama==1.0.1",
         "SPARQLWrapper==2.0.0",
+        "pytest==9.0.2",
     ],
     long_description=long_description,
     long_description_content_type="text/markdown",
