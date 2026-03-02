@@ -24,7 +24,7 @@ from t2smetrics.measures.distance import (
     EuclideanDistance,
 )
 from t2smetrics.measures.llm_judge import LLMJudge
-from t2smetrics.measures.text_metrics import Bleu, RougeN, Meteor, SPBleu
+from t2smetrics.measures.text_metrics import Bleu, QCanBleu, RougeN, Meteor, SPBleu
 from t2smetrics.measures.uri.uri_hallucination import URIHallucination
 from t2smetrics.measures.query_execution import QueryExecution
 from t2smetrics.measures.token import SPF1, TokenRecall, TokenPrecision, TokenF1
@@ -82,34 +82,35 @@ for qa in question_answering_systems:
     llm_backend = OllamaBackend()
 
     measures = [
-        AnswerSetPrecision(),  # OK
-        AnswerSetRecall(),  # OK
+        # AnswerSetPrecision(),  # OK
+        # AnswerSetRecall(),  # OK
         AnswerSetF1(),  # OK
         Bleu(),  # OK
-        CodeBLEU(),  # OK
-        CosineSimilarity(),  # OK
-        EuclideanDistance(),  # OK
-        F1QALD(),  # OK
+        # CodeBLEU(),  # OK
+        # CosineSimilarity(),  # OK
+        # EuclideanDistance(),  # OK
+        # F1QALD(),  # OK
         F1Spinach(),  # OK
         SPBleu(),  # OK
         SPF1(),  # OK
-        HitAtK(k=1),  # OK
-        JaccardSimilarity(),  # OK
-        LLMJudge(),  # OK
-        LevenshteinDistance(),  # OK
-        MRR(),  # OK
-        Meteor(),  # OK
-        NDCG(),  # OK
-        PrecisionAtK(k=1),  # OK
-        PrecisionQALD(),  # OK
-        QueryExecution(),  # OK
-        QueryExactMatch(),  # OK
-        RecallQALD(),  # OK
-        RougeN(4),  # OK
-        TokenF1(),  # OK
-        TokenPrecision(),  # OK
-        TokenRecall(),  # OK
-        URIHallucination(),  # OK
+        # HitAtK(k=1),  # OK
+        # JaccardSimilarity(),  # OK
+        # LLMJudge(),  # OK
+        # LevenshteinDistance(),  # OK
+        # MRR(),  # OK
+        # Meteor(),  # OK
+        # NDCG(),  # OK
+        # PrecisionAtK(k=1),  # OK
+        # PrecisionQALD(),  # OK
+        QCanBleu(),  # OK
+        # QueryExecution(),  # OK
+        # QueryExactMatch(),  # OK
+        # RecallQALD(),  # OK
+        # RougeN(4),  # OK
+        # TokenF1(),  # OK
+        # TokenPrecision(),  # OK
+        # TokenRecall(),  # OK
+        # URIHallucination(),  # OK
     ]
 
     experiment = Experiment(

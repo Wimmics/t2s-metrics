@@ -4,7 +4,10 @@ from rouge_score import rouge_scorer
 from nltk.translate.meteor_score import meteor_score
 from t2smetrics.measures.base import Measure
 from t2smetrics.core.result import EvaluationResult
-from t2smetrics.representation.preprocessing import SP_NORMALIZER_PREPROCESSOR
+from t2smetrics.representation.preprocessing import (
+    QCAN_NORMALIZER_PREPROCESSOR,
+    SP_NORMALIZER_PREPROCESSOR,
+)
 
 
 class Bleu(Measure):
@@ -50,6 +53,17 @@ class SPBleu(Bleu):
         super().__init__(n, weights)
         self.name = "sp-bleu"
         self.preprocessor = SP_NORMALIZER_PREPROCESSOR
+
+    def compute(self, case, context=None):
+        return super().compute(case, context)
+
+
+class QCanBleu(Bleu):
+
+    def __init__(self, n: int = 0, weights: tuple = None):
+        super().__init__(n, weights)
+        self.name = "qcan-bleu"
+        self.preprocessor = QCAN_NORMALIZER_PREPROCESSOR
 
     def compute(self, case, context=None):
         return super().compute(case, context)
