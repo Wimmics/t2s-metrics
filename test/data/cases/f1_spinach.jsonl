@@ -11,3 +11,7 @@
 {  "id": "f1_2_em_2_all_one_third_w_2fp",  "golden": "SELECT ?item ?surprise ?surprise_2 WHERE {  VALUES (?item ?surprise ?surprise_2) {    (<b> <c> <c>)    (<a> <c> <c>)  }}",  "generated": "SELECT ?item WHERE {  VALUES ?item { <a> <b> <surprise> <surprise_2> }}", "order_matters": false}
 {  "id": "f1_2_em_2_all_two_third_w_2fp",  "golden": "SELECT ?item ?surprise ?surprise_2 WHERE {   VALUES (?item ?surprise ?surprise_2) {    (<b> <c> <abc>)    (<a> <c> <abc>)  }}",  "generated": "SELECT ?item ?surprise WHERE {  VALUES (?item ?surprise) {    (<b> <c>)    (<a> <c>)    (<surprise> <c>)    (<surprise_2> <c>)  }}", "order_matters": false}
 {  "id": "f1_2_em_2_all_two_third_w_2fp_duplicate_gold_should_not_matter",  "golden": "SELECT ?item ?surprise ?surprise_2 WHERE {  VALUES (?item ?surprise ?surprise_2) {    (<b> <c> <c>)    (<a> <c> <c>)  }}",  "generated": "SELECT ?item ?surprise WHERE {  VALUES (?item ?surprise) {    (<b> <c>)    (<a> <c>)    (<surprise> <c>)    (<surprise_2> <c>)  }}", "order_matters": false}
+{  "id": "ask_true_true",  "golden": "ASK { FILTER(1 = 1) }",  "generated": "ASK { FILTER(1 = 1) }", "order_matters": false}
+{  "id": "ask_true_false",  "golden": "ASK { FILTER(1 = 1) }",  "generated": "ASK { FILTER(1 = 0) }", "order_matters": false}
+{  "id": "ask_false_false",  "golden": "ASK { FILTER(1 = 0) }",  "generated": "ASK { FILTER(1 = 0) }", "order_matters": false}
+{  "id": "ask_false_true",  "golden": "ASK { FILTER(1 = 0) }",  "generated": "ASK { FILTER(1 = 1) }", "order_matters": false}

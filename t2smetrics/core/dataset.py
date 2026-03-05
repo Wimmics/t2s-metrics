@@ -1,9 +1,13 @@
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterator
 
+from SPARQLWrapper import QueryResult
+
 from t2smetrics.representation.sparql_query import SparqlQuery
+
+_NOT_CACHED = object()
 
 
 @dataclass
@@ -12,6 +16,9 @@ class QueryCase:
     golden: SparqlQuery
     generated: SparqlQuery
     order_matters: bool
+    golden_response: "QueryResult.ConvertResult" = _NOT_CACHED
+    generated_response: "QueryResult.ConvertResult" = _NOT_CACHED
+    is_uri_hallicinated_map: dict[str, bool] = field(default_factory=dict)
 
 
 class JsonlDataset:

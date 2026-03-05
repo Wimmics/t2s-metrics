@@ -8,6 +8,6 @@ class LLMJudge(Measure):
 
     def compute(self, case, context):
         response = context.llm_backend.judge(
-            f"Question: {case.id}\nGold: {case.golden.raw}\nPredicted: {case.generated.raw}"
+            f"\nGold SPARQL query: {case.golden.raw}\nPredicted SPARQL query: {case.generated.raw}"
         )
         return EvaluationResult(case.id, self.name, response["score"])

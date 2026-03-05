@@ -1,0 +1,74 @@
+@prefix ex: <http://example.org/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix dbo: <http://dbpedia.org/ontology/> .
+
+# Entities
+ex:Alice a foaf:Person ;
+         foaf:name "Alice" ;
+         foaf:age 30 ;
+         foaf:workplaceHomepage ex:CompanyA ;
+         dbo:birthPlace ex:NewYork .
+
+ex:Bob a foaf:Person ;
+       foaf:name "Bob" ;
+       foaf:age 35 ;
+       foaf:workplaceHomepage ex:CompanyB ;
+       dbo:birthPlace ex:LosAngeles .
+
+ex:Charlie a foaf:Person ;
+           foaf:name "Charlie" ;
+           foaf:age 28 ;
+           foaf:workplaceHomepage ex:CompanyA ;
+           dbo:birthPlace ex:Chicago .
+
+ex:Diana a foaf:Person ;
+         foaf:name "Diana" ;
+         foaf:age 32 ;
+         foaf:workplaceHomepage ex:CompanyC ;
+         dbo:birthPlace ex:NewYork .
+
+# Organizations
+ex:CompanyA a foaf:Organization ;
+            foaf:name "Company A" ;
+            dbo:foundingYear "2010" ;
+            foaf:homepage ex:CompanyA_Website .
+
+ex:CompanyB a foaf:Organization ;
+            foaf:name "Company B" ;
+            dbo:foundingYear "2015" ;
+            foaf:homepage ex:CompanyB_Website .
+
+ex:CompanyC a foaf:Organization ;
+            foaf:name "Company C" ;
+            dbo:foundingYear "2012" ;
+            foaf:homepage ex:CompanyC_Website .
+
+# Cities
+ex:NewYork a dbo:City ;
+           foaf:name "New York" ;
+           dbo:country ex:USA .
+
+ex:LosAngeles a dbo:City ;
+              foaf:name "Los Angeles" ;
+              dbo:country ex:USA .
+
+ex:Chicago a dbo:City ;
+           foaf:name "Chicago" ;
+           dbo:country ex:USA .
+
+# Countries
+ex:USA a dbo:Country ;
+       foaf:name "United States of America" .
+
+# Relationships
+ex:Alice foaf:knows ex:Bob ;
+         foaf:knows ex:Charlie .
+
+ex:Bob foaf:knows ex:Alice ;
+       foaf:knows ex:Diana .
+
+ex:Charlie foaf:knows ex:Alice ;
+           foaf:knows ex:Diana .
+
+ex:Diana foaf:knows ex:Bob ;
+         foaf:knows ex:Charlie .

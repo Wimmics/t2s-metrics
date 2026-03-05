@@ -6,3 +6,15 @@ q2:
 
 q3:
   AnswerSetPrecision: 0
+
+ask_true_true:
+  AnswerSetPrecision: 1.0
+
+ask_true_false:
+  AnswerSetPrecision: 0.0
+
+ask_false_false:
+  AnswerSetPrecision: 1.0
+
+ask_false_true:
+  AnswerSetPrecision: 0.0

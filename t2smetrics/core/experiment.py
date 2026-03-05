@@ -11,7 +11,7 @@ class Experiment:
         measures: list[Measure],
         execution_backend=None,
         llm_backend=None,
-        cache=None,
+        cache_result_sets=True,
         verbose=False,
     ):
         self.dataset = dataset
@@ -19,7 +19,7 @@ class Experiment:
         self.context = EvaluationContext(
             execution_backend=execution_backend,
             llm_backend=llm_backend,
-            cache=cache,
+            cache_result_sets=cache_result_sets,
         )
 
         self.engine = EvaluationEngine(measures, self.context, verbose=verbose)

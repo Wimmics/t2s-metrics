@@ -67,7 +67,7 @@ def str_to_measure(measure_name: str) -> Measure:
         # "EuclideanDistance": EuclideanDistance(),
         # "JaccardSimilarity": JaccardSimilarity(),
         # "LevenshteinDistance": LevenshteinDistance(),
-        # "URIHallucination": URIHallucination(),
+        "URIHallucination": URIHallucination(),
         "Bleu": Bleu(),
         "SP-Bleu": SPBleu(),
         "SP-F1": SPF1(),
