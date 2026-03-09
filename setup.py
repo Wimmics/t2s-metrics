@@ -19,6 +19,8 @@ setup(
         "langchain_ollama==1.0.1",
         "SPARQLWrapper==2.0.0",
         "pytest==9.0.2",
+        "dash==4.0.0",
+        "dash_bootstrap_components==2.0.4"
     ],
     long_description=long_description,
     long_description_content_type="text/markdown",

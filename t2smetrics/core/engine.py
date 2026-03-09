@@ -14,8 +14,8 @@ class EvaluationEngine:
         self.context = context
         self.verbose = verbose
 
-    def evaluate(self, dataset: Iterable[QueryCase]) -> list[EvaluationResult]:
-        results = []
+    def evaluate(self, dataset: Iterable[QueryCase]) -> set[EvaluationResult]:
+        results = set()
 
         for case in tqdm(
             dataset, desc="Evaluating cases", unit="case", disable=not self.verbose
@@ -40,6 +40,6 @@ class EvaluationEngine:
                 if measure.requires_llm and self.context.llm_backend is None:
                     raise RuntimeError(f"{measure.name} requires an LLM backend")
 
-                results.append(measure.run(case, self.context))
+                results.add(measure.run(case, self.context))
 
         return results

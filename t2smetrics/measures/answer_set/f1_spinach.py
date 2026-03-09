@@ -1,10 +1,11 @@
-from collections import Counter
-import numpy as np
 import logging
+import numpy as np
 from scipy.optimize import linear_sum_assignment
+from collections import Counter
 
 from t2smetrics.measures.answer_set.base import AnswerSetMeasure
 from t2smetrics.core.result import EvaluationResult
+from t2smetrics.measures.answer_set.f1 import AnswerSetF1
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +15,22 @@ class F1Spinach(AnswerSetMeasure):
     name = "f1_spinach"
 
     def compute(self, case, context):
+        # gold, pred = self._get_answer_lists(case, context)
         gold, pred = self._get_answer_json_whitout_normalisation(case, context)
+
+        if type(pred) is bool or type(gold) is bool:
+            f1 = int(pred == gold)
+            return EvaluationResult(case.id, self.name, f1)
+
+        if len(pred) * len(gold) > 1000000:
+            logger.warning(
+                "The number of comparisons for F1Spinach is %d, which may lead to long computation time.",
+                len(pred) * len(gold),
+            )
+            logger.warning(
+                "Falling back to a simpler F1 computation without maximal matching."
+            )
+            return AnswerSetF1().compute(case, context)
 
         f1 = self.f1(pred, gold)
         return EvaluationResult(case.id, self.name, f1)
@@ -62,7 +78,10 @@ class F1Spinach(AnswerSetMeasure):
                 len(gold_results) - len(col_ind)
             )
 
-            res = 2 * tp / (2 * tp + fp_or_fn)
+            if (2 * tp + fp_or_fn) == 0:
+                res = 0
+            else:
+                res = 2 * tp / (2 * tp + fp_or_fn)
 
         else:
             # an older implmentation with greedy matching
@@ -104,7 +123,7 @@ class F1Spinach(AnswerSetMeasure):
                     fn += 1 - match_ratio
 
             fn += len(list(filter(lambda x: not x[1], gold_result_mapping)))
-
+            
             res = 2 * tp / (2 * tp + fp + fn)
 
         assert 0 <= res

@@ -109,4 +109,4 @@ def run_single_case(
 
     results, _ = experiment.run()
 
-    return results[0]
+    return results.pop()
