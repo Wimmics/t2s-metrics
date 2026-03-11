@@ -219,6 +219,8 @@ datasets/*
 
 !datasets/ck25/
 datasets/ck25/results/
+datasets/ck25/kg/*
+!datasets/ck25/kg/dataset.ttl
 
 !datasets/example/
 datasets/example/results/
