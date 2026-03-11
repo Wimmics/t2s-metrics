@@ -128,11 +128,28 @@ python -m pytest
 
 # License
 
-See the [LICENSE file](./LICENSE).
+## t2s-metrics
 
-## Cite this work
+t2s-metrics is provided under the terms of the [GNU Affero General Public License 3.0](./LICENSES/AGPL-3.0.txt) (AGPL-3.0).
 
-...
+
+## Redistribution of third-party software and data
+
+This repository provides several third-party contributions redistributed with their original licences.
+
+### CK25 Dataset
+
+t2s-metrics reuses the [CK25 Corporate Knowledge Reference Dataset for Benchmarking Text-2-SPARQL QA Approaches](https://github.com/eccenca/ck25-dataset/) that we modified to account for file format requirements (jsonl format).
+
+The modified version is redistributed in directory [dataset/ck25](dataset/ck25) under the terms of the [Creative Commons Attribution 4.0 International license](LICENCES/CC-BY-4.0.txt) (CC-BY-4.0).
+
+### QCan library
+
+t2s-metrics reuses the [QCan software for canonicalising SPARQL queries](https://github.com/RittoShadow/QCan).
+
+QCan is written in Java. In this repository, we distribute the compiled jar of QCan v1.1, [third_party_lib/qcan-1.1-jar-with-dependencies.jar](third_party_lib/qcan-1.1-jar-with-dependencies.jar), under the terms of the [Apache 2.0 licence](LICENSES/Apache-2.0.txt).
+
+
 
 
 <details>
