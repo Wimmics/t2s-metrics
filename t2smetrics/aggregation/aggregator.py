@@ -8,9 +8,9 @@ class MeanAggregator:
     def aggregate(self, results: Iterable[EvaluationResult]):
         buckets = defaultdict(list)
         for r in results:
-            buckets[r.measure].append(r.score)
+            buckets[r.metric].append(r.score)
 
         return {
-            measure: sum(scores) / len(scores)
-            for measure, scores in buckets.items()
+            metric: sum(scores) / len(scores)
+            for metric, scores in buckets.items()
         }

@@ -3,7 +3,7 @@ import subprocess
 from typing import Callable
 import logging
 
-from t2smetrics.core.dataset import QueryCase
+from t2smetrics.core.eval import QueryCase
 from t2smetrics.representation.sparql_query import SparqlQuery
 
 logger = logging.getLogger(__name__)
@@ -56,7 +56,7 @@ def normalize_qcan(q: str) -> str:
     command = [
         "java",
         "-jar",
-        "./res/lib/qcan-1.1-jar-with-dependencies.jar",
+        "./third_party_lib/qcan-1.1-jar-with-dependencies.jar",
         "easy",
         "-q",
         f"{q}",
@@ -71,7 +71,7 @@ def normalize_qcan(q: str) -> str:
     )
 
     if result.stderr:
-        # logger.warning(f"QCan normalization error: {result.stderr}")
+        logger.warning(f"QCan normalization error falling back to original: {result.stderr}")
         return q
 
     result = result.stdout

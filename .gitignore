@@ -212,10 +212,17 @@ __marimo__/
 
 
 # t2s-metrics 
-res/datasets/db25
-res/db25
-res/results
-res/sciqa
-res/notebooks
-res/pb-q2set
-res/instruct-sparql
+
+notebooks/
+
+datasets/*
+
+!datasets/ck25/
+datasets/ck25/results/
+
+!datasets/example/
+datasets/example/results/
+
+t2smetrics/run_*
+!t2smetrics/run_example.py
+!datasets/run_text2sparql.py

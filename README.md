@@ -32,75 +32,113 @@ python -m t2smetrics.cli --dataset example_dataset.jsonl
 ### Python (minimal example)
 
 ```python
-from t2smetrics.core.dataset import JsonlDataset
 from t2smetrics.core.experiment import Experiment
-from t2smetrics.measures.token import TokenPrecision, TokenRecall, TokenF1
-from t2smetrics.measures.exact import QueryExactMatch
+from t2smetrics.core.eval import JsonlEval
+from t2smetrics.metrics.text_metrics import Bleu
+from t2smetrics.metrics.token import TokenF1
 
-dataset = JsonlDataset("./example_dataset.jsonl")
-measures = [TokenPrecision(), TokenRecall(), TokenF1(), QueryExactMatch()]
 
-exp = Experiment(dataset, measures)
-results, summary = exp.run()
+jsonl_eval = JsonlEval("./datasets/example/eval/example.jsonl")
+metrics = [Bleu(), TokenF1()]
+experiment = Experiment(jsonl_eval, metrics)
+_, summary = experiment.run()
 
-print("=== SUMMARY ===")
+print("\n=== SUMMARY ===")
 for k, v in summary.items():
-	print(f"{k}: {v:.4f}")
+    print(f"{k}: {v:.4f}")
 ```
 
 ### Python (full example with execution backends)
 
 ```python
 from t2smetrics.core.experiment import Experiment
-from t2smetrics.core.dataset import JsonlDataset
+from t2smetrics.core.eval import JsonlEval
 from t2smetrics.execution.rdflib_backend import RDFLibBackend
 
 from t2smetrics.llm.ollama_backend import OllamaBackend
-from t2smetrics.measures.answer_set.f1 import AnswerSetF1
-from t2smetrics.measures.answer_set.precision import AnswerSetPrecision
-from t2smetrics.measures.answer_set.recall import AnswerSetRecall
-from t2smetrics.measures.exact import QueryExactMatch
-from t2smetrics.measures.codebleu.codebleu import CodeBLEU
-from t2smetrics.measures.text_metrics import Bleu, RougeN, Meteor
-from t2smetrics.measures.query_execution import QueryExecution
-from t2smetrics.measures.token import TokenRecall, TokenPrecision, TokenF1
+from t2smetrics.metrics.answer_set.f1 import AnswerSetF1
+from t2smetrics.metrics.answer_set.precision import AnswerSetPrecision
+from t2smetrics.metrics.answer_set.precision_qald import PrecisionQALD
+from t2smetrics.metrics.answer_set.recall import AnswerSetRecall
+from t2smetrics.metrics.answer_set.recall_qald import RecallQALD
+from t2smetrics.metrics.exact import QueryExactMatch
+from t2smetrics.metrics.codebleu.codebleu import CodeBLEU
+from t2smetrics.metrics.answer_set.f1_qald import F1QALD
+from t2smetrics.metrics.answer_set.f1_spinach import F1Spinach
+from t2smetrics.metrics.answer_set.mrr import MRR
+from t2smetrics.metrics.answer_set.hit_at_k import HitAtK
+from t2smetrics.metrics.answer_set.ndcg import NDCG
+from t2smetrics.metrics.answer_set.p_at_k import PrecisionAtK
+from t2smetrics.metrics.distance import (
+    LevenshteinDistance,
+    JaccardSimilarity,
+    CosineSimilarity,
+    EuclideanDistance,
+)
+from t2smetrics.metrics.llm_judge import LLMJudge
+from t2smetrics.metrics.text_metrics import Bleu, RougeN, Meteor, SPBleu
+from t2smetrics.metrics.uri.uri_hallucination import URIHallucination
+from t2smetrics.metrics.query_execution import QueryExecution
+from t2smetrics.metrics.token import SPF1, TokenRecall, TokenPrecision, TokenF1
 
-dataset = JsonlDataset("./example_dataset.jsonl")
-execution_backend = RDFLibBackend("example.ttl")
+
+jsonl_eval = JsonlEval("./datasets/example/eval/example.jsonl")
+
+execution_backend = RDFLibBackend("./datasets/example/kg/example.ttl")
+
 llm_backend = OllamaBackend()
 
-measures = [
-	AnswerSetPrecision(),
-	AnswerSetRecall(),
-	AnswerSetF1(),
-	Bleu(),
-	CodeBLEU(),
-	Meteor(),
-	QueryExecution(),
-	QueryExactMatch(),
-	RougeN(4),
-	TokenF1(),
-	TokenPrecision(),
-	TokenRecall(),
+metrics = [
+    AnswerSetPrecision(),
+    AnswerSetRecall(),
+    AnswerSetF1(),
+    Bleu(),
+    SPBleu(),
+    CodeBLEU(),
+    CosineSimilarity(),
+    EuclideanDistance(),
+    F1QALD(),
+    PrecisionQALD(),
+    RecallQALD(),
+    F1Spinach(),
+    HitAtK(k=5),
+    JaccardSimilarity(),
+    LLMJudge(),
+    LevenshteinDistance(),
+    MRR(),
+    Meteor(),
+    NDCG(),
+    PrecisionAtK(k=1),
+    QueryExecution(),
+    QueryExactMatch(),
+    RougeN(1),
+    RougeN(2),
+    RougeN(3),
+    RougeN(4),
+    TokenF1(),
+    SPF1(),
+    TokenPrecision(),
+    TokenRecall(),
+    URIHallucination(),
 ]
 
 experiment = Experiment(
-	dataset=dataset,
-	measures=measures,
-	execution_backend=execution_backend,
-	llm_backend=llm_backend,
-	verbose=True,
+    jsonl_eval=jsonl_eval,
+    metrics=metrics,
+    execution_backend=execution_backend,
+    llm_backend=llm_backend,
+    verbose=True,
 )
 
 results, summary = experiment.run()
 
 print("=== PER QUERY RESULTS ===")
 for r in results:
-	print(r)
+    print(r)
 
 print("\n=== SUMMARY ===")
 for k, v in summary.items():
-	print(f"{k}: {v:.4f}")
+    print(f"{k}: {v:.4f}")
 ```
 
 ### Example scripts
@@ -129,15 +167,3 @@ python -m pytest
 # License
 
 See the [LICENSE file](./LICENSE).
-
-## Cite this work
-
-...
-
-
-<details>
-<summary>See BibTex</summary>
-@inproceedings{,
-...
-}
-</details>

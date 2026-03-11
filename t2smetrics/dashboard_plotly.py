@@ -1,13 +1,17 @@
 import json
+from pathlib import Path
 import pandas as pd
 import plotly.graph_objects as go
 import dash
 from dash import dcc, html, Input, Output
 import dash_bootstrap_components as dbc
-import os
+import plotly.express as px
 
-# Get all json files in the results folder
-available_files = [f for f in os.listdir("./res/results/") if f.endswith(".json")]
+
+parent_folder = Path("datasets")
+
+# Find all json files in results folders under each subfolder
+available_files = [str(f) for f in parent_folder.glob("*/results/*.json")]
 
 if not available_files:
     raise FileNotFoundError("No JSON files found in the results folder.")
@@ -101,20 +105,31 @@ app.layout = dbc.Container(
         # Tabs for different visualizations
         dcc.Tabs(
             [
+                # Tab 1: Radar Chart
                 dcc.Tab(
                     label="Radar Chart",
                     children=[
                         dbc.Row([dbc.Col(dcc.Graph(id="radar-chart"), width=12)])
                     ],
                 ),
+                # Tab 2: Bar Chart Comparison
                 dcc.Tab(
                     label="Bar Chart",
                     children=[dbc.Row([dbc.Col(dcc.Graph(id="bar-chart"), width=12)])],
                 ),
+                # Tab 3: Heatmap
                 dcc.Tab(
-                    label="Heatmap",
+                    label="Correlation Heatmap",
                     children=[
-                        dbc.Row([dbc.Col(html.Label("Select Metrics for Heatmap:"))]),
+                        dbc.Row(
+                            [
+                                dbc.Col(
+                                    html.Label(
+                                        "Select Metrics for Correlation Heatmap:"
+                                    )
+                                )
+                            ]
+                        ),
                         dbc.Row(
                             [
                                 dbc.Col(
@@ -123,7 +138,53 @@ app.layout = dbc.Container(
                                 )
                             ]
                         ),
-                        dbc.Row([dbc.Col(dcc.Graph(id="heatmap"), width=12)]),
+                        dbc.Row(
+                            [dbc.Col(dcc.Graph(id="correlation-heatmap"), width=12)]
+                        ),
+                    ],
+                ),
+                # Tab 4: Parallel Coordinates
+                dcc.Tab(
+                    label="Parallel Coordinates",
+                    children=[
+                        dbc.Row(
+                            [
+                                dbc.Col(
+                                    html.Label(
+                                        "Select Metrics for Parallel Coordinates:"
+                                    )
+                                )
+                            ]
+                        ),
+                        dbc.Row(
+                            [
+                                dbc.Col(
+                                    dcc.Dropdown(
+                                        id="parallel-coords-metrics", multi=True
+                                    ),
+                                    width=12,
+                                )
+                            ]
+                        ),
+                        dbc.Row([dbc.Col(dcc.Graph(id="parallel-coords"), width=12)]),
+                    ],
+                ),
+                # Tab 5: Scatter Matrix
+                dcc.Tab(
+                    label="Scatter Matrix",
+                    children=[
+                        dbc.Row(
+                            [dbc.Col(html.Label("Select Metrics for Scatter Matrix:"))]
+                        ),
+                        dbc.Row(
+                            [
+                                dbc.Col(
+                                    dcc.Dropdown(id="scatter-metrics", multi=True),
+                                    width=12,
+                                )
+                            ]
+                        ),
+                        dbc.Row([dbc.Col(dcc.Graph(id="scatter-matrix"), width=12)]),
                     ],
                 ),
             ]
@@ -152,8 +213,7 @@ def load_data(selected_file):
         return {}, {}, {}, "No file selected", [], [], [], None
 
     # Load the selected file
-    file_path = f"./res/results/{selected_file}"
-    with open(file_path, "r") as f:
+    with open(selected_file, "r") as f:
         data = json.load(f)
 
     # Filter out empty metrics
@@ -236,6 +296,24 @@ def update_heatmap_metrics(metrics):
     return [{"label": m, "value": m} for m in metrics]
 
 
+# Callback to update parallel coordinates metrics dropdown
+@app.callback(
+    Output("parallel-coords-metrics", "options"), [Input("metrics-store", "data")]
+)
+def update_parallel_coords_metrics(metrics):
+    if not metrics:
+        return []
+    return [{"label": m, "value": m} for m in metrics]
+
+
+# Callback to update parallel coordinates metrics dropdown
+@app.callback(Output("scatter-metrics", "options"), [Input("metrics-store", "data")])
+def update_scatter_metrics(metrics):
+    if not metrics:
+        return []
+    return [{"label": m, "value": m} for m in metrics]
+
+
 # Callback to update radar and bar charts
 @app.callback(
     [Output("radar-chart", "figure"), Output("bar-chart", "figure")],
@@ -302,50 +380,140 @@ def update_radar_and_bar(stored_data, selected_systems, selected_category):
     return fig_radar, fig_bar
 
 
-# Callback for heatmap
 @app.callback(
-    Output("heatmap", "figure"),
+    Output("correlation-heatmap", "figure"),
     [
         Input("data-store", "data"),
-        Input("system-selector", "value"),
         Input("heatmap-metrics", "value"),
+        Input("system-selector", "value"),
     ],
 )
-def update_heatmap(stored_data, selected_systems, selected_metrics):
-    if (
-        not stored_data
-        or not selected_systems
-        or not selected_metrics
-        or len(selected_metrics) < 2
-    ):
-        return go.Figure()
+def update_heatmap(stored_data, selected_metrics, selected_systems):
+    if not stored_data or not selected_systems:
+        return go.Figure(), go.Figure()
 
     # Convert to DataFrame
     df = stored_data_to_df(stored_data)
     filtered_df = df[df["system_name"].isin(selected_systems)]
 
-    # Calculate correlation matrix
-    corr_matrix = filtered_df[selected_metrics].corr().round(2)
+    if not selected_metrics or len(selected_metrics) < 2:
+        return go.Figure()
 
-    fig = go.Figure(
-        data=go.Heatmap(
-            z=corr_matrix.values,
-            x=selected_metrics,
-            y=selected_metrics,
-            colorscale="RdBu",
-            zmin=-1,
-            zmax=1,
-            text=corr_matrix.values,
-            texttemplate="%{text}",
-            textfont={"size": 10},
+    try:
+        # Calculate correlation matrix
+        corr_matrix = filtered_df[selected_metrics].corr().round(2)
+        corr_matrix = corr_matrix.fillna(0)
+
+        fig = go.Figure(
+            data=go.Heatmap(
+                z=corr_matrix.values,
+                x=selected_metrics,
+                y=selected_metrics,
+                colorscale="turbo",
+                zmin=-1,
+                zmax=1,
+                text=corr_matrix.values,
+                texttemplate="%{text}",
+                textfont={"size": 10},
+            )
         )
-    )
 
-    fig.update_layout(
-        title="Metric Correlation Heatmap", height=700, xaxis_tickangle=-45
-    )
+        fig.update_layout(
+            title="Metric Correlation Heatmap", height=700, xaxis_tickangle=-45
+        )
+        return fig
 
-    return fig
+    except Exception as e:
+        print("Error generating heatmap:", e)
+        return go.Figure()
+
+
+@app.callback(
+    Output("parallel-coords", "figure"),
+    [
+        Input("data-store", "data"),
+        Input("parallel-coords-metrics", "value"),
+        Input("system-selector", "value"),
+    ],
+)
+def update_parallel(stored_data, selected_metrics, selected_systems):
+    if not stored_data or not selected_systems:
+        return go.Figure(), go.Figure()
+
+    # Convert to DataFrame
+    df = stored_data_to_df(stored_data)
+    filtered_df = df[df["system_name"].isin(selected_systems)]
+
+    if not selected_metrics or len(selected_metrics) < 2:
+        return go.Figure()
+
+    try:
+
+        dimensions = []
+        for metric in selected_metrics:
+            dimensions.append(
+                dict(
+                    label=metric,
+                    values=filtered_df[metric],
+                    range=[filtered_df[metric].min(), filtered_df[metric].max()],
+                )
+            )
+
+        fig = go.Figure(
+            data=go.Parcoords(
+                line=dict(color=filtered_df.index, colorscale="Viridis"),
+                dimensions=dimensions,
+            )
+        )
+
+        fig.update_layout(title="Parallel Coordinates Plot", height=600)
+
+        return fig
+
+    except Exception as e:
+        print("Error generating heatmap:", e)
+        return go.Figure()
+
+
+@app.callback(
+    Output("scatter-matrix", "figure"),
+    [
+        Input("data-store", "data"),
+        Input("scatter-metrics", "value"),
+        Input("system-selector", "value"),
+    ],
+)
+def update_scatter_matrix(stored_data, selected_metrics, selected_systems):
+    if not stored_data or not selected_systems:
+        return go.Figure(), go.Figure()
+
+    # Convert to DataFrame
+    df = stored_data_to_df(stored_data)
+    filtered_df = df[df["system_name"].isin(selected_systems)]
+
+    if not selected_metrics or len(selected_metrics) < 2:
+        return go.Figure()
+
+    try:
+        filtered_df = df[df["system_name"].isin(selected_systems)]
+
+        if len(selected_metrics) < 2:
+            return go.Figure()
+
+        fig = px.scatter_matrix(
+            filtered_df,
+            dimensions=selected_metrics,
+            color="system_name",
+            title="Scatter Matrix",
+        )
+
+        fig.update_layout(height=800)
+        fig.update_traces(diagonal_visible=False)
+
+        return fig
+    except Exception as e:
+        print("Error generating heatmap:", e)
+        return go.Figure()
 
 
 if __name__ == "__main__":

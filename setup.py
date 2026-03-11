@@ -20,7 +20,8 @@ setup(
         "SPARQLWrapper==2.0.0",
         "pytest==9.0.2",
         "dash==4.0.0",
-        "dash_bootstrap_components==2.0.4"
+        "dash_bootstrap_components==2.0.4",
+        "pandas==3.0.1",
     ],
     long_description=long_description,
     long_description_content_type="text/markdown",
