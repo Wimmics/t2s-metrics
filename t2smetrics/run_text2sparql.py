@@ -1,4 +1,5 @@
 import json
+import os
 import time
 from t2smetrics.core.experiment import Experiment
 from t2smetrics.core.eval import JsonlEval
@@ -132,5 +133,9 @@ end_time = time.time()
 logging.info(f"Execution time: {int(end_time - start_time)} seconds")
 
 current_time = time.strftime("%Y%m%d-%H%M%S")
-with open(f"./datasets/{dataset_name}/results/{dataset_name}-{current_time}.json", "w") as f:
+
+file_path = f"./datasets/{dataset_name}/results/{dataset_name}-{current_time}.json"
+os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
+with open(file_path, "w") as f:
     json.dump(all_qa_results, f, indent=2)
