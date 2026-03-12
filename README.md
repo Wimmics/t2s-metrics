@@ -1,12 +1,26 @@
 # T2S-Metrics
 
-[![License](https://img.shields.io/badge/License-AGPL%20v3-blue)](/LICENSES)
-[![PyPI](https://img.shields.io/pypi/v/t2s-metrics)](https://pypi.org/project/t2s-metrics/)
-[![Downloads](https://img.shields.io/pypi/dm/t2s-metrics)](https://pypi.org/project/t2s-metrics/)
+<div align="center">
+<br>
 
-A small evaluation toolkit for text-to-SPARQL systems. It runs a configurable set
+<img src="img/logo.png" width="50%" style="border-radius: 5px;" alt="t2s-metrics logo">
+
+</div>
+
+<p align="center">
+    <em>A small evaluation toolkit for text-to-SPARQL systems. It runs a configurable set
 of metrics over JSONL datasets and can execute queries against local RDF files or
-SPARQL endpoints.
+SPARQL endpoints.</em>
+</p>
+
+<p align="center">
+   <a href="LICENSES">
+    <img src="https://img.shields.io/badge/License-AGPL%20v3-blue" alt="LICENSES"></a>
+    <a href="https://pypi.org/project/t2s-metrics">
+    <img src="https://img.shields.io/pypi/v/t2s-metrics" alt="PyPI"></a>
+     <a href="https://pypi.org/project/t2s-metrics/">
+    <img src="https://img.shields.io/pypi/dm/t2s-metricsue" alt="Downloads"></a>
+</p>
 
 ## Features
 
