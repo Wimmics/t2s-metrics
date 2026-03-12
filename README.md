@@ -23,6 +23,72 @@ uv pip install -e .
 
 ## Usage
 
+### Expected JSONL format
+
+Input evaluation files must be JSON Lines (`.jsonl`) with **one object per line**.
+Each object must include:
+
+- `id` (string): unique query/case identifier
+- `golden` (string): reference SPARQL query
+- `generated` (string): system-generated SPARQL query
+- `order_matters` (boolean): whether answer order must be preserved
+
+This is exactly what `JsonlEval` expects in `t2smetrics/core/eval.py`.
+
+Example (from `datasets/ck25/eval/AIFB.jsonl`):
+
+```json
+{"id": "ck25:1-en", "golden": "PREFIX pv: <http://ld.company.org/prod-vocab/>\nSELECT DISTINCT ?result\nWHERE\n{\n  <http://ld.company.org/prod-instances/empl-Karen.Brant%40company.org> pv:memberOf ?result .\n  ?result a pv:Department .\n}\n", "generated": "SELECT ?department WHERE { ?person :name \"Ms. Brant\"; :worksIn ?department. }", "order_matters": false}
+```
+
+### Execution backends
+
+The library supports two execution backend families:
+
+1. **Local RDF file execution** with `RDFLibBackend`
+2. **Remote SPARQL endpoint execution** with `SparqlEndpointBackend`
+
+`SparqlEndpointBackend` is generic SPARQL 1.1 and works with endpoints such as
+**QLever** and **Corese** (and also GraphDB, Fuseki, Virtuoso, Blazegraph, etc.).
+
+```python
+from t2smetrics.execution.rdflib_backend import RDFLibBackend
+from t2smetrics.execution.sparql_endpoint_backend import SparqlEndpointBackend
+
+# Option 1: local KG file
+local_backend = RDFLibBackend("./datasets/example/kg/example.ttl")
+
+# Option 2: remote endpoint (e.g., QLever/Corese)
+endpoint_backend = SparqlEndpointBackend("http://localhost:8886/")
+```
+
+### LLM backend (local Ollama + extensible)
+
+For LLM-based metrics (for example `LLMJudge`), the library currently provides
+`OllamaBackend` for **local** inference.
+
+```python
+from t2smetrics.llm.ollama_backend import OllamaBackend
+
+llm_backend = OllamaBackend(model="gemma3:4b")
+```
+
+The LLM layer is extensible via `LLMBackend` (`t2smetrics/llm/base.py`).
+To plug another provider, implement `judge(prompt: str, timeout: int = 30) -> dict`
+and return a dictionary with a numeric `score` (recommended in `[0, 1]`).
+
+```python
+from t2smetrics.llm.base import LLMBackend
+
+
+class MyLLMBackend(LLMBackend):
+    def judge(self, prompt: str, timeout: int = 30) -> dict:
+        # Call your provider/client here
+        return {"score": 0.85, "raw": "optional provider response"}
+```
+
+Then pass your backend to `Experiment(..., llm_backend=...)`.
+
 ### Python (minimal example)
 
 ```python
@@ -135,12 +201,57 @@ for k, v in summary.items():
     print(f"{k}: {v:.4f}")
 ```
 
-### Example scripts
+### Full workflow example (dataset + endpoint + export)
+
+For a complete run over multiple systems and export of aggregated metrics to JSON,
+see `t2smetrics/run_text2sparql.py`.
+
+Typical workflow:
+
+1. Choose a dataset folder (for example `datasets/ck25`).
+2. Put input files under `datasets/<dataset>/eval/*.jsonl`.
+3. Start your SPARQL endpoint (for example QLever/Corese).
+4. Set endpoint URL in the script (example: `http://localhost:8886/`).
+5. Run:
 
 ```bash
-python -m t2smetrics.run_example
 python -m t2smetrics.run_text2sparql
 ```
+
+The script writes timestamped summary files under:
+
+```text
+datasets/<dataset>/results/<dataset>-YYYYMMDD-HHMMSS.json
+```
+
+These result files are then directly consumable by the dashboard.
+
+### Dashboard
+
+The dashboard reads JSON result files (generated in `datasets/*/results/*.json`)
+and serves an interactive UI (Radar, Bar, Correlation Heatmap, Parallel Coordinates,
+Scatter Matrix).
+
+Launch with auto-discovery:
+
+```bash
+python -m t2smetrics.cli dashboard
+```
+
+Launch with explicit files:
+
+```bash
+python -m t2smetrics.cli dashboard \
+    datasets/ck25/results/ck25-20260306-133227.json \
+    datasets/db25/results/db25-20260306-132100.json
+```
+
+Then open:
+
+```text
+http://127.0.0.1:8050
+```
+
 
 ## Development
 
