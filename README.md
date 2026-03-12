@@ -10,7 +10,7 @@ SPARQL endpoints.
   CodeBLEU, and more.
 - Execution backends for local RDF (RDFLib) and remote SPARQL endpoints.
 - Pluggable LLM-based judging via an Ollama backend.
-- CLI and Python API for quick experiments.
+- Python API for quick experiments.
 
 ## Installation
 
@@ -22,12 +22,6 @@ uv pip install -e .
 ```
 
 ## Usage
-
-### CLI
-
-```bash
-python -m t2smetrics.cli --dataset example_dataset.jsonl
-```
 
 ### Python (minimal example)
 

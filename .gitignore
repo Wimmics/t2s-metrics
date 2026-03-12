@@ -215,12 +215,14 @@ __marimo__/
 
 notebooks/
 
-datasets/*
-
+datasets/**
 !datasets/ck25/
-datasets/ck25/results/
-datasets/ck25/kg/*
+!datasets/ck25/eval/
+!datasets/ck25/eval/*
+!datasets/ck25/kg/
 !datasets/ck25/kg/dataset.ttl
+!datasets/ck25/utils/
+!datasets/ck25/utils/mapping_eval.py
 
 !datasets/example/
 datasets/example/results/
