@@ -14,6 +14,14 @@ SPARQL endpoints.
 
 ## Installation
 
+The package is available on PyPI and can be installed directly with pip:
+
+```bash
+pip install t2s-metrics
+```
+
+For development (editable install), you can use:
+
 ```bash
 uv venv
 source .venv/bin/activate
