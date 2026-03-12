@@ -48,7 +48,7 @@ def _build_layout(available_files):
     """Build the app layout with the given list of available JSON files."""
     return dbc.Container(
         [
-            html.H1("QA System Evaluation Dashboard", className="text-center mb-4"),
+            html.H1("Text2SPARQL Metrics Evaluation Dashboard", className="text-center mb-4"),
             # File selector row
             dbc.Row(
                 [
