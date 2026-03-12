@@ -1,31 +1,34 @@
 import argparse
-
-from t2smetrics.core.eval import JsonlEval
-from t2smetrics.core.experiment import Experiment
-from t2smetrics.metrics.token import TokenPrecision, TokenRecall, TokenF1
-from t2smetrics.metrics.exact import QueryExactMatch
+import sys
 
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--jsonl_eval", required=True)
+    parser = argparse.ArgumentParser(
+        description="T2S Metrics CLI",
+    )
+    subparsers = parser.add_subparsers(dest="command")
+
+    # dashboard subcommand
+    dashboard_parser = subparsers.add_parser(
+        "dashboard",
+        help="Launch the evaluation dashboard",
+    )
+    dashboard_parser.add_argument(
+        "files",
+        nargs="*",
+        metavar="FILE",
+        help="JSON result file(s) to load. If omitted, auto-discovers datasets/*/results/*.json",
+    )
+
     args = parser.parse_args()
 
-    jsonl_eval = JsonlEval(args.jsonl_eval)
-
-    metrics = [
-        TokenPrecision(),
-        TokenRecall(),
-        TokenF1(),
-        QueryExactMatch(),
-    ]
-
-    exp = Experiment(jsonl_eval=jsonl_eval, metrics=metrics)
-    results, summary = exp.run()
-
-    print("=== SUMMARY ===")
-    for k, v in summary.items():
-        print(f"{k}: {v:.4f}")
+    if args.command == "dashboard":
+        from t2smetrics import dashboard_plotly
+        available_files = args.files if args.files else None
+        dashboard_plotly.run(available_files=available_files)
+    else:
+        parser.print_help()
+        sys.exit(1)
 
 
 if __name__ == "__main__":

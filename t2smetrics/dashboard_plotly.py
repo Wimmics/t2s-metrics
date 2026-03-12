@@ -10,12 +10,6 @@ import plotly.express as px
 
 parent_folder = Path("datasets")
 
-# Find all json files in results folders under each subfolder
-available_files = [str(f) for f in parent_folder.glob("*/results/*.json")]
-
-if not available_files:
-    raise FileNotFoundError("No JSON files found in the results folder.")
-
 # Initialize Dash app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
@@ -49,149 +43,166 @@ metric_categories = {
     "Execution Metrics": ["query_execution", "query_exact_match", "uri_hallucination"],
 }
 
-# App layout
-app.layout = dbc.Container(
-    [
-        html.H1("QA System Evaluation Dashboard", className="text-center mb-4"),
-        # File selector row
-        dbc.Row(
-            [
-                dbc.Col(
-                    [
-                        html.Label("Select JSON File:"),
-                        dcc.Dropdown(
-                            id="file-selector",
-                            options=[{"label": f, "value": f} for f in available_files],
-                            value=available_files[0],  # Default to first file
-                            clearable=False,
-                        ),
-                    ],
-                    width=4,
-                ),
-                dbc.Col(
-                    [
-                        html.Label("File Info:"),
-                        html.Div(id="file-info", className="text-muted"),
-                    ],
-                    width=8,
-                ),
-            ],
-            className="mb-4",
-        ),
-        # Store components for the current data
-        dcc.Store(id="systems-store"),
-        dcc.Store(id="metrics-store"),
-        dcc.Store(id="data-store"),
-        # System and metric selectors
-        dbc.Row(
-            [
-                dbc.Col(
-                    [
-                        html.Label("Select Systems:"),
-                        dcc.Dropdown(id="system-selector", multi=True),
-                    ],
-                    width=6,
-                ),
-                dbc.Col(
-                    [
-                        html.Label("Select Metric Category:"),
-                        dcc.Dropdown(id="category-selector"),
-                    ],
-                    width=6,
-                ),
-            ],
-            className="mb-4",
-        ),
-        # Tabs for different visualizations
-        dcc.Tabs(
-            [
-                # Tab 1: Radar Chart
-                dcc.Tab(
-                    label="Radar Chart",
-                    children=[
-                        dbc.Row([dbc.Col(dcc.Graph(id="radar-chart"), width=12)])
-                    ],
-                ),
-                # Tab 2: Bar Chart Comparison
-                dcc.Tab(
-                    label="Bar Chart",
-                    children=[dbc.Row([dbc.Col(dcc.Graph(id="bar-chart"), width=12)])],
-                ),
-                # Tab 3: Heatmap
-                dcc.Tab(
-                    label="Correlation Heatmap",
-                    children=[
-                        dbc.Row(
-                            [
-                                dbc.Col(
-                                    html.Label(
-                                        "Select Metrics for Correlation Heatmap:"
+
+def _build_layout(available_files):
+    """Build the app layout with the given list of available JSON files."""
+    return dbc.Container(
+        [
+            html.H1("QA System Evaluation Dashboard", className="text-center mb-4"),
+            # File selector row
+            dbc.Row(
+                [
+                    dbc.Col(
+                        [
+                            html.Label("Select JSON File:"),
+                            dcc.Dropdown(
+                                id="file-selector",
+                                options=[
+                                    {"label": f, "value": f} for f in available_files
+                                ],
+                                # value=available_files[0],  # Default to first file
+                                clearable=False,
+                            ),
+                        ],
+                        width=4,
+                    ),
+                    dbc.Col(
+                        [
+                            html.Label("File Info:"),
+                            html.Div(id="file-info", className="text-muted"),
+                        ],
+                        width=8,
+                    ),
+                ],
+                className="mb-4",
+            ),
+            # Store components for the current data
+            dcc.Store(id="systems-store"),
+            dcc.Store(id="metrics-store"),
+            dcc.Store(id="data-store"),
+            # System and metric selectors
+            dbc.Row(
+                [
+                    dbc.Col(
+                        [
+                            html.Label("Select Systems:"),
+                            dcc.Dropdown(id="system-selector", multi=True),
+                        ],
+                        width=6,
+                    ),
+                    dbc.Col(
+                        [
+                            html.Label("Select Metric Category:"),
+                            dcc.Dropdown(id="category-selector"),
+                        ],
+                        width=6,
+                    ),
+                ],
+                className="mb-4",
+            ),
+            # Tabs for different visualizations
+            dcc.Tabs(
+                [
+                    # Tab 1: Radar Chart
+                    dcc.Tab(
+                        label="Radar Chart",
+                        children=[
+                            dbc.Row([dbc.Col(dcc.Graph(id="radar-chart"), width=12)])
+                        ],
+                    ),
+                    # Tab 2: Bar Chart Comparison
+                    dcc.Tab(
+                        label="Bar Chart",
+                        children=[
+                            dbc.Row([dbc.Col(dcc.Graph(id="bar-chart"), width=12)])
+                        ],
+                    ),
+                    # Tab 3: Heatmap
+                    dcc.Tab(
+                        label="Correlation Heatmap",
+                        children=[
+                            dbc.Row(
+                                [
+                                    dbc.Col(
+                                        html.Label(
+                                            "Select Metrics for Correlation Heatmap:"
+                                        )
                                     )
-                                )
-                            ]
-                        ),
-                        dbc.Row(
-                            [
-                                dbc.Col(
-                                    dcc.Dropdown(id="heatmap-metrics", multi=True),
-                                    width=12,
-                                )
-                            ]
-                        ),
-                        dbc.Row(
-                            [dbc.Col(dcc.Graph(id="correlation-heatmap"), width=12)]
-                        ),
-                    ],
-                ),
-                # Tab 4: Parallel Coordinates
-                dcc.Tab(
-                    label="Parallel Coordinates",
-                    children=[
-                        dbc.Row(
-                            [
-                                dbc.Col(
-                                    html.Label(
-                                        "Select Metrics for Parallel Coordinates:"
+                                ]
+                            ),
+                            dbc.Row(
+                                [
+                                    dbc.Col(
+                                        dcc.Dropdown(id="heatmap-metrics", multi=True),
+                                        width=12,
                                     )
-                                )
-                            ]
-                        ),
-                        dbc.Row(
-                            [
-                                dbc.Col(
-                                    dcc.Dropdown(
-                                        id="parallel-coords-metrics", multi=True
-                                    ),
-                                    width=12,
-                                )
-                            ]
-                        ),
-                        dbc.Row([dbc.Col(dcc.Graph(id="parallel-coords"), width=12)]),
-                    ],
-                ),
-                # Tab 5: Scatter Matrix
-                dcc.Tab(
-                    label="Scatter Matrix",
-                    children=[
-                        dbc.Row(
-                            [dbc.Col(html.Label("Select Metrics for Scatter Matrix:"))]
-                        ),
-                        dbc.Row(
-                            [
-                                dbc.Col(
-                                    dcc.Dropdown(id="scatter-metrics", multi=True),
-                                    width=12,
-                                )
-                            ]
-                        ),
-                        dbc.Row([dbc.Col(dcc.Graph(id="scatter-matrix"), width=12)]),
-                    ],
-                ),
-            ]
-        ),
-    ],
-    fluid=True,
-)
+                                ]
+                            ),
+                            dbc.Row(
+                                [dbc.Col(dcc.Graph(id="correlation-heatmap"), width=12)]
+                            ),
+                        ],
+                    ),
+                    # Tab 4: Parallel Coordinates
+                    dcc.Tab(
+                        label="Parallel Coordinates",
+                        children=[
+                            dbc.Row(
+                                [
+                                    dbc.Col(
+                                        html.Label(
+                                            "Select Metrics for Parallel Coordinates:"
+                                        )
+                                    )
+                                ]
+                            ),
+                            dbc.Row(
+                                [
+                                    dbc.Col(
+                                        dcc.Dropdown(
+                                            id="parallel-coords-metrics", multi=True
+                                        ),
+                                        width=12,
+                                    )
+                                ]
+                            ),
+                            dbc.Row(
+                                [dbc.Col(dcc.Graph(id="parallel-coords"), width=12)]
+                            ),
+                        ],
+                    ),
+                    # Tab 5: Scatter Matrix
+                    dcc.Tab(
+                        label="Scatter Matrix",
+                        children=[
+                            dbc.Row(
+                                [
+                                    dbc.Col(
+                                        html.Label("Select Metrics for Scatter Matrix:")
+                                    )
+                                ]
+                            ),
+                            dbc.Row(
+                                [
+                                    dbc.Col(
+                                        dcc.Dropdown(id="scatter-metrics", multi=True),
+                                        width=12,
+                                    )
+                                ]
+                            ),
+                            dbc.Row(
+                                [dbc.Col(dcc.Graph(id="scatter-matrix"), width=12)]
+                            ),
+                        ],
+                    ),
+                ]
+            ),
+        ],
+        fluid=True,
+    )
+
+
+app.layout = _build_layout([])
 
 
 # Callback to load data when file is selected
@@ -516,5 +527,19 @@ def update_scatter_matrix(stored_data, selected_metrics, selected_systems):
         return go.Figure()
 
 
-if __name__ == "__main__":
+def run(available_files=None):
+    if available_files is None:
+        available_files = [str(f) for f in parent_folder.glob("*/results/*.json")]
+        if not available_files:
+            raise FileNotFoundError("No JSON files found in the results folder.")
+    for f in available_files:
+        if not Path(f).is_file():
+            raise FileNotFoundError(f"The path does not exist or is not a file: {f}")
+        elif not f.endswith(".json"):
+            raise ValueError(f"Invalid file type (expected .json): {f}")
+    app.layout = _build_layout(available_files)
     app.run(debug=True, port=8050)
+
+
+if __name__ == "__main__":
+    run()
