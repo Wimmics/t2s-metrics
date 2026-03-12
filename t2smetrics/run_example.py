@@ -1,41 +1,41 @@
 from t2smetrics.core.experiment import Experiment
-from t2smetrics.core.dataset import JsonlDataset
+from t2smetrics.core.eval import JsonlEval
 from t2smetrics.execution.rdflib_backend import RDFLibBackend
 
 from t2smetrics.llm.ollama_backend import OllamaBackend
-from t2smetrics.measures.answer_set.f1 import AnswerSetF1
-from t2smetrics.measures.answer_set.precision import AnswerSetPrecision
-from t2smetrics.measures.answer_set.precision_qald import PrecisionQALD
-from t2smetrics.measures.answer_set.recall import AnswerSetRecall
-from t2smetrics.measures.answer_set.recall_qald import RecallQALD
-from t2smetrics.measures.exact import QueryExactMatch
-from t2smetrics.measures.codebleu.codebleu import CodeBLEU
-from t2smetrics.measures.answer_set.f1_qald import F1QALD
-from t2smetrics.measures.answer_set.f1_spinach import F1Spinach
-from t2smetrics.measures.answer_set.mrr import MRR
-from t2smetrics.measures.answer_set.hit_at_k import HitAtK
-from t2smetrics.measures.answer_set.ndcg import NDCG
-from t2smetrics.measures.answer_set.p_at_k import PrecisionAtK
-from t2smetrics.measures.distance import (
+from t2smetrics.metrics.answer_set.f1 import AnswerSetF1
+from t2smetrics.metrics.answer_set.precision import AnswerSetPrecision
+from t2smetrics.metrics.answer_set.precision_qald import PrecisionQALD
+from t2smetrics.metrics.answer_set.recall import AnswerSetRecall
+from t2smetrics.metrics.answer_set.recall_qald import RecallQALD
+from t2smetrics.metrics.exact import QueryExactMatch
+from t2smetrics.metrics.codebleu.codebleu import CodeBLEU
+from t2smetrics.metrics.answer_set.f1_qald import F1QALD
+from t2smetrics.metrics.answer_set.f1_spinach import F1Spinach
+from t2smetrics.metrics.answer_set.mrr import MRR
+from t2smetrics.metrics.answer_set.hit_at_k import HitAtK
+from t2smetrics.metrics.answer_set.ndcg import NDCG
+from t2smetrics.metrics.answer_set.p_at_k import PrecisionAtK
+from t2smetrics.metrics.distance import (
     LevenshteinDistance,
     JaccardSimilarity,
     CosineSimilarity,
     EuclideanDistance,
 )
-from t2smetrics.measures.llm_judge import LLMJudge
-from t2smetrics.measures.text_metrics import Bleu, RougeN, Meteor, SPBleu
-from t2smetrics.measures.uri.uri_hallucination import URIHallucination
-from t2smetrics.measures.query_execution import QueryExecution
-from t2smetrics.measures.token import SPF1, TokenRecall, TokenPrecision, TokenF1
+from t2smetrics.metrics.llm_judge import LLMJudge
+from t2smetrics.metrics.text_metrics import Bleu, RougeN, Meteor, SPBleu
+from t2smetrics.metrics.uri.uri_hallucination import URIHallucination
+from t2smetrics.metrics.query_execution import QueryExecution
+from t2smetrics.metrics.token import SPF1, TokenRecall, TokenPrecision, TokenF1
 
 
-dataset = JsonlDataset("./example_dataset.jsonl")
+jsonl_eval = JsonlEval("./datasets/example/eval/example.jsonl")
 
-execution_backend = RDFLibBackend("example.ttl")
+execution_backend = RDFLibBackend("./datasets/example/kg/example.ttl")
 
 llm_backend = OllamaBackend()
 
-measures = [
+metrics = [
     AnswerSetPrecision(),
     AnswerSetRecall(),
     AnswerSetF1(),
@@ -70,8 +70,8 @@ measures = [
 ]
 
 experiment = Experiment(
-    dataset=dataset,
-    measures=measures,
+    jsonl_eval=jsonl_eval,
+    metrics=metrics,
     execution_backend=execution_backend,
     llm_backend=llm_backend,
     verbose=True,

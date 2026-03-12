@@ -7,7 +7,7 @@
             "type": "Person",
             "affiliation": {
                 "type": "Organization",
-                "name": "Université Côte d'Azur"
+                "name": "CNRS"
             },
             "email": "yousouf.taghzouti@inria.fr",
             "familyName": "Taghzouti",
@@ -19,20 +19,9 @@
             "roleName": "Developper"
         },
         {
-            "id": "https://orcid.org/0000-0001-9064-0463",
-            "type": "Person",
-            "affiliation": {
-                "type": "Organization",
-                "name": "CNRS"
-            },
-            "email": "franck.michel@inria.fr",
-            "familyName": "Michel",
-            "givenName": "Franck"
-        },
-        {
             "type": "Role",
-            "schema:author": "https://orcid.org/0000-0001-9064-0463",
-            "roleName": "Developper"
+            "schema:author": "https://orcid.org/0000-0003-4509-9537",
+            "roleName": "Design"
         },
         {
             "id": "https://orcid.org/0000-0002-5293-3916",
@@ -48,22 +37,38 @@
         {
             "type": "Role",
             "schema:author": "https://orcid.org/0000-0002-5293-3916",
-            "roleName": "Developper"
+            "roleName": "Design"
         },
         {
-            "id": "https://orcid.org/0000-0001-6711-6719",
+            "id": "https://orcid.org/0000-0003-1157-9030",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "Inria"
+            },
+            "email": "camille.juigne@inria.fr",
+            "familyName": "Juigné",
+            "givenName": "Camille"
+        },
+        {
+            "type": "Role",
+            "schema:author": "https://orcid.org/0000-0003-1157-9030",
+            "roleName": "Design"
+        },
+        {
+            "id": "https://orcid.org/0009-0005-8523-0941",
             "type": "Person",
             "affiliation": {
                 "type": "Organization",
                 "name": "CNRS"
             },
-            "email": "louis-felix.nothias@cnrs.fr",
-            "familyName": "Nothias",
-            "givenName": "Louis-Felix"
+            "email": "benjamin.navet@univ-cotedazur.fr",
+            "familyName": "Navet",
+            "givenName": "Benjamin"
         },
         {
             "type": "Role",
-            "schema:author": "https://orcid.org/0000-0001-6711-6719",
+            "schema:author": "https://orcid.org/0009-0005-8523-0941",
             "roleName": "Design"
         },
         {
@@ -81,6 +86,38 @@
             "type": "Role",
             "schema:author": "https://orcid.org/0000-0003-0543-1232",
             "roleName": "Design"
+        },
+        {
+            "id": "https://orcid.org/0000-0001-9064-0463",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "CNRS"
+            },
+            "email": "franck.michel@inria.fr",
+            "familyName": "Michel",
+            "givenName": "Franck"
+        },
+        {
+            "type": "Role",
+            "schema:author": "https://orcid.org/0000-0001-9064-0463",
+            "roleName": "Design"
+        },
+        {
+            "id": "https://orcid.org/0000-0001-6711-6719",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "CNRS"
+            },
+            "email": "louis-felix.nothias@cnrs.fr",
+            "familyName": "Nothias",
+            "givenName": "Louis-Felix"
+        },
+        {
+            "type": "Role",
+            "schema:author": "https://orcid.org/0000-0001-6711-6719",
+            "roleName": "Design"
         }
     ],
     "codeRepository": "https://github.com/Wimmics/t2s-metrics",
@@ -94,6 +131,6 @@
         "Text-to-SPARQL"
     ],
     "name": "T2S-Metrics",
-    "version": "1.0",
+    "version": "1.0.0",
     "issueTracker": "https://github.com/Wimmics/t2s-metrics/issues"
 }

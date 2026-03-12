@@ -1,8 +1,12 @@
 import re
+import subprocess
 from typing import Callable
+import logging
 
-from t2smetrics.core.dataset import QueryCase
+from t2smetrics.core.eval import QueryCase
 from t2smetrics.representation.sparql_query import SparqlQuery
+
+logger = logging.getLogger(__name__)
 
 
 class Preprocessor:
@@ -47,9 +51,54 @@ def normalize_mask_iris(q: str) -> str:
     return re.sub(r"<[^>]+>", "<IRI>", q)
 
 
+def normalize_qcan(q: str) -> str:
+
+    command = [
+        "java",
+        "-jar",
+        "./third_party_lib/qcan-1.1-jar-with-dependencies.jar",
+        "easy",
+        "-q",
+        f"{q}",
+    ]
+
+    # print(" ".join(command))
+
+    result = subprocess.run(
+        command,
+        capture_output=True,
+        text=True,
+    )
+
+    if result.stderr:
+        logger.warning(f"QCan normalization error falling back to original: {result.stderr}")
+        return q
+
+    result = result.stdout
+
+    to_delete = [
+        "usage: easy [-d] [-f <filename>] [-g] [-m] [-o <output>] [-q <query>]",
+        " -d              Set to avoid writing duplicate queries in output file.",
+        " -f <filename>   Filename that contains the query/queries to canonicalise.",
+        " -g              Set if input is gzip file. Results will also be zipped.",
+        " -m              Set to enable minimisation/leaning.",
+        " -o <output>     Output file",
+        " -q <query>      The query to canonicalise.",
+    ]
+
+    result = result.replace("\n".join(to_delete), "")
+    return result.strip()
+
+
 SP_NORMALIZER_PREPROCESSOR = Preprocessor(
     [
         normalize_whitespace,
         normalize_variables,
+    ]
+)
+
+QCAN_NORMALIZER_PREPROCESSOR = Preprocessor(
+    [
+        normalize_qcan,
     ]
 )

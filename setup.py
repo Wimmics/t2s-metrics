@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="t2s-metrics",
-    version="0.0.1",
+    version="1.0.0",
     packages=find_packages(),
     install_requires=[
         "setuptools==80.9.0",
@@ -19,8 +19,22 @@ setup(
         "langchain_ollama==1.0.1",
         "SPARQLWrapper==2.0.0",
         "pytest==9.0.2",
+        "dash==4.0.0",
+        "dash_bootstrap_components==2.0.4",
+        "pandas==3.0.1",
     ],
     long_description=long_description,
     long_description_content_type="text/markdown",
-    author="YoucTagh",
+    author="Wimmics",
+    author_email="yousouf.taghzouti@inria.fr",
+    url="https://github.com/Wimmics/t2s-metrics",
+    licence="AGPL-3.0",
+    license_files=["LICENSE"],
+    keywords=[
+        "Question Answering System",
+        "Large Language Model",
+        "Metric",
+        "Text-to-SPARQL"
+    ],
+    python_requires=">=3.12",
 )

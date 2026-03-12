@@ -1,4 +1,4 @@
-from SPARQLWrapper import SPARQLWrapper, JSON
+from SPARQLWrapper import QueryResult, SPARQLWrapper, JSON
 from t2smetrics.execution.base import ExecutionBackend
 
 
@@ -20,10 +20,7 @@ class SparqlEndpointBackend(ExecutionBackend):
         self.default_graph = default_graph
         self.headers = headers or {}
 
-    def execute(self, query: str, return_type: str = "tuples"):
-
-        if return_type not in {"tuples", "json"}:
-            raise ValueError(f"Invalid return_type: {return_type}")
+    def execute(self, query: str) -> "QueryResult.ConvertResult":
 
         sparql = SPARQLWrapper(self.endpoint_url)
         sparql.setQuery(query)
@@ -41,26 +38,4 @@ class SparqlEndpointBackend(ExecutionBackend):
         except Exception:
             return None
 
-        # ASK queries
-        if "boolean" in response:
-            return bool(response["boolean"])
-
-        # SELECT queries
-        vars_ = response["head"]["vars"]
-        rows = []
-
-        if return_type == "json":
-            return response["results"]["bindings"]
-
-        else:
-            for binding in response["results"]["bindings"]:
-                if binding is None:
-                    continue
-                elif len(binding) == 0:
-                    continue
-                row = tuple(
-                    binding[var]["value"] if var in binding else None for var in vars_
-                )
-                rows.append(row)
-
-            return rows
+        return response

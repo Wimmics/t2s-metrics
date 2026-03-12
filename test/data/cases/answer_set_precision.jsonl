@@ -1,3 +1,7 @@
 {  "id": "q1",  "golden": "SELECT ?x WHERE { ?x a <http://example.org/Person> }",  "generated": "", "order_matters": false}
 {  "id": "q2",  "golden": "SELECT ?x WHERE { ?x <http://example.org/age> 30 }",  "generated": "SELECT ?x WHERE { ?x <http://example.org/age> 30 }", "order_matters": false}
 {  "id": "q3",  "golden": "SELECT ?x WHERE { ?x <http://example.org/age> 30 }",  "generated": "SELECT ?x WHERE { ?x <http://example.org/age> 40 }", "order_matters": false}
+{  "id": "ask_true_true",  "golden": "ASK { FILTER(1 = 1) }",  "generated": "ASK { FILTER(1 = 1) }", "order_matters": false}
+{  "id": "ask_true_false",  "golden": "ASK { FILTER(1 = 1) }",  "generated": "ASK { FILTER(1 = 0) }", "order_matters": false}
+{  "id": "ask_false_false",  "golden": "ASK { FILTER(1 = 0) }",  "generated": "ASK { FILTER(1 = 0) }", "order_matters": false}
+{  "id": "ask_false_true",  "golden": "ASK { FILTER(1 = 0) }",  "generated": "ASK { FILTER(1 = 1) }", "order_matters": false}

@@ -36,3 +36,15 @@ f1_2_em_2_all_two_third_w_2fp:
 
 f1_2_em_2_all_two_third_w_2fp_duplicate_gold_should_not_matter:
   F1Spinach: 0.5 # ((2 / 3) * 2 * 2) / ((2 / 3) * 2 * 2 + (1 / 3) * 2 + 2)
+
+ask_true_true:
+  F1Spinach: 1.0
+
+ask_true_false:
+  F1Spinach: 0.0
+
+ask_false_false:
+  F1Spinach: 1.0
+
+ask_false_true:
+  F1Spinach: 0.0

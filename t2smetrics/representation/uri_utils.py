@@ -2,7 +2,7 @@ import re
 from urllib.parse import urljoin
 
 
-def extract_uris(sparql: str) -> list[str]:
+def extract_uris(sparql: str) -> set[str]:
     base = None
     prefixes = {}
 

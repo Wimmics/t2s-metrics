@@ -1,3 +1,3 @@
 class ExecutionBackend:
-    def execute(self, query: str, return_type: str = "tuples"):
+    def execute(self, query: str):
         raise NotImplementedError
