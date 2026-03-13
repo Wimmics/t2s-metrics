@@ -131,6 +131,6 @@
         "Text-to-SPARQL"
     ],
     "name": "T2S-Metrics",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "issueTracker": "https://github.com/Wimmics/t2s-metrics/issues"
 }

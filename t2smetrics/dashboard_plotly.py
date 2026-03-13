@@ -48,7 +48,9 @@ def _build_layout(available_files):
     """Build the app layout with the given list of available JSON files."""
     return dbc.Container(
         [
-            html.H1("Text2SPARQL Metrics Evaluation Dashboard", className="text-center mb-4"),
+            html.H1(
+                "Text2SPARQL Metrics Evaluation Dashboard", className="text-center mb-4"
+            ),
             # File selector row
             dbc.Row(
                 [
@@ -335,8 +337,23 @@ def update_scatter_metrics(metrics):
     ],
 )
 def update_radar_and_bar(stored_data, selected_systems, selected_category):
-    if not stored_data or not selected_systems or not selected_category:
-        return go.Figure(), go.Figure()
+    if not stored_data or not selected_category or not selected_systems:
+        # Return empty figure with message
+        return go.Figure().add_annotation(
+            text="No data selected",
+            xref="paper",
+            yref="paper",
+            x=0.5,
+            y=0.5,
+            showarrow=False,
+        ), go.Figure().add_annotation(
+            text="No data selected",
+            xref="paper",
+            yref="paper",
+            x=0.5,
+            y=0.5,
+            showarrow=False,
+        )
 
     # Convert to DataFrame
     df = stored_data_to_df(stored_data)
@@ -400,17 +417,25 @@ def update_radar_and_bar(stored_data, selected_systems, selected_category):
     ],
 )
 def update_heatmap(stored_data, selected_metrics, selected_systems):
-    if not stored_data or not selected_systems:
-        return go.Figure(), go.Figure()
-
-    # Convert to DataFrame
-    df = stored_data_to_df(stored_data)
-    filtered_df = df[df["system_name"].isin(selected_systems)]
-
-    if not selected_metrics or len(selected_metrics) < 2:
-        return go.Figure()
+    if not stored_data or not selected_metrics or not selected_systems:
+        # Return empty figure with message
+        return go.Figure().add_annotation(
+            text="No data selected",
+            xref="paper",
+            yref="paper",
+            x=0.5,
+            y=0.5,
+            showarrow=False,
+        )
 
     try:
+
+        # Convert to DataFrame
+        df = stored_data_to_df(stored_data)
+        filtered_df = df[df["system_name"].isin(selected_systems)]
+
+        if not selected_metrics or len(selected_metrics) < 2:
+            return go.Figure()
         # Calculate correlation matrix
         corr_matrix = filtered_df[selected_metrics].corr().round(2)
         corr_matrix = corr_matrix.fillna(0)
@@ -448,8 +473,16 @@ def update_heatmap(stored_data, selected_metrics, selected_systems):
     ],
 )
 def update_parallel(stored_data, selected_metrics, selected_systems):
-    if not stored_data or not selected_systems:
-        return go.Figure(), go.Figure()
+    if not stored_data or not selected_metrics or not selected_systems:
+        # Return empty figure with message
+        return go.Figure().add_annotation(
+            text="No data selected",
+            xref="paper",
+            yref="paper",
+            x=0.5,
+            y=0.5,
+            showarrow=False,
+        )
 
     # Convert to DataFrame
     df = stored_data_to_df(stored_data)
@@ -495,8 +528,16 @@ def update_parallel(stored_data, selected_metrics, selected_systems):
     ],
 )
 def update_scatter_matrix(stored_data, selected_metrics, selected_systems):
-    if not stored_data or not selected_systems:
-        return go.Figure(), go.Figure()
+    if not stored_data or not selected_metrics or not selected_systems:
+        # Return empty figure with message
+        return go.Figure().add_annotation(
+            text="No data selected",
+            xref="paper",
+            yref="paper",
+            x=0.5,
+            y=0.5,
+            showarrow=False,
+        )
 
     # Convert to DataFrame
     df = stored_data_to_df(stored_data)
