@@ -3,7 +3,7 @@
 <div align="center">
 <br>
 
-<img src="img/logo.png" width="50%" style="border-radius: 5px;" alt="t2s-metrics logo">
+<img src="https://raw.githubusercontent.com/Wimmics/t2s-metrics/main/img/logo.png" width="50%" style="border-radius: 5px;" alt="t2s-metrics logo">
 
 </div>
 
@@ -19,7 +19,7 @@ SPARQL endpoints.</em>
     <a href="https://pypi.org/project/t2s-metrics">
     <img src="https://img.shields.io/pypi/v/t2s-metrics" alt="PyPI"></a>
      <a href="https://pypi.org/project/t2s-metrics/">
-    <img src="https://img.shields.io/pypi/dm/t2s-metricsue" alt="Downloads"></a>
+    <img src="https://img.shields.io/pypi/dm/t2s-metrics" alt="Downloads"></a>
 </p>
 
 ## Features
@@ -29,6 +29,11 @@ SPARQL endpoints.</em>
 - Execution backends for local RDF (RDFLib) and remote SPARQL endpoints.
 - Pluggable LLM-based judging via an Ollama backend.
 - Python API for quick experiments.
+
+## Prerequisites
+- [Python](https://www.python.org/) 3.12 or later, 
+- [Ollama](http://ollama.com/) (optional),
+- A SPARQL engine (optional).                  
 
 ## Installation
 
