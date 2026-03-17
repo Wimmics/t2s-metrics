@@ -14,12 +14,10 @@ SPARQL endpoints.</em>
 </p>
 
 <p align="center">
-   <a href="LICENSES">
-    <img src="https://img.shields.io/badge/License-AGPL%20v3-blue" alt="LICENSES"></a>
-    <a href="https://pypi.org/project/t2s-metrics">
-    <img src="https://img.shields.io/pypi/v/t2s-metrics" alt="PyPI"></a>
-     <a href="https://pypi.org/project/t2s-metrics/">
-    <img src="https://img.shields.io/pypi/dm/t2s-metrics" alt="Downloads"></a>
+    <a href="LICENSES"><img src="https://img.shields.io/badge/License-AGPL%20v3-blue" alt="LICENSES"></a>
+    <a href="https://pypi.org/project/t2s-metrics"><img src="https://img.shields.io/pypi/v/t2s-metrics" alt="PyPI"></a>
+    <a href="https://pypi.org/project/t2s-metrics/"><img src="https://img.shields.io/pypi/dm/t2s-metrics" alt="Downloads"></a>
+    <a href="https://doi.org/10.5281/zenodo.19051441"><img src="https://img.shields.io/badge/DOI-10.5281/zenodo.19051441-blue" alt="DOI"></a>
 </p>
 
 ## Features
@@ -31,28 +29,66 @@ SPARQL endpoints.</em>
 - Python API for quick experiments.
 
 ## Prerequisites
-- [Python](https://www.python.org/) 3.12 or later, 
+- [Python](https://www.python.org/) 3.12 or later,
+- [uv](https://docs.astral.sh/uv/) (recommended) or pip,
 - [Ollama](http://ollama.com/) (optional),
-- A SPARQL engine (optional).                  
+- A SPARQL engine (optional).          
 
 ## Installation
 
+### PyPI
 The package is available on PyPI and can be installed directly with pip:
 
 ```bash
 pip install t2s-metrics
 ```
 
-For development (editable install), you can use:
+### For development (editable install):
 
+1. Clone the repository:
 ```bash
-uv venv
-source .venv/bin/activate
-uv pip install -r requirements.txt
-uv pip install -e .
+git clone https://github.com/Wimmics/t2s-metrics.git
+```
+
+2. Navigate to the project directory:
+```bash
+cd t2s-metrics
+```
+
+3. Install dependencies
+
+#### Using `uv`:
+```bash
+uv sync
+
+# With dev dependencies (pytest, ruff, twine)
+uv sync --all-extras
+```
+
+#### Using `pip`:
+```bash
+pip install -e .
+
+# With dev dependencies (pytest, ruff, twine)
+pip install -e ".[dev]"
 ```
 
 ## Usage
+
+In order to follow the example, please visit the [GitHub repository](https://github.com/Wimmics/t2s-metrics) and download the datasets from the root folder (`\datasets`).
+
+### Option A — with environment activation:
+
+```bash
+source .venv/bin/activate       # macOS/Linux
+.venv\Scripts\activate          # Windows
+cli
+```
+
+### Option B — with uv run (no activation needed):
+```bash
+uv run cli
+```
 
 ### Expected JSONL format
 
@@ -246,7 +282,7 @@ Typical workflow:
 5. Run:
 
 ```bash
-python -m t2smetrics.run_text2sparql
+uv run t2smetrics.run_text2sparql
 ```
 
 The script writes timestamped summary files under:
@@ -266,13 +302,13 @@ Scatter Matrix).
 Launch with auto-discovery:
 
 ```bash
-python -m t2smetrics.cli dashboard
+cli dashboard
 ```
 
 Launch with explicit files:
 
 ```bash
-python -m t2smetrics.cli dashboard \
+cli dashboard \
     datasets/ck25/results/ck25-20260306-133227.json \
     datasets/db25/results/db25-20260306-132100.json
 ```
@@ -289,7 +325,7 @@ http://127.0.0.1:8050
 ### Build
 
 ```bash
-python setup.py sdist bdist_wheel
+uv build
 ```
 
 ### Tests
@@ -297,7 +333,7 @@ python setup.py sdist bdist_wheel
 There are no automated tests yet. If you add tests, run them with:
 
 ```bash
-python -m pytest
+uv run pytest
 ```
 
 # License

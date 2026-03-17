@@ -1,0 +1,107 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+only-include = ["/t2smetrics"]
+packages = ["t2smetrics"]
+
+[tool.hatch.build.targets.sdist]
+# Control what goes into the source distribution (tar.gz)
+only-include = [
+    "/t2smetrics",
+    "/README.md",
+    "/LICENSES",
+    "/pyproject.toml",
+]
+
+[project]
+name = "t2s-metrics"
+version = "1.1.0"
+description = "T2S-Metrics provides a modular abstraction layer that decouples metric specification from implementation, enabling consistent, transparent, and reproducible evaluation of SPARQL-based QA systems"
+authors = [
+    { name = "Yousouf Taghzouti", email = "yousouf.taghzouti@inria.fr" }
+]
+license = { text = "AGPL-3.0" }
+readme = "README.md"
+requires-python = ">=3.12"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "nltk>=3.9.2",
+    "rouge_score>=0.1.2",
+    "scikit-learn>=1.8.0",
+    "Levenshtein>=0.27.3",
+    "rdflib>=7.5.0",
+    "langchain_ollama>=1.0.1",
+    "SPARQLWrapper>=2.0.0",
+    "dash>=4.0.0",
+    "dash_bootstrap_components>=2.0.4",
+    "pandas>=3.0.1",
+    "matplotlib>=3.10.8",
+    "seaborn>=0.13.2",
+]
+
+[project.scripts]
+cli = "t2smetrics.cli:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.2.0",
+    "ruff>=0.1.0",
+    "twine==6.2.0",
+]
+test = [
+    "pytest>=7.2.0",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/Wimmics/t2s-metrics"
+"Repository" = "https://github.com/Wimmics/t2s-metrics.git"
+"Issues" = "https://github.com/Wimmics/t2s-metrics/issues"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v"
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 88
+fix = true
+indent-width = 4
+exclude = [
+    ".venv",
+    "__pycache__",
+    "*.pyc",
+    ".DS_Store",
+    ".vscode",
+    "*.egg-info",
+    "dist",
+    "build",
+    ".deprecated",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle
+    "F",    # Pyflakes
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "SIM",  # flake8-simplify
+    "I",    # isort
+]
+ignore = [
+    "E501",    # Line too long (handled by formatter)
+    "SIM103",  # Return negated condition directly (style preference)
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
