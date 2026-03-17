@@ -14,12 +14,10 @@ SPARQL endpoints.</em>
 </p>
 
 <p align="center">
-   <a href="LICENSES">
-    <img src="https://img.shields.io/badge/License-AGPL%20v3-blue" alt="LICENSES"></a>
-    <a href="https://pypi.org/project/t2s-metrics">
-    <img src="https://img.shields.io/pypi/v/t2s-metrics" alt="PyPI"></a>
-     <a href="https://pypi.org/project/t2s-metrics/">
-    <img src="https://img.shields.io/pypi/dm/t2s-metrics" alt="Downloads"></a>
+    <a href="LICENSES"><img src="https://img.shields.io/badge/License-AGPL%20v3-blue" alt="LICENSES"></a>
+    <a href="https://pypi.org/project/t2s-metrics"><img src="https://img.shields.io/pypi/v/t2s-metrics" alt="PyPI"></a>
+    <a href="https://pypi.org/project/t2s-metrics/"><img src="https://img.shields.io/pypi/dm/t2s-metrics" alt="Downloads"></a>
+    <a href="https://doi.org/10.5281/zenodo.19051441"><img src="https://img.shields.io/badge/DOI-10.5281/zenodo.19051441-blue" alt="DOI"></a>
 </p>
 
 ## Features
