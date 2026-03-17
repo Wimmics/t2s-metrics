@@ -122,7 +122,7 @@
     ],
     "codeRepository": "https://github.com/Wimmics/t2s-metrics",
     "datePublished": "2026-03-13",
-    "dateModified": "2026-03-16",
+    "dateModified": "2026-03-20",
     "description": "T2S-Metrics provides a modular abstraction layer that decouples metric specification from implementation, enabling consistent, transparent, and reproducible evaluation of SPARQL-based QA systems",
     "identifier": "t2s-metrics",
     "keywords": [
@@ -132,6 +132,6 @@
         "Text-to-SPARQL"
     ],
     "name": "T2S-Metrics",
-    "version": "1.0.2",
+    "version": "1.1.0",
     "issueTracker": "https://github.com/Wimmics/t2s-metrics/issues"
 }
