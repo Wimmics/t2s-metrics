@@ -14,17 +14,35 @@ authors:
     affiliation: 'Univ. Côte d''Azur, Inria, ICN, I3S, France'
     orcid: 'https://orcid.org/0000-0003-4509-9537'
     
-  - given-names: Franck
-    family-names: Michel
-    email: franck.michel@inria.fr
-    affiliation: 'Univ. Côte d''Azur, CNRS, Inria'
-    orcid: 'https://orcid.org/0000-0001-9064-0463'
-    
   - given-names: Tao
     family-names: Jiang
     email: tao.jiang@cnrs.fr
     affiliation: 'Univ. Côte d''Azur, CNRS, ICN, France'
     orcid: 'https://orcid.org/0000-0002-5293-3916'
+    
+  - given-names: Camille
+    family-names: Juigne
+    email: camille.juigne@inria.fr
+    affiliation: 'Univ. Côte d''Azur, Inria, CNRS'
+    orcid: 'https://orcid.org/0000-0003-1157-9030'
+
+  - given-names: Benjamin
+    family-names: Navet
+    email: benjamin.navet@univ-cotedazur.fr
+    affiliation: 'Univ. Côte d''Azur, Inria, CNRS'
+    orcid: 'https://orcid.org/0009-0005-8523-0941'
+        
+  - given-names: Fabien
+    family-names: Gandon
+    email: fabien.gandon@inria.fr
+    affiliation: 'Inria, Univ. Côte d''Azur, CNRS, I3S, France'
+    orcid: 'https://orcid.org/0000-0003-0543-1232'
+    
+  - given-names: Franck
+    family-names: Michel
+    email: franck.michel@cnrs.fr
+    affiliation: 'Univ. Côte d''Azur, CNRS, Inria'
+    orcid: 'https://orcid.org/0000-0001-9064-0463'
     
   - given-names: Louis-Felix
     family-names: Nothias
@@ -32,13 +50,7 @@ authors:
     affiliation: 'Univ. Côte d''Azur, CNRS, ICN, France'
     orcid: 'https://orcid.org/0000-0001-6711-6719'
     
-  - given-names: Fabien
-    family-names: Gandon
-    email: fabien.gandon@inria.fr
-    affiliation: 'Inria, Univ. Côte d''Azur, CNRS, I3S, France'
-    orcid: 'https://orcid.org/0000-0003-0543-1232'
-    
 repository-code: 'https://github.com/Wimmics/t2s-metrics'
 license: AGPL-3.0-or-later
-version: 1.0
+version: 1.0.2
 date-released: '2026-03-13'
