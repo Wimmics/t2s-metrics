@@ -1,6 +1,6 @@
 from t2smetrics.core.context import EvaluationContext
-from t2smetrics.metrics.answer_set.base import AnswerSetMeasure
 from t2smetrics.core.result import EvaluationResult
+from t2smetrics.metrics.answer_set.base import AnswerSetMeasure
 
 
 class PrecisionAtK(AnswerSetMeasure):

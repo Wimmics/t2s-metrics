@@ -1,8 +1,10 @@
 import logging
-from langchain_ollama import ChatOllama
-from t2smetrics.llm.base import LLMBackend
-from pydantic import BaseModel, Field
 from concurrent.futures import ThreadPoolExecutor, TimeoutError
+
+from langchain_ollama import ChatOllama
+from pydantic import BaseModel, Field
+
+from t2smetrics.llm.base import LLMBackend
 
 
 class JudgeResponse(BaseModel):

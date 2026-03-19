@@ -1,9 +1,11 @@
-from typing import Iterable
+from collections.abc import Iterable
+
+from tqdm import tqdm
+
 from t2smetrics.core.context import EvaluationContext
 from t2smetrics.core.eval import QueryCase
-from t2smetrics.metrics.base import Metric
 from t2smetrics.core.result import EvaluationResult
-from tqdm import tqdm
+from t2smetrics.metrics.base import Metric
 
 
 class EvaluationEngine:

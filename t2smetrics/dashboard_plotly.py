@@ -1,12 +1,12 @@
 import json
 from pathlib import Path
-import pandas as pd
-import plotly.graph_objects as go
-import dash
-from dash import dcc, html, Input, Output
-import dash_bootstrap_components as dbc
-import plotly.express as px
 
+import dash
+import dash_bootstrap_components as dbc
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
+from dash import Input, Output, dcc, html
 
 parent_folder = Path("datasets")
 
@@ -226,7 +226,7 @@ def load_data(selected_file):
         return {}, {}, {}, "No file selected", [], [], [], None
 
     # Load the selected file
-    with open(selected_file, "r") as f:
+    with open(selected_file) as f:
         data = json.load(f)
 
     # Filter out empty metrics
@@ -276,7 +276,7 @@ def load_data(selected_file):
 
     # Category options
     category_options = [
-        {"label": cat, "value": cat} for cat in available_categories.keys()
+        {"label": cat, "value": cat} for cat in available_categories
     ]
 
     return (

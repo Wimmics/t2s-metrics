@@ -66,4 +66,4 @@ class AnswerSetMeasure(Metric):
         return set(gold_list), set(pred_list)
 
     def _validate(self, gold: set, pred: set) -> bool:
-        return True if gold and pred and len(pred) > 0 else False
+        return bool(gold and pred and len(pred) > 0)

@@ -4,8 +4,8 @@ https://github.com/AKSW/text2sparql.aksw.org/tree/2025/docs/results
 """
 
 import json
-import yaml
 
+import yaml
 
 datasets = ["ck25", "db25"]
 qa_systems = [
@@ -28,11 +28,11 @@ languages = ["en", "es"]
 for dataset in datasets:
     for qa_system in qa_systems:
         with open(
-            f"docs/results/{qa_system}/{dataset}_answers.json", "r"
+            f"docs/results/{qa_system}/{dataset}_answers.json"
         ) as f_gen_ck25:
             f_gen_data = json.load(f_gen_ck25)
 
-        with open(f"docs/benchmark/questions_{dataset}.yaml", "r") as f_gold_ck25:
+        with open(f"docs/benchmark/questions_{dataset}.yaml") as f_gold_ck25:
             content = f_gold_ck25.read()
             f_gold_data = yaml.safe_load(content)
 
@@ -51,10 +51,7 @@ for dataset in datasets:
                             "golden": gold_item["query"]["sparql"],
                             "generated": item["query"],
                             "order_matters": (
-                                True
-                                if "features" in gold_item
-                                and "RESULT_ORDER_MATTERS" in gold_item["features"]
-                                else False
+                                bool("features" in gold_item and "RESULT_ORDER_MATTERS" in gold_item["features"])
                             ),
                         }
                     )

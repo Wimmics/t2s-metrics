@@ -1,7 +1,4 @@
 import pytest
-
-from t2smetrics.core.result import EvaluationResult
-
 from helpers import (
     DATA_DIR,
     check_available_file_cases,
@@ -9,6 +6,8 @@ from helpers import (
     run_single_case,
     str_to_metric,
 )
+
+from t2smetrics.core.result import EvaluationResult
 
 AVAILABLE_FILE_CASES = check_available_file_cases()
 
@@ -20,7 +19,7 @@ def get_cases():
             DATA_DIR / "expectations" / f"{file_case_id}.yaml"
         )
         for case_id, metric_scores in expectations.items():
-            for metric_name in metric_scores.keys():
+            for metric_name in metric_scores:
                 cases.append(
                     (file_case_id, case_id, metric_name, metric_scores[metric_name])
                 )

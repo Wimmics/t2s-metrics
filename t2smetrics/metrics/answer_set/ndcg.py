@@ -1,4 +1,5 @@
 import math
+
 from t2smetrics.core.eval import QueryCase
 from t2smetrics.core.result import EvaluationResult
 from t2smetrics.metrics.answer_set.base import AnswerSetMeasure
@@ -28,9 +29,6 @@ class NDCG(AnswerSetMeasure):
 
         ideal_dcg = dcg(ideal_relevances)
 
-        if ideal_dcg == 0:
-            score = 0.0
-        else:
-            score = actual_dcg / ideal_dcg
+        score = 0.0 if ideal_dcg == 0 else actual_dcg / ideal_dcg
 
         return EvaluationResult(case.id, self.name, score)

@@ -1,9 +1,10 @@
 import nltk
-from nltk.translate.bleu_score import sentence_bleu, SmoothingFunction
-from rouge_score import rouge_scorer
+from nltk.translate.bleu_score import SmoothingFunction, sentence_bleu
 from nltk.translate.meteor_score import meteor_score
-from t2smetrics.metrics.base import Metric
+from rouge_score import rouge_scorer
+
 from t2smetrics.core.result import EvaluationResult
+from t2smetrics.metrics.base import Metric
 from t2smetrics.representation.preprocessing import (
     QCAN_NORMALIZER_PREPROCESSOR,
     SP_NORMALIZER_PREPROCESSOR,

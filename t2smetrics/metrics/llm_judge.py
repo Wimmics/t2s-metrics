@@ -1,5 +1,5 @@
-from t2smetrics.metrics.base import Metric
 from t2smetrics.core.result import EvaluationResult
+from t2smetrics.metrics.base import Metric
 
 
 class LLMJudge(Metric):

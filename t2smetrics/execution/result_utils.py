@@ -49,9 +49,7 @@ def normalize_query_response(response, return_type="tuples"):
     else:
         for binding in response["results"]["bindings"]:
             # Some SPARQL endpoints e.g. Qlever return [None] for empty results.
-            if binding is None:
-                continue
-            elif len(binding) == 0:
+            if binding is None or len(binding) == 0:
                 continue
             row = tuple(
                 binding[var]["value"] if var in binding else None for var in vars_

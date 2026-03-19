@@ -1,4 +1,5 @@
-from SPARQLWrapper import QueryResult, SPARQLWrapper, JSON
+from SPARQLWrapper import JSON, QueryResult, SPARQLWrapper
+
 from t2smetrics.execution.base import ExecutionBackend
 
 

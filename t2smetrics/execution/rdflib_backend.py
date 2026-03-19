@@ -1,9 +1,9 @@
 import json
-
-from rdflib import Graph
-from t2smetrics.execution.base import ExecutionBackend
 import logging
 
+from rdflib import Graph
+
+from t2smetrics.execution.base import ExecutionBackend
 
 logger = logging.getLogger(__name__)
 

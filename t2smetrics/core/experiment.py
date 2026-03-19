@@ -1,6 +1,6 @@
+from t2smetrics.aggregation.aggregator import MeanAggregator
 from t2smetrics.core.context import EvaluationContext
 from t2smetrics.core.engine import EvaluationEngine
-from t2smetrics.aggregation.aggregator import MeanAggregator
 from t2smetrics.core.eval import JsonlEval
 from t2smetrics.metrics.base import Metric
 

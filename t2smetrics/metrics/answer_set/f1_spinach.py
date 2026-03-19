@@ -1,10 +1,11 @@
 import logging
-import numpy as np
-from scipy.optimize import linear_sum_assignment
 from collections import Counter
 
-from t2smetrics.metrics.answer_set.base import AnswerSetMeasure
+import numpy as np
+from scipy.optimize import linear_sum_assignment
+
 from t2smetrics.core.result import EvaluationResult
+from t2smetrics.metrics.answer_set.base import AnswerSetMeasure
 from t2smetrics.metrics.answer_set.f1 import AnswerSetF1
 
 logger = logging.getLogger(__name__)
@@ -78,10 +79,7 @@ class F1Spinach(AnswerSetMeasure):
                 len(gold_results) - len(col_ind)
             )
 
-            if (2 * tp + fp_or_fn) == 0:
-                res = 0
-            else:
-                res = 2 * tp / (2 * tp + fp_or_fn)
+            res = 0 if 2 * tp + fp_or_fn == 0 else 2 * tp / (2 * tp + fp_or_fn)
 
         else:
             # an older implmentation with greedy matching
@@ -123,10 +121,10 @@ class F1Spinach(AnswerSetMeasure):
                     fn += 1 - match_ratio
 
             fn += len(list(filter(lambda x: not x[1], gold_result_mapping)))
-            
+
             res = 2 * tp / (2 * tp + fp + fn)
 
-        assert 0 <= res
+        assert res >= 0
         assert res <= 1
 
         return res

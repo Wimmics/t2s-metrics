@@ -1,7 +1,7 @@
+import logging
 import re
 import subprocess
-from typing import Callable
-import logging
+from collections.abc import Callable
 
 from t2smetrics.core.eval import QueryCase
 from t2smetrics.representation.sparql_query import SparqlQuery

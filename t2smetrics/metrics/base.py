@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-from t2smetrics.core.result import EvaluationResult
 from t2smetrics.core.eval import QueryCase
+from t2smetrics.core.result import EvaluationResult
 from t2smetrics.representation.preprocessing import Preprocessor
 
 
