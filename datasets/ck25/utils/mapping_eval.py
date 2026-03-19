@@ -1,5 +1,4 @@
-"""
-This is a mapping evaluation utility for the CK25 dataset results. The official results can be found at:
+"""This is a mapping evaluation utility for the CK25 dataset results. The official results can be found at:
 https://github.com/AKSW/text2sparql.aksw.org/tree/2025/docs/results
 """
 

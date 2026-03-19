@@ -8,8 +8,7 @@ from t2smetrics.metrics.codebleu.weighted_bleu import weighted_precision
 
 
 class CodeBLEU(Metric):
-    """
-    CodeBLEU = avg(
+    """CodeBLEU = avg(
         BLEU,
         weighted BLEU,
         syntax score,

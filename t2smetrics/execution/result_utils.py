@@ -1,6 +1,5 @@
 def normalize_answer_set_basic(result):
-    """
-    Normalize execution results to a set of tuples.
+    """Normalize execution results to a set of tuples.
     Handles ASK and SELECT queries.
     """
     if isinstance(result, bool):
@@ -11,8 +10,7 @@ def normalize_answer_set_basic(result):
 
 
 def normalize_answer_set_list(result):
-    """
-    Normalize execution results to a set of strings.
+    """Normalize execution results to a set of strings.
     Handles ASK and SELECT queries.
     """
     if isinstance(result, bool):

@@ -1,35 +1,36 @@
 import json
+import logging
 import os
 import time
-from t2smetrics.core.experiment import Experiment
+import warnings
+
 from t2smetrics.core.eval import JsonlEval
+from t2smetrics.core.experiment import Experiment
 from t2smetrics.execution.sparql_endpoint_backend import SparqlEndpointBackend
 from t2smetrics.llm.ollama_backend import OllamaBackend
 from t2smetrics.metrics.answer_set.f1 import AnswerSetF1
+from t2smetrics.metrics.answer_set.f1_qald import F1QALD
+from t2smetrics.metrics.answer_set.f1_spinach import F1Spinach
+from t2smetrics.metrics.answer_set.hit_at_k import HitAtK
+from t2smetrics.metrics.answer_set.mrr import MRR
+from t2smetrics.metrics.answer_set.ndcg import NDCG
+from t2smetrics.metrics.answer_set.p_at_k import PrecisionAtK
 from t2smetrics.metrics.answer_set.precision import AnswerSetPrecision
 from t2smetrics.metrics.answer_set.precision_qald import PrecisionQALD
 from t2smetrics.metrics.answer_set.recall import AnswerSetRecall
 from t2smetrics.metrics.answer_set.recall_qald import RecallQALD
-from t2smetrics.metrics.exact import QueryExactMatch
 from t2smetrics.metrics.codebleu.codebleu import CodeBLEU
-from t2smetrics.metrics.answer_set.f1_qald import F1QALD
-from t2smetrics.metrics.answer_set.f1_spinach import F1Spinach
-from t2smetrics.metrics.answer_set.mrr import MRR
-from t2smetrics.metrics.answer_set.hit_at_k import HitAtK
-from t2smetrics.metrics.answer_set.ndcg import NDCG
-from t2smetrics.metrics.answer_set.p_at_k import PrecisionAtK
 from t2smetrics.metrics.distance import (
-    LevenshteinDistance,
-    JaccardSimilarity,
     CosineSimilarity,
     EuclideanDistance,
+    JaccardSimilarity,
+    LevenshteinDistance,
 )
-from t2smetrics.metrics.text_metrics import Bleu, RougeN, Meteor, SPBleu
-from t2smetrics.metrics.uri.uri_hallucination import URIHallucination
+from t2smetrics.metrics.exact import QueryExactMatch
 from t2smetrics.metrics.query_execution import QueryExecution
-from t2smetrics.metrics.token import SPF1, TokenRecall, TokenPrecision, TokenF1
-import logging
-import warnings
+from t2smetrics.metrics.text_metrics import Bleu, Meteor, RougeN, SPBleu
+from t2smetrics.metrics.token import SPF1, TokenF1, TokenPrecision, TokenRecall
+from t2smetrics.metrics.uri.uri_hallucination import URIHallucination
 
 logging.basicConfig(
     level=logging.INFO,
@@ -70,7 +71,6 @@ all_qa_results = []
 start_time = time.time()
 
 for qa in question_answering_systems:
-
     jsonl_eval = JsonlEval(f"./datasets/{dataset_name}/eval/{qa}.jsonl")
 
     execution_backend = SparqlEndpointBackend(endpoint_url)

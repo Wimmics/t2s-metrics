@@ -37,8 +37,7 @@ class F1Spinach(AnswerSetMeasure):
         return EvaluationResult(case.id, self.name, f1)
 
     def f1(self, predicted_results, gold_results, maximal_matching=True):
-        """
-        Calculates a row-major F1 score for each example.
+        """Calculates a row-major F1 score for each example.
         """
         if predicted_results is None:
             return 0
@@ -130,8 +129,7 @@ class F1Spinach(AnswerSetMeasure):
         return res
 
     def _compute_match_ratio(self, predicted, gold):
-        """
-        Example `predicted` or `gold`:
+        """Example `predicted` or `gold`:
         {
             "item": {
             "type": "uri",

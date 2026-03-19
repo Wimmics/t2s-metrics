@@ -4,8 +4,7 @@ from t2smetrics.execution.base import ExecutionBackend
 
 
 class SparqlEndpointBackend(ExecutionBackend):
-    """
-    Generic SPARQL 1.1 HTTP endpoint backend.
+    """Generic SPARQL 1.1 HTTP endpoint backend.
     Works with Corese, QLever, GraphDB, Fuseki, Virtuoso, Blazegraph, etc.
     """
 

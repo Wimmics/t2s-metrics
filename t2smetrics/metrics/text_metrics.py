@@ -13,11 +13,9 @@ from t2smetrics.representation.preprocessing import (
 
 class Bleu(Metric):
     def __init__(self, n: int = 0, weights: tuple = None):
-        """
-        If n is specified, compute BLEU-n.
+        """If n is specified, compute BLEU-n.
         If n=0, compute cumulative BLEU with the provided weights or default to BLEU-4.
         """
-
         if n < 0:
             raise ValueError("n should be a non-negative integer.")
 
