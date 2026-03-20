@@ -8,29 +8,35 @@ from t2smetrics.core.eval import JsonlEval
 from t2smetrics.core.experiment import Experiment
 from t2smetrics.execution.sparql_endpoint_backend import SparqlEndpointBackend
 from t2smetrics.llm.ollama_backend import OllamaBackend
-from t2smetrics.metrics.answer_set.f1 import AnswerSetF1
-from t2smetrics.metrics.answer_set.f1_qald import F1QALD
-from t2smetrics.metrics.answer_set.f1_spinach import F1Spinach
-from t2smetrics.metrics.answer_set.hit_at_k import HitAtK
-from t2smetrics.metrics.answer_set.mrr import MRR
-from t2smetrics.metrics.answer_set.ndcg import NDCG
-from t2smetrics.metrics.answer_set.p_at_k import PrecisionAtK
-from t2smetrics.metrics.answer_set.precision import AnswerSetPrecision
-from t2smetrics.metrics.answer_set.precision_qald import PrecisionQALD
-from t2smetrics.metrics.answer_set.recall import AnswerSetRecall
-from t2smetrics.metrics.answer_set.recall_qald import RecallQALD
-from t2smetrics.metrics.codebleu.codebleu import CodeBLEU
-from t2smetrics.metrics.distance import (
+from t2smetrics.metrics import (
+    F1QALD,
+    MRR,
+    NDCG,
+    SPF1,
+    AnswerSetF1,
+    AnswerSetPrecision,
+    AnswerSetRecall,
+    Bleu,
+    CodeBLEU,
     CosineSimilarity,
     EuclideanDistance,
+    F1Spinach,
+    HitAtK,
     JaccardSimilarity,
     LevenshteinDistance,
+    Meteor,
+    PrecisionAtK,
+    PrecisionQALD,
+    QueryExactMatch,
+    QueryExecution,
+    RecallQALD,
+    RougeN,
+    SPBleu,
+    TokenF1,
+    TokenPrecision,
+    TokenRecall,
+    URIHallucination,
 )
-from t2smetrics.metrics.exact import QueryExactMatch
-from t2smetrics.metrics.query_execution import QueryExecution
-from t2smetrics.metrics.text_metrics import Bleu, Meteor, RougeN, SPBleu
-from t2smetrics.metrics.token import SPF1, TokenF1, TokenPrecision, TokenRecall
-from t2smetrics.metrics.uri.uri_hallucination import URIHallucination
 
 logging.basicConfig(
     level=logging.INFO,
