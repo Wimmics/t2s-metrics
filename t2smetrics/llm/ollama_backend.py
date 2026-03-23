@@ -1,7 +1,7 @@
-import logging
 from concurrent.futures import ThreadPoolExecutor, TimeoutError
 
 from langchain_ollama import ChatOllama
+from loguru import logger
 from pydantic import BaseModel, Field
 
 from t2smetrics.llm.base import LLMBackend
@@ -47,7 +47,7 @@ class OllamaBackend(LLMBackend):
         try:
             response = future.result(timeout=timeout)  # Timeout in seconds
         except TimeoutError:
-            logging.warning("LLM call timed out.")
+            logger.warning("LLM call timed out.")
             return {"score": None, "raw": "Model call timed out!"}
 
         return {"score": response.score, "raw": response}

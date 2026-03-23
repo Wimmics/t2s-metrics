@@ -44,6 +44,7 @@ dependencies = [
     "pandas>=3.0.1",
     "matplotlib>=3.10.8",
     "seaborn>=0.13.2",
+    "loguru>=0.7.3",
 ]
 
 [project.scripts]

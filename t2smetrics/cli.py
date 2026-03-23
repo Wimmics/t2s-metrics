@@ -1,14 +1,123 @@
-import argparse
 import sys
+from argparse import ArgumentParser, _SubParsersAction
+
+from t2smetrics.metrics.metrics_utils import get_metric_mapping
 
 
-def main():
-    parser = argparse.ArgumentParser(
-        description="T2S Metrics CLI",
+def get_run_experiments_parser(
+    subparsers: "_SubParsersAction[ArgumentParser]",
+) -> ArgumentParser:
+    """Adds the 'run' subcommand parser to the provided subparsers action.
+
+    Args:
+        subparsers: The subparsers action to which the 'run' parser will be added.
+
+    Returns:
+        The ArgumentParser instance for the 'run' subcommand.
+    """
+    run_experiments_parser = subparsers.add_parser(
+        "run",
+        help="Run evaluation experiments and save results to a JSON file",
     )
-    subparsers = parser.add_subparsers(dest="command")
+    run_experiments_parser.add_argument(
+        "-d",
+        "--dataset",
+        type=str,
+        default="unknown",
+        help="Dataset to evaluate (e.g., 'ck25')",
+    )
+    run_experiments_parser.add_argument(
+        "-s",
+        "--systems_name",
+        type=str,
+        default=[],
+        nargs="+",
+        help="System name (e.g., 'AIFB')",
+    )
+    run_experiments_parser.add_argument(
+        "-j",
+        "--jsonl_evals",
+        type=str,
+        nargs="+",
+        help="Path(s) to JSONL evaluation files (e.g., './datasets/ck25/eval/AIFB.jsonl') or directories containing JSONL files (e.g., './datasets/ck25/eval/')",
+        required=True,
+    )
 
-    # dashboard subcommand
+    available_metrics = sorted(get_metric_mapping().keys())
+
+    # Create a nicely formatted help text
+    help_metrics = f"""Metrics to compute or "__all__" to compute all available metrics.
+    
+    Available metrics:
+    {", ".join(available_metrics)}
+    """
+    run_experiments_parser.add_argument(
+        "-m",
+        "--metrics",
+        metavar="METRIC",
+        choices=available_metrics + ["__all__"],
+        nargs="+",
+        help=help_metrics,
+        required=True,
+    )
+    run_experiments_parser.add_argument(
+        "-eg",
+        "--execution_backend_graph_path",
+        type=str,
+        help="Path to the execution backend graph (e.g., './datasets/ck25/kg/dataset.ttl')",
+    )
+    run_experiments_parser.add_argument(
+        "-ee",
+        "--execution_backend_endpoint_url",
+        type=str,
+        help="SPARQL endpoint URL for the execution backend (e.g., 'http://localhost:3030/dataset/sparql')",
+    )
+    run_experiments_parser.add_argument(
+        "-lo",
+        "--llm_backend_ollama_model",
+        default="gemma3:4b",
+        type=str,
+        help="LLM model name for Ollama backend (e.g., 'gemma3:4b')",
+    )
+    run_experiments_parser.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        help="Enable verbose output during experiment execution (default: False)",
+    )
+    run_experiments_parser.add_argument(
+        "-ncr",
+        "--no_cache_results",
+        action="store_false",
+        help="Do not cache query execution results (default: cache results)",
+    )
+    run_experiments_parser.add_argument(
+        "-ep",
+        "--export_path",
+        type=str,
+        help="Path to save the experiment results JSON file (default: './datasets/{dataset}/results/')",
+    )
+    run_experiments_parser.add_argument(
+        "-eq",
+        "--export_per_query",
+        action="store_true",
+        help="Include per-query results in the exported JSON file (default: False)",
+    )
+
+    return run_experiments_parser
+
+
+def get_dashboard_parser(
+    subparsers: "_SubParsersAction[ArgumentParser]",
+) -> ArgumentParser:
+    """Adds the 'dashboard' subcommand parser to the provided subparsers action.
+
+    Args:
+        subparsers: The subparsers action to which the 'dashboard' parser will be added.
+
+    Returns:
+        The ArgumentParser instance for the 'dashboard' subcommand.
+    """
     dashboard_parser = subparsers.add_parser(
         "dashboard",
         help="Launch the evaluation dashboard",
@@ -19,13 +128,43 @@ def main():
         metavar="FILE",
         help="JSON result file(s) to load. If omitted, auto-discovers datasets/*/results/*.json",
     )
+    return dashboard_parser
+
+
+def main():
+    parser = ArgumentParser(
+        description="T2S Metrics CLI",
+    )
+    subparsers = parser.add_subparsers(dest="command")
+
+    get_run_experiments_parser(subparsers)
+
+    get_dashboard_parser(subparsers)
 
     args = parser.parse_args()
 
     if args.command == "dashboard":
         from t2smetrics import dashboard_plotly
+
         available_files = args.files if args.files else None
         dashboard_plotly.run(available_files=available_files)
+
+    if args.command == "run":
+        from t2smetrics import run_experiments
+
+        run_experiments.run(
+            dataset=args.dataset,
+            systems_name=args.systems_name,
+            jsonl_evals=args.jsonl_evals,
+            metrics_str=args.metrics,
+            verbose=args.verbose,
+            cache_results=args.no_cache_results,
+            export_path=args.export_path,
+            per_query=args.export_per_query,
+            execution_backend_graph_path=args.execution_backend_graph_path,
+            execution_backend_endpoint_url=args.execution_backend_endpoint_url,
+            llm_backend_ollama_model=args.llm_backend_ollama_model,
+        )
     else:
         parser.print_help()
         sys.exit(1)

@@ -1,14 +1,12 @@
-import logging
 from collections import Counter
 
 import numpy as np
+from loguru import logger
 from scipy.optimize import linear_sum_assignment
 
 from t2smetrics.core.result import EvaluationResult
 from t2smetrics.metrics.answer_set.base import AnswerSetMeasure
 from t2smetrics.metrics.answer_set.f1 import AnswerSetF1
-
-logger = logging.getLogger(__name__)
 
 
 # The official implementation at: https://github.com/stanford-oval/spinach/blob/8bb2d9cfa7f54b7b63ba5e6acd8264fdb7f8ecf9/eval.py#L108
@@ -37,8 +35,7 @@ class F1Spinach(AnswerSetMeasure):
         return EvaluationResult(case.id, self.name, f1)
 
     def f1(self, predicted_results, gold_results, maximal_matching=True):
-        """Calculates a row-major F1 score for each example.
-        """
+        """Calculates a row-major F1 score for each example."""
         if predicted_results is None:
             return 0
 
