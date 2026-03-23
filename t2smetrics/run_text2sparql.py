@@ -1,11 +1,10 @@
-import json
 import logging
-import os
 import time
 import warnings
 
 from t2smetrics.core.eval import JsonlEval
 from t2smetrics.core.experiment import Experiment
+from t2smetrics.core.export import export_experiment_runs
 from t2smetrics.execution.sparql_endpoint_backend import SparqlEndpointBackend
 from t2smetrics.llm.ollama_backend import OllamaBackend
 from t2smetrics.metrics import (
@@ -72,7 +71,7 @@ question_answering_systems = [
 dataset_name = "ck25"
 endpoint_url = "http://localhost:8886/"
 
-all_qa_results = []
+experiment_runs = []
 
 start_time = time.time()
 
@@ -114,6 +113,8 @@ for qa in question_answering_systems:
     ]
 
     experiment = Experiment(
+        dataset=dataset_name,
+        system_name=qa,
         jsonl_eval=jsonl_eval,
         metrics=metrics,
         execution_backend=execution_backend,
@@ -123,6 +124,8 @@ for qa in question_answering_systems:
 
     results, summary = experiment.run()
 
+    experiment_runs.append(experiment)
+
     print("=== PER QUERY RESULTS ===")
     for r in results:
         print(r)
@@ -131,17 +134,8 @@ for qa in question_answering_systems:
     for k, v in summary.items():
         print(f"{k}: {v:.4f}")
 
-    all_qa_results.append(
-        {"dataset": dataset_name, "system_name": qa, "metrics": summary}
-    )
 
 end_time = time.time()
 logging.info(f"Execution time: {int(end_time - start_time)} seconds")
 
-current_time = time.strftime("%Y%m%d-%H%M%S")
-
-file_path = f"./datasets/{dataset_name}/results/{dataset_name}-{current_time}.json"
-os.makedirs(os.path.dirname(file_path), exist_ok=True)
-
-with open(file_path, "w") as f:
-    json.dump(all_qa_results, f, indent=2)
+export_experiment_runs(experiment_runs)

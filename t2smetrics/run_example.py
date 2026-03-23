@@ -1,5 +1,6 @@
 from t2smetrics.core.eval import JsonlEval
 from t2smetrics.core.experiment import Experiment
+from t2smetrics.core.export import export_experiment_runs
 from t2smetrics.execution.rdflib_backend import RDFLibBackend
 from t2smetrics.llm.ollama_backend import OllamaBackend
 from t2smetrics.metrics import (
@@ -18,7 +19,6 @@ from t2smetrics.metrics import (
     HitAtK,
     JaccardSimilarity,
     LevenshteinDistance,
-    LLMJudge,
     Meteor,
     PrecisionAtK,
     PrecisionQALD,
@@ -54,7 +54,7 @@ metrics = [
     F1Spinach(),
     HitAtK(k=5),
     JaccardSimilarity(),
-    LLMJudge(),
+    # LLMJudge(),
     LevenshteinDistance(),
     MRR(),
     Meteor(),
@@ -74,6 +74,8 @@ metrics = [
 ]
 
 experiment = Experiment(
+    dataset="example",
+    system_name="example_system",
     jsonl_eval=jsonl_eval,
     metrics=metrics,
     execution_backend=execution_backend,
@@ -90,3 +92,6 @@ for r in results:
 print("\n=== SUMMARY ===")
 for k, v in summary.items():
     print(f"{k}: {v:.4f}")
+
+
+export_experiment_runs(experiment_runs=[experiment], per_query=True)
