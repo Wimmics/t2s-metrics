@@ -1,12 +1,11 @@
-import logging
 import re
 import subprocess
 from collections.abc import Callable
 
+from loguru import logger
+
 from t2smetrics.core.eval import QueryCase
 from t2smetrics.representation.sparql_query import SparqlQuery
-
-logger = logging.getLogger(__name__)
 
 
 class Preprocessor:
@@ -71,7 +70,9 @@ def normalize_qcan(q: str) -> str:
     )
 
     if result.stderr:
-        logger.warning(f"QCan normalization error falling back to original: {result.stderr}")
+        logger.warning(
+            f"QCan normalization error falling back to original: {result.stderr}"
+        )
         return q
 
     result = result.stdout

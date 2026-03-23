@@ -4,10 +4,10 @@ from helpers import (
     check_available_file_cases,
     load_expectations,
     run_single_case,
-    str_to_metric,
 )
 
 from t2smetrics.core.result import EvaluationResult
+from t2smetrics.metrics.metrics_utils import str_to_metric
 
 AVAILABLE_FILE_CASES = check_available_file_cases()
 
