@@ -122,6 +122,8 @@ def _build_layout(available_files):
                     # Tab 3: Heatmap
                     dcc.Tab(
                         label="Correlation Heatmap",
+                        id="tab-correlation-heatmap",
+                        disabled=True,
                         children=[
                             dbc.Row(
                                 [
@@ -148,6 +150,8 @@ def _build_layout(available_files):
                     # Tab 4: Parallel Coordinates
                     dcc.Tab(
                         label="Parallel Coordinates",
+                        id="tab-parallel-coords",
+                        disabled=True,
                         children=[
                             dbc.Row(
                                 [
@@ -176,6 +180,8 @@ def _build_layout(available_files):
                     # Tab 5: Scatter Matrix
                     dcc.Tab(
                         label="Scatter Matrix",
+                        id="tab-scatter-matrix",
+                        disabled=True,
                         children=[
                             dbc.Row(
                                 [
@@ -218,12 +224,15 @@ app.layout = _build_layout([])
         Output("system-selector", "value"),
         Output("category-selector", "options"),
         Output("category-selector", "value"),
+        Output("tab-correlation-heatmap", "disabled"),
+        Output("tab-parallel-coords", "disabled"),
+        Output("tab-scatter-matrix", "disabled"),
     ],
     [Input("file-selector", "value")],
 )
 def load_data(selected_file):
     if not selected_file:
-        return {}, {}, {}, "No file selected", [], [], [], None
+        return {}, {}, {}, "No file selected", [], [], [], None, True, True, True
 
     # Load the selected file
     with open(selected_file) as f:
@@ -233,7 +242,7 @@ def load_data(selected_file):
     valid_data = [item for item in data if item.get("metrics")]
 
     if not valid_data:
-        return {}, {}, {}, "No valid data in file", [], [], [], None
+        return {}, {}, {}, "No valid data in file", [], [], [], None, True, True, True
 
     # Extract system names and metrics
     systems = [item["system_name"] for item in valid_data]
@@ -275,9 +284,7 @@ def load_data(selected_file):
     system_options = [{"label": sys, "value": sys} for sys in systems]
 
     # Category options
-    category_options = [
-        {"label": cat, "value": cat} for cat in available_categories
-    ]
+    category_options = [{"label": cat, "value": cat} for cat in available_categories]
 
     return (
         stored_data,
@@ -288,6 +295,9 @@ def load_data(selected_file):
         systems,
         category_options,
         list(available_categories.keys())[0] if available_categories else None,
+        len(systems) < 2,  # Disable heatmap if less than 2 systems
+        len(systems) < 2,  # Disable parallel coordinates if less than 2 systems
+        len(systems) < 2,  # Disable scatter matrix if less than 2 systems
     )
 
 
@@ -417,7 +427,8 @@ def update_radar_and_bar(stored_data, selected_systems, selected_category):
     ],
 )
 def update_heatmap(stored_data, selected_metrics, selected_systems):
-    if not stored_data or not selected_metrics or not selected_systems:
+
+    if not stored_data:
         # Return empty figure with message
         return go.Figure().add_annotation(
             text="No data selected",
@@ -428,8 +439,22 @@ def update_heatmap(stored_data, selected_metrics, selected_systems):
             showarrow=False,
         )
 
-    try:
+    if (
+        not selected_metrics
+        or not selected_systems
+        or len(selected_systems) < 2
+        or len(selected_metrics) < 2
+    ):
+        return go.Figure().add_annotation(
+            text="Select at least 2 systems and 2 metrics",
+            xref="paper",
+            yref="paper",
+            x=0.5,
+            y=0.5,
+            showarrow=False,
+        )
 
+    try:
         # Convert to DataFrame
         df = stored_data_to_df(stored_data)
         filtered_df = df[df["system_name"].isin(selected_systems)]
@@ -473,10 +498,26 @@ def update_heatmap(stored_data, selected_metrics, selected_systems):
     ],
 )
 def update_parallel(stored_data, selected_metrics, selected_systems):
-    if not stored_data or not selected_metrics or not selected_systems:
+
+    if not stored_data:
         # Return empty figure with message
         return go.Figure().add_annotation(
             text="No data selected",
+            xref="paper",
+            yref="paper",
+            x=0.5,
+            y=0.5,
+            showarrow=False,
+        )
+
+    if (
+        not selected_metrics
+        or not selected_systems
+        or len(selected_systems) < 2
+        or len(selected_metrics) < 2
+    ):
+        return go.Figure().add_annotation(
+            text="Select at least 2 systems and 2 metrics",
             xref="paper",
             yref="paper",
             x=0.5,
@@ -492,7 +533,6 @@ def update_parallel(stored_data, selected_metrics, selected_systems):
         return go.Figure()
 
     try:
-
         dimensions = []
         for metric in selected_metrics:
             dimensions.append(
@@ -528,10 +568,27 @@ def update_parallel(stored_data, selected_metrics, selected_systems):
     ],
 )
 def update_scatter_matrix(stored_data, selected_metrics, selected_systems):
-    if not stored_data or not selected_metrics or not selected_systems:
+
+    if not stored_data:
         # Return empty figure with message
         return go.Figure().add_annotation(
             text="No data selected",
+            xref="paper",
+            yref="paper",
+            x=0.5,
+            y=0.5,
+            showarrow=False,
+        )
+
+    if (
+        not selected_metrics
+        or not selected_systems
+        or len(selected_systems) < 2
+        or len(selected_metrics) < 2
+        or len(selected_metrics) > 5
+    ):
+        return go.Figure().add_annotation(
+            text="Select at least 2 systems and 2 metrics (max 5 for readability)",
             xref="paper",
             yref="paper",
             x=0.5,
