@@ -123,11 +123,32 @@ def get_dashboard_parser(
         help="Launch the evaluation dashboard",
     )
     dashboard_parser.add_argument(
-        "files",
+        "-f",
+        "--files",
         nargs="*",
         metavar="FILE",
         help="JSON result file(s) to load. If omitted, auto-discovers datasets/*/results/*.json",
     )
+    dashboard_parser.add_argument(
+        "-s",
+        "--static",
+        action="store_true",
+        help="Generate a static snapshot of the dashboard and store it in the specified output directory.",
+    )
+    dashboard_parser.add_argument(
+        "-o",
+        "--output",
+        default="static_dashboard_snapshot",
+        help="Output directory for static dashboard snapshot (default: 'static_dashboard_snapshot')",
+    )
+    dashboard_parser.add_argument(
+        "-p",
+        "--port",
+        type=int,
+        default=8050,
+        help="Port to run the dashboard on (default: 8050)",
+    )
+
     return dashboard_parser
 
 
@@ -147,9 +168,17 @@ def main():
         from t2smetrics import dashboard_plotly
 
         available_files = args.files if args.files else None
-        dashboard_plotly.run(available_files=available_files)
+        static_mode = args.static
+        output_dir = args.output
+        port = args.port
+        dashboard_plotly.run(
+            available_files=available_files,
+            static_mode=static_mode,
+            output_dir=output_dir,
+            port=port,
+        )
 
-    if args.command == "run":
+    elif args.command == "run":
         from t2smetrics import run_experiments
 
         run_experiments.run(

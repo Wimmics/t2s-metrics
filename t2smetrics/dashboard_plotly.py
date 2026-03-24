@@ -7,6 +7,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from dash import Input, Output, dcc, html
+from loguru import logger
 
 parent_folder = Path("datasets")
 
@@ -485,7 +486,7 @@ def update_heatmap(stored_data, selected_metrics, selected_systems):
         return fig
 
     except Exception as e:
-        print("Error generating heatmap:", e)
+        logger.error("Error generating heatmap:", e)
         return go.Figure()
 
 
@@ -555,7 +556,7 @@ def update_parallel(stored_data, selected_metrics, selected_systems):
         return fig
 
     except Exception as e:
-        print("Error generating heatmap:", e)
+        logger.error("Error generating parallel coordinates plot:", e)
         return go.Figure()
 
 
@@ -621,11 +622,17 @@ def update_scatter_matrix(stored_data, selected_metrics, selected_systems):
 
         return fig
     except Exception as e:
-        print("Error generating heatmap:", e)
+        logger.error("Error generating scatter matrix:", e)
         return go.Figure()
 
 
-def run(available_files=None):
+def run(
+    available_files=None,
+    static_mode=False,
+    output_dir="static_dashboard_snapshot",
+    port=8050,
+):
+
     if available_files is None:
         available_files = [str(f) for f in parent_folder.glob("*/results/*.json")]
         if not available_files:
@@ -635,8 +642,19 @@ def run(available_files=None):
             raise FileNotFoundError(f"The path does not exist or is not a file: {f}")
         elif not f.endswith(".json"):
             raise ValueError(f"Invalid file type (expected .json): {f}")
-    app.layout = _build_layout(available_files)
-    app.run(debug=True, port=8050)
+
+    if static_mode:
+        logger.info("Generating static dashboard snapshot...")
+        from t2smetrics import dashboard_plotly_static
+
+        dashboard_plotly_static.run(
+            available_files=available_files,
+            output_dir=output_dir,
+        )
+
+    else:
+        app.layout = _build_layout(available_files)
+        app.run(debug=True, port=port)
 
 
 if __name__ == "__main__":
