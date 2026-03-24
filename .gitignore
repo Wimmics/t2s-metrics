@@ -236,3 +236,5 @@ datasets/example/results/
 t2smetrics/run_*
 !t2smetrics/run_example.py
 !datasets/run_text2sparql.py
+
+static_dashboard_snapshot/
