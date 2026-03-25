@@ -1,4 +1,7 @@
+import os
+
 import nltk
+from loguru import logger
 from nltk.translate.bleu_score import SmoothingFunction, sentence_bleu
 from nltk.translate.meteor_score import meteor_score
 from rouge_score import rouge_scorer
@@ -8,6 +11,7 @@ from t2smetrics.metrics.base import Metric
 from t2smetrics.representation.preprocessing import (
     QCAN_NORMALIZER_PREPROCESSOR,
     SP_NORMALIZER_PREPROCESSOR,
+    qcan_library_path,
 )
 
 
@@ -47,7 +51,6 @@ class Bleu(Metric):
 
 
 class SPBleu(Bleu):
-
     def __init__(self, n: int = 0, weights: tuple = None):
         super().__init__(n, weights)
         self.name = "sp-bleu"
@@ -58,11 +61,20 @@ class SPBleu(Bleu):
 
 
 class QCanBleu(Bleu):
-
     def __init__(self, n: int = 0, weights: tuple = None):
         super().__init__(n, weights)
         self.name = "qcan-bleu"
         self.preprocessor = QCAN_NORMALIZER_PREPROCESSOR
+        self.check_library_exists()
+
+    def check_library_exists(self):
+        if not os.path.isfile(qcan_library_path):
+            logger.error(
+                f"QCan library not found at {qcan_library_path}. Please ensure the JAR file is present. You can download it from https://github.com/Wimmics/t2s-metrics/tree/main/third_party_lib"
+            )
+            raise FileNotFoundError(
+                f"QCan library not found at {qcan_library_path}. Please ensure the JAR file is present. You can download it from https://github.com/Wimmics/t2s-metrics/tree/main/third_party_lib"
+            )
 
     def compute(self, case, context=None):
         return super().compute(case, context)

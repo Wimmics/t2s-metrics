@@ -32,7 +32,8 @@ SPARQL endpoints.</em>
 - [Python](https://www.python.org/) 3.12 or later,
 - [uv](https://docs.astral.sh/uv/) (recommended) or pip,
 - [Ollama](http://ollama.com/) (optional),
-- A SPARQL engine (optional).          
+- A SPARQL engine (optional).
+- The [QCan](https://github.com/RittoShadow/QCan) library jar (optional). You can find it in the [./third_party_lib ](https://github.com/Wimmics/t2s-metrics/tree/main/third_party_lib) folder.
 
 ## Installation
 
