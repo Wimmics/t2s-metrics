@@ -27,6 +27,9 @@ class Preprocessor:
         return processed_case
 
 
+qcan_library_path = "./third_party_lib/qcan-1.1-jar-with-dependencies.jar"
+
+
 def normalize_whitespace(q: str) -> str:
     return " ".join(q.split())
 
@@ -55,7 +58,7 @@ def normalize_qcan(q: str) -> str:
     command = [
         "java",
         "-jar",
-        "./third_party_lib/qcan-1.1-jar-with-dependencies.jar",
+        qcan_library_path,
         "easy",
         "-q",
         f"{q}",
