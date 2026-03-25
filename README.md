@@ -183,7 +183,7 @@ cli run --help
 Example command (as requested):
 
 ```bash
-cli run -d ck25 -j ./datasets/ck25/eval/ -m 'hit@1' 'answerset_f1' 'answerset_precision' 'answerset_recall' 'bleu' 'codebleu' 'cosine_sim' 'euclidean' 'f1_qald' 'f1_spinach' 'jaccard' 'levenshtein' 'meteor' 'mrr' 'ndcg' 'p@1' 'precision_qald' 'query_exact_match' 'recall_qald' 'rouge_4' 'sp-bleu' 'sp-f1' 'token_f1' 'token_precision' 'token_recall' 'uri_hallucination' 'query_execution' -ee http://localhost:8886/
+cli run -d ck25 -j ./datasets/ck25/eval/ -m 'hit@1' 'answerset_f1' 'answerset_precision' 'answerset_recall' 'bleu' 'codebleu' 'cosine_sim' 'euclidean' 'f1_qald' 'f1_spinach' 'jaccard' 'levenshtein' 'meteor' 'mrr' 'ndcg' 'p@1' 'precision_qald' 'query_exact_match' 'recall_qald' 'rouge_4' 'sp-bleu' 'sp-f1' 'token_f1' 'token_precision' 'token_recall' 'uri_hallucination' 'query_execution' -ee http://localhost:8886/ -v -p
 ```
 
 Common useful flags:
@@ -240,14 +240,14 @@ uv run pytest
 
 ## Release updates
 
-For full details by version, see [CHANGELOG.md](./CHANGELOG.md).
+For full details by version, see [CHANGELOG.md](https://github.com/Wimmics/t2s-metrics/blob/main/CHANGELOG.md).
 
 
 ## License
 
 ### t2s-metrics
 
-t2s-metrics is provided under the terms of the [GNU Affero General Public License 3.0](./LICENSES/AGPL-3.0.txt) (AGPL-3.0).
+t2s-metrics is provided under the terms of the [GNU Affero General Public License 3.0](https://github.com/Wimmics/t2s-metrics/blob/main/LICENSES/AGPL-3.0.txt) (AGPL-3.0).
 
 
 ### Redistribution of third-party software and data
@@ -258,10 +258,10 @@ This repository provides several third-party contributions redistributed with th
 
 t2s-metrics reuses the [CK25 Corporate Knowledge Reference Dataset for Benchmarking Text-2-SPARQL QA Approaches](https://github.com/eccenca/ck25-dataset/) that we modified to account for file format requirements (jsonl format).
 
-The modified version is redistributed in directory [dataset/ck25](dataset/ck25) under the terms of the [Creative Commons Attribution 4.0 International license](LICENSES/CC-BY-4.0.txt) (CC-BY-4.0).
+The modified version is redistributed in directory [datasets/ck25](https://github.com/Wimmics/t2s-metrics/blob/main/datasets/ck25) under the terms of the [Creative Commons Attribution 4.0 International license](https://github.com/Wimmics/t2s-metrics/blob/main/LICENSES/CC-BY-4.0.txt) (CC-BY-4.0).
 
 #### QCan library
 
 t2s-metrics reuses the [QCan software for canonicalising SPARQL queries](https://github.com/RittoShadow/QCan).
 
-QCan is written in Java. In this repository, we distribute the compiled jar of QCan v1.1, [third_party_lib/qcan-1.1-jar-with-dependencies.jar](third_party_lib/qcan-1.1-jar-with-dependencies.jar), under the terms of the [Apache 2.0 license](LICENSES/Apache-2.0.txt).
+QCan is written in Java. In this repository, we distribute the compiled jar of QCan v1.1, [third_party_lib/qcan-1.1-jar-with-dependencies.jar](https://github.com/Wimmics/t2s-metrics/blob/main/third_party_lib/qcan-1.1-jar-with-dependencies.jar), under the terms of the [Apache 2.0 license](https://github.com/Wimmics/t2s-metrics/blob/main/LICENSES/Apache-2.0.txt).
