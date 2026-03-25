@@ -1,8 +1,4 @@
-from t2smetrics.core.eval import JsonlEval
-from t2smetrics.core.experiment import Experiment
-from t2smetrics.core.export import export_experiment_runs
-from t2smetrics.execution.rdflib_backend import RDFLibBackend
-from t2smetrics.llm.ollama_backend import OllamaBackend
+from t2smetrics import run_experiments
 from t2smetrics.metrics import (
     F1QALD,
     MRR,
@@ -19,6 +15,7 @@ from t2smetrics.metrics import (
     HitAtK,
     JaccardSimilarity,
     LevenshteinDistance,
+    LLMJudge,
     Meteor,
     PrecisionAtK,
     PrecisionQALD,
@@ -33,12 +30,9 @@ from t2smetrics.metrics import (
     URIHallucination,
 )
 
-jsonl_eval = JsonlEval("./datasets/example/eval/example.jsonl")
-
-execution_backend = RDFLibBackend("./datasets/example/kg/example.ttl")
-
-llm_backend = OllamaBackend()
-
+dataset_name = "example"
+graph_path = "./datasets/example/kg/example.ttl"
+jsonl_paths = ["./datasets/example/eval/example.jsonl"]
 metrics = [
     AnswerSetPrecision(),
     AnswerSetRecall(),
@@ -54,7 +48,7 @@ metrics = [
     F1Spinach(),
     HitAtK(k=5),
     JaccardSimilarity(),
-    # LLMJudge(),
+    LLMJudge(),
     LevenshteinDistance(),
     MRR(),
     Meteor(),
@@ -73,25 +67,10 @@ metrics = [
     URIHallucination(),
 ]
 
-experiment = Experiment(
-    dataset="example",
-    system_name="example_system",
-    jsonl_eval=jsonl_eval,
-    metrics=metrics,
-    execution_backend=execution_backend,
-    llm_backend=llm_backend,
+run_experiments.run(
+    dataset=dataset_name,
+    jsonl_evals=jsonl_paths,
+    metrics_list=metrics,
+    execution_backend_graph_path=graph_path,
     verbose=True,
 )
-
-results, summary = experiment.run()
-
-print("=== PER QUERY RESULTS ===")
-for r in results:
-    print(r)
-
-print("\n=== SUMMARY ===")
-for k, v in summary.items():
-    print(f"{k}: {v:.4f}")
-
-
-export_experiment_runs(experiment_runs=[experiment], per_query=True)

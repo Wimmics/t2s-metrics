@@ -20,3 +20,9 @@ class Metric(ABC):
     @abstractmethod
     def compute(self, case: QueryCase, context=None) -> EvaluationResult:
         pass
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}()"

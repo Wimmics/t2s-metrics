@@ -14,15 +14,14 @@ class AnswerSetMeasure(Metric):
         self, case: QueryCase, context: EvaluationContext
     ):
         if context.cache_result_sets:
-
-            if case.generated_response is not _NOT_CACHED:
+            if case.generated_response != _NOT_CACHED:
                 # print("Using cached predicted result for case", case.id)
                 pred_response = case.generated_response
             else:
                 pred_response = context.execution_backend.execute(case.generated.raw)
                 case.generated_response = pred_response
 
-            if case.golden_response is not _NOT_CACHED:
+            if case.golden_response != _NOT_CACHED:
                 # print("Using cached golden result for case", case.id)
                 gold_response = case.golden_response
             else:
@@ -38,15 +37,14 @@ class AnswerSetMeasure(Metric):
 
     def _get_answer_lists(self, case: QueryCase, context: EvaluationContext):
         if context.cache_result_sets:
-
-            if case.generated_response is not _NOT_CACHED:
+            if case.generated_response != _NOT_CACHED:
                 # print("Using cached predicted result for case", case.id)
                 pred_response = case.generated_response
             else:
                 pred_response = context.execution_backend.execute(case.generated.raw)
                 case.generated_response = pred_response
 
-            if case.golden_response is not _NOT_CACHED:
+            if case.golden_response != _NOT_CACHED:
                 # print("Using cached golden result for case", case.id)
                 gold_response = case.golden_response
             else:

@@ -12,7 +12,11 @@ from loguru import logger
 parent_folder = Path("datasets")
 
 # Initialize Dash app
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = dash.Dash(
+    "Text2SPARQL Metrics Dashboard",
+    external_stylesheets=[dbc.themes.BOOTSTRAP],
+    title="Text2SPARQL Metrics Dashboard",
+)
 
 # Metric categories (defined globally)
 metric_categories = {
@@ -32,7 +36,7 @@ metric_categories = {
         "sp-bleu",
         "qcan-bleu",
     ],
-    "Ranking Metrics": ["p@1", "Hit@1", "mrr", "ndcg"],
+    "Ranking Metrics": ["p@1", "hit@1", "mrr", "ndcg"],
     "Structural Metrics": [
         "sp-f1",
         "token_f1",

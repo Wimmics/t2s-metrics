@@ -103,6 +103,12 @@ def get_run_experiments_parser(
         action="store_true",
         help="Include per-query results in the exported JSON file (default: False)",
     )
+    run_experiments_parser.add_argument(
+        "-p",
+        "--parallel",
+        action="store_true",
+        help="Run experiments in parallel using multiprocessing (default: False)",
+    )
 
     return run_experiments_parser
 
@@ -185,7 +191,7 @@ def main():
             dataset=args.dataset,
             systems_name=args.systems_name,
             jsonl_evals=args.jsonl_evals,
-            metrics_str=args.metrics,
+            metrics_list=args.metrics,
             verbose=args.verbose,
             cache_results=args.no_cache_results,
             export_path=args.export_path,
@@ -193,6 +199,7 @@ def main():
             execution_backend_graph_path=args.execution_backend_graph_path,
             execution_backend_endpoint_url=args.execution_backend_endpoint_url,
             llm_backend_ollama_model=args.llm_backend_ollama_model,
+            parallel=args.parallel,
         )
     else:
         parser.print_help()
