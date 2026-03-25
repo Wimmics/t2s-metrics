@@ -25,7 +25,7 @@ metric_categories = {
         "sp-bleu",
         "qcan-bleu",
     ],
-    "Ranking Metrics": ["p@1", "Hit@1", "mrr", "ndcg"],
+    "Ranking Metrics": ["p@1", "hit@1", "mrr", "ndcg"],
     "Structural Metrics": [
         "sp-f1",
         "token_f1",

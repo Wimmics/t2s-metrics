@@ -46,7 +46,9 @@ class Experiment:
         self.engine = EvaluationEngine(metrics, self.context, verbose=verbose)
         self.aggregator = MeanAggregator()
 
-    def run(self):
-        self.results = self.engine.evaluate(self.jsonl_eval)
+    def run(
+        self, max_workers: int = 1
+    ) -> tuple[set[EvaluationResult], dict[str, float]]:
+        self.results = self.engine.evaluate(self.jsonl_eval, max_workers=max_workers)
         self.summary = self.aggregator.aggregate(self.results)
         return self.results, self.summary

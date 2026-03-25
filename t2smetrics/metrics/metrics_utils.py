@@ -18,6 +18,7 @@ from t2smetrics.metrics import (
     PrecisionAtK,
     PrecisionQALD,
     QueryExactMatch,
+    QueryExecution,
     RecallQALD,
     RougeN,
     SPBleu,
@@ -40,10 +41,10 @@ def get_metric_mapping() -> dict[str, Metric]:
         RecallQALD(),
         F1QALD(),
         F1Spinach(),
-        HitAtK(k=5),
+        HitAtK(k=1),
         MRR(),
         NDCG(),
-        PrecisionAtK(k=5),
+        PrecisionAtK(k=1),
         QueryExactMatch(),
         CosineSimilarity(),
         EuclideanDistance(),
@@ -60,6 +61,7 @@ def get_metric_mapping() -> dict[str, Metric]:
         TokenF1(),
         CodeBLEU(),
         LLMJudge(),
+        QueryExecution(),
     ]
 
     return {metric.name: metric for metric in metrics}

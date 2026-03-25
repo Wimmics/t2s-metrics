@@ -7,7 +7,7 @@ from SPARQLWrapper import QueryResult
 
 from t2smetrics.representation.sparql_query import SparqlQuery
 
-_NOT_CACHED = object()
+_NOT_CACHED = "__NOT_CACHED__"
 
 
 @dataclass

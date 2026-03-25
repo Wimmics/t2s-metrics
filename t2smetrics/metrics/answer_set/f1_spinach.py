@@ -11,7 +11,12 @@ from t2smetrics.metrics.answer_set.f1 import AnswerSetF1
 
 # The official implementation at: https://github.com/stanford-oval/spinach/blob/8bb2d9cfa7f54b7b63ba5e6acd8264fdb7f8ecf9/eval.py#L108
 class F1Spinach(AnswerSetMeasure):
-    name = "f1_spinach"
+    def __init__(self, maximal_comparisons=1000000):
+        if maximal_comparisons <= 0:
+            raise ValueError("maximal_comparisons must be a positive integer.")
+
+        self.name = "f1_spinach"
+        self.maximal_comparisons = maximal_comparisons
 
     def compute(self, case, context):
         # gold, pred = self._get_answer_lists(case, context)
@@ -21,10 +26,9 @@ class F1Spinach(AnswerSetMeasure):
             f1 = int(pred == gold)
             return EvaluationResult(case.id, self.name, f1)
 
-        if len(pred) * len(gold) > 1000000:
+        if len(pred) * len(gold) > self.maximal_comparisons:
             logger.warning(
-                "The number of comparisons for F1Spinach is %d, which may lead to long computation time.",
-                len(pred) * len(gold),
+                f"The number of comparisons for F1Spinach is {len(pred) * len(gold)}, which may lead to long computation time."
             )
             logger.warning(
                 "Falling back to a simpler F1 computation without maximal matching."
