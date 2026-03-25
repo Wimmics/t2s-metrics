@@ -22,26 +22,35 @@ SPARQL endpoints.</em>
 
 ## Features
 
-- Metrics for query exact match, token overlap, answer-set quality, BLEU/ROUGE,
-  CodeBLEU, and more.
-- Execution backends for local RDF (RDFLib) and remote SPARQL endpoints.
-- Pluggable LLM-based judging via an Ollama backend.
-- Python API for quick experiments.
+- Full evaluation pipeline for Text-to-SPARQL systems from JSONL inputs to exportable JSON results.
+- Rich metric coverage for answer-set quality, text similarity, structural similarity, ranking, distance, and execution validity.
+- Two execution backend families:
+    - Local RDF graphs with RDFLib.
+    - Remote SPARQL endpoints (QLever, Corese, Fuseki, GraphDB, Virtuoso, Blazegraph, etc.).
+- Simple Python API for research workflows and reproducible experiment scripts.
+- CLI to run evaluations and launch dashboards.
+- Static dashboard export support for sharing reports without running a server.
 
 ## Prerequisites
-- [Python](https://www.python.org/) 3.12 or later,
-- [uv](https://docs.astral.sh/uv/) (recommended) or pip,
-- [Ollama](http://ollama.com/) (optional),
-- A SPARQL engine (optional).
-- The [QCan](https://github.com/RittoShadow/QCan) library jar (optional). You can find it in the [./third_party_lib ](https://github.com/Wimmics/t2s-metrics/tree/main/third_party_lib) folder.
+- [Python](https://www.python.org/) 3.12 or later.
+- [uv](https://docs.astral.sh/uv/) (recommended for local development) or pip.
+- A SPARQL endpoint only if you use execution metrics with a remote KG (for example QLever/Corese).
+- [Ollama](http://ollama.com/) only if you enable LLM-based metrics.
+- QCan jar only if you use qcan-related metrics. The repository includes it under [third_party_lib](https://github.com/Wimmics/t2s-metrics/tree/main/third_party_lib).
 
 ## Installation
 
 ### PyPI
-The package is available on PyPI and can be installed directly with pip:
+For users who only want to run the library and CLI:
 
 ```bash
 pip install t2s-metrics
+```
+
+After installation, the CLI entry point is available as:
+
+```bash
+cli --help
 ```
 
 ### For development (editable install):
@@ -76,242 +85,135 @@ pip install -e ".[dev]"
 
 ## Usage
 
-In order to follow the example, please visit the [GitHub repository](https://github.com/Wimmics/t2s-metrics) and download the datasets from the root folder (`\datasets`).
+This section focuses on practical usage for both PyPI users and repository users.
 
-### Option A — with environment activation:
+### 1. Prepare your evaluation data
 
-```bash
-source .venv/bin/activate       # macOS/Linux
-.venv\Scripts\activate          # Windows
-cli
-```
+Input files must be JSON Lines (`.jsonl`) with one object per line.
 
-### Option B — with uv run (no activation needed):
-```bash
-uv run cli
-```
+Required keys:
 
-### Expected JSONL format
+- `id`: unique query/case identifier.
+- `golden`: reference SPARQL query.
+- `generated`: system-generated SPARQL query.
+- `order_matters`: whether result ordering must be preserved.
 
-Input evaluation files must be JSON Lines (`.jsonl`) with **one object per line**.
-Each object must include:
-
-- `id` (string): unique query/case identifier
-- `golden` (string): reference SPARQL query
-- `generated` (string): system-generated SPARQL query
-- `order_matters` (boolean): whether answer order must be preserved
-
-This is exactly what `JsonlEval` expects in `t2smetrics/core/eval.py`.
-
-Example (from `datasets/ck25/eval/AIFB.jsonl`):
+Example (from [datasets/ck25/eval/AIFB.jsonl](https://github.com/Wimmics/t2s-metrics/blob/main/datasets/ck25/eval/AIFB.jsonl)):
 
 ```json
 {"id": "ck25:1-en", "golden": "PREFIX pv: <http://ld.company.org/prod-vocab/>\nSELECT DISTINCT ?result\nWHERE\n{\n  <http://ld.company.org/prod-instances/empl-Karen.Brant%40company.org> pv:memberOf ?result .\n  ?result a pv:Department .\n}\n", "generated": "SELECT ?department WHERE { ?person :name \"Ms. Brant\"; :worksIn ?department. }", "order_matters": false}
 ```
 
-### Execution backends
+### 2. Choose your execution backend
 
-The library supports two execution backend families:
+You must provide one execution backend when running execution-aware metrics:
 
-1. **Local RDF file execution** with `RDFLibBackend`
-2. **Remote SPARQL endpoint execution** with `SparqlEndpointBackend`
+- Local graph file with `--execution_backend_graph_path`.
+- SPARQL endpoint URL with `--execution_backend_endpoint_url`.
 
-`SparqlEndpointBackend` is generic SPARQL 1.1 and works with endpoints such as
-**QLever** and **Corese** (and also GraphDB, Fuseki, Virtuoso, Blazegraph, etc.).
+Python examples:
 
 ```python
 from t2smetrics.execution.rdflib_backend import RDFLibBackend
 from t2smetrics.execution.sparql_endpoint_backend import SparqlEndpointBackend
 
-# Option 1: local KG file
+# Local file backend
 local_backend = RDFLibBackend("./datasets/example/kg/example.ttl")
 
-# Option 2: remote endpoint (e.g., QLever/Corese)
+# Remote endpoint backend
 endpoint_backend = SparqlEndpointBackend("http://localhost:8886/")
 ```
 
-### LLM backend (local Ollama + extensible)
+### 3. Run from Python (based on run_example.py)
 
-For LLM-based metrics (for example `LLMJudge`), the library currently provides
-`OllamaBackend` for **local** inference.
-
-```python
-from t2smetrics.llm.ollama_backend import OllamaBackend
-
-llm_backend = OllamaBackend(model="gemma3:4b")
-```
-
-The LLM layer is extensible via `LLMBackend` (`t2smetrics/llm/base.py`).
-To plug another provider, implement `judge(prompt: str, timeout: int = 30) -> dict`
-and return a dictionary with a numeric `score` (recommended in `[0, 1]`).
+The minimal complete workflow from `t2smetrics/run_example.py`:
 
 ```python
-from t2smetrics.llm.base import LLMBackend
-
-
-class MyLLMBackend(LLMBackend):
-    def judge(self, prompt: str, timeout: int = 30) -> dict:
-        # Call your provider/client here
-        return {"score": 0.85, "raw": "optional provider response"}
-```
-
-Then pass your backend to `Experiment(..., llm_backend=...)`.
-
-### Python (minimal example)
-
-```python
-from t2smetrics.core.experiment import Experiment
-from t2smetrics.core.eval import JsonlEval
-from t2smetrics.metrics.text_metrics import Bleu
-from t2smetrics.metrics.token import TokenF1
-
-
-jsonl_eval = JsonlEval("./datasets/example/eval/example.jsonl")
-metrics = [Bleu(), TokenF1()]
-experiment = Experiment(jsonl_eval, metrics)
-_, summary = experiment.run()
-
-print("\n=== SUMMARY ===")
-for k, v in summary.items():
-    print(f"{k}: {v:.4f}")
-```
-
-### Python (full example with execution backends)
-
-```python
-from t2smetrics.core.experiment import Experiment
-from t2smetrics.core.eval import JsonlEval
-from t2smetrics.execution.rdflib_backend import RDFLibBackend
-
-from t2smetrics.llm.ollama_backend import OllamaBackend
-from t2smetrics.metrics.answer_set.f1 import AnswerSetF1
-from t2smetrics.metrics.answer_set.precision import AnswerSetPrecision
-from t2smetrics.metrics.answer_set.precision_qald import PrecisionQALD
-from t2smetrics.metrics.answer_set.recall import AnswerSetRecall
-from t2smetrics.metrics.answer_set.recall_qald import RecallQALD
-from t2smetrics.metrics.exact import QueryExactMatch
-from t2smetrics.metrics.codebleu.codebleu import CodeBLEU
-from t2smetrics.metrics.answer_set.f1_qald import F1QALD
-from t2smetrics.metrics.answer_set.f1_spinach import F1Spinach
-from t2smetrics.metrics.answer_set.mrr import MRR
-from t2smetrics.metrics.answer_set.hit_at_k import HitAtK
-from t2smetrics.metrics.answer_set.ndcg import NDCG
-from t2smetrics.metrics.answer_set.p_at_k import PrecisionAtK
-from t2smetrics.metrics.distance import (
-    LevenshteinDistance,
-    JaccardSimilarity,
-    CosineSimilarity,
-    EuclideanDistance,
+from t2smetrics import run_experiments
+from t2smetrics.metrics import (
+    AnswerSetPrecision,
+    AnswerSetRecall,
+    AnswerSetF1,
+    Bleu,
+    CodeBLEU,
+    QueryExecution,
+    QueryExactMatch,
 )
-from t2smetrics.metrics.llm_judge import LLMJudge
-from t2smetrics.metrics.text_metrics import Bleu, RougeN, Meteor, SPBleu
-from t2smetrics.metrics.uri.uri_hallucination import URIHallucination
-from t2smetrics.metrics.query_execution import QueryExecution
-from t2smetrics.metrics.token import SPF1, TokenRecall, TokenPrecision, TokenF1
 
-
-jsonl_eval = JsonlEval("./datasets/example/eval/example.jsonl")
-
-execution_backend = RDFLibBackend("./datasets/example/kg/example.ttl")
-
-llm_backend = OllamaBackend()
-
-metrics = [
-    AnswerSetPrecision(),
-    AnswerSetRecall(),
-    AnswerSetF1(),
-    Bleu(),
-    SPBleu(),
-    CodeBLEU(),
-    CosineSimilarity(),
-    EuclideanDistance(),
-    F1QALD(),
-    PrecisionQALD(),
-    RecallQALD(),
-    F1Spinach(),
-    HitAtK(k=5),
-    JaccardSimilarity(),
-    LLMJudge(),
-    LevenshteinDistance(),
-    MRR(),
-    Meteor(),
-    NDCG(),
-    PrecisionAtK(k=1),
-    QueryExecution(),
-    QueryExactMatch(),
-    RougeN(1),
-    RougeN(2),
-    RougeN(3),
-    RougeN(4),
-    TokenF1(),
-    SPF1(),
-    TokenPrecision(),
-    TokenRecall(),
-    URIHallucination(),
-]
-
-experiment = Experiment(
-    jsonl_eval=jsonl_eval,
-    metrics=metrics,
-    execution_backend=execution_backend,
-    llm_backend=llm_backend,
+run_experiments.run(
+    dataset="example",
+    jsonl_evals=["./datasets/example/eval/example.jsonl"],
+    metrics_list=[
+        AnswerSetPrecision(),
+        AnswerSetRecall(),
+        AnswerSetF1(),
+        Bleu(),
+        CodeBLEU(),
+        QueryExecution(),
+        QueryExactMatch(),
+    ],
+    execution_backend_graph_path="./datasets/example/kg/example.ttl",
     verbose=True,
 )
-
-results, summary = experiment.run()
-
-print("=== PER QUERY RESULTS ===")
-for r in results:
-    print(r)
-
-print("\n=== SUMMARY ===")
-for k, v in summary.items():
-    print(f"{k}: {v:.4f}")
 ```
 
-### Full workflow example (dataset + endpoint + export)
+### 4. Run from Python on ck25 (based on run_text2sparql.py)
 
-For a complete run over multiple systems and export of aggregated metrics to JSON,
-see `t2smetrics/run_text2sparql.py`.
-
-Typical workflow:
-
-1. Choose a dataset folder (for example `datasets/ck25`).
-2. Put input files under `datasets/<dataset>/eval/*.jsonl`.
-3. Start your SPARQL endpoint (for example QLever/Corese).
-4. Set endpoint URL in the script (example: `http://localhost:8886/`).
-5. Run:
+`t2smetrics/run_text2sparql.py` demonstrates a multi-system run on [ck25 dataset](https://github.com/AKSW/text2sparql.aksw.org/tree/2025) with an endpoint backend and parallel execution.
 
 ```bash
-uv run t2smetrics.run_text2sparql
+uv run ./t2smetrics/run_text2sparql.py
 ```
 
-The script writes timestamped summary files under:
+This generates timestamped JSON results under:
 
 ```text
-datasets/<dataset>/results/<dataset>-YYYYMMDD-HHMMSS.json
+datasets/ck25/results/ck25-YYYYMMDD-HHMMSS.json
 ```
 
-These result files are then directly consumable by the dashboard.
+### 5. Run from CLI (recommended for daily use)
 
-### Dashboard
+Show command help:
 
-The dashboard reads JSON result files (generated in `datasets/*/results/*.json`)
-and serves an interactive UI (Radar, Bar, Correlation Heatmap, Parallel Coordinates,
-Scatter Matrix).
+```bash
+cli --help
+cli run --help
+```
 
-Launch with auto-discovery:
+Example command (as requested):
+
+```bash
+cli run -d ck25 -j ./datasets/ck25/eval/ -m 'hit@1' 'answerset_f1' 'answerset_precision' 'answerset_recall' 'bleu' 'codebleu' 'cosine_sim' 'euclidean' 'f1_qald' 'f1_spinach' 'jaccard' 'levenshtein' 'meteor' 'mrr' 'ndcg' 'p@1' 'precision_qald' 'query_exact_match' 'recall_qald' 'rouge_4' 'sp-bleu' 'sp-f1' 'token_f1' 'token_precision' 'token_recall' 'uri_hallucination' 'query_execution' -ee http://localhost:8886/
+```
+
+Common useful flags:
+
+- `-s/--systems_name` for explicit system names.
+- `-p/--parallel` for multiprocessing.
+- `-eq/--export_per_query` to include per-query values in output JSON.
+- `-ep/--export_path` to control output location.
+- `-eg/--execution_backend_graph_path` to run on local RDF files instead of endpoint mode.
+
+### 6. Launch the dashboard
+
+Auto-discover results under `datasets/*/results/*.json`:
 
 ```bash
 cli dashboard
 ```
 
-Launch with explicit files:
+Load explicit result files:
 
 ```bash
-cli dashboard \
-    datasets/ck25/results/ck25-20260306-133227.json \
-    datasets/db25/results/db25-20260306-132100.json
+cli dashboard -f \
+  datasets/ck25/results/ck25-20260306-133227.json \
+  datasets/db25/results/db25-20260306-132100.json
+```
+
+Generate a static dashboard snapshot:
+
+```bash
+cli dashboard --static --output static_dashboard_snapshot
 ```
 
 Then open:
@@ -319,7 +221,6 @@ Then open:
 ```text
 http://127.0.0.1:8050
 ```
-
 
 ## Development
 
@@ -339,7 +240,7 @@ uv run pytest
 
 ## Release updates
 
-See [CHANGELOG.md](./CHANGELOG.md) for the full version history.
+For full details by version, see [CHANGELOG.md](./CHANGELOG.md).
 
 
 ## License
