@@ -14,6 +14,7 @@ SPARQL endpoints.</em>
 </p>
 
 <p align="center">
+    <a href="https://t2s-metrics.readthedocs.io/en/latest/"><img src="https://img.shields.io/badge/Docs-Read%20the%20Docs-blue?style=flat-square&logo=readthedocs" alt="docs">
     <a href="LICENSES"><img src="https://img.shields.io/badge/License-AGPL%20v3-blue" alt="LICENSES"></a>
     <a href="https://pypi.org/project/t2s-metrics"><img src="https://img.shields.io/pypi/v/t2s-metrics" alt="PyPI"></a>
     <a href="https://pypi.org/project/t2s-metrics/"><img src="https://img.shields.io/pypi/dm/t2s-metrics" alt="Downloads"></a>
