@@ -1,8 +1,8 @@
 # CLI Reference
 
-The project exposes a `cli` command with two main subcommands.
+The project exposes a `t2s` command with two main subcommands.
 
-## `cli run`
+## `t2s run`
 
 Runs evaluations and exports JSON results.
 
@@ -18,7 +18,7 @@ Key arguments:
 - `-eq`, `--export_per_query`: include per-query values in export
 - `-ep`, `--export_path`: custom output path
 
-## `cli dashboard`
+## `t2s dashboard`
 
 Starts dashboard UI or builds a static snapshot.
 

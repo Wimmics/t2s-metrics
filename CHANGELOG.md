@@ -7,8 +7,8 @@ The format is inspired by Keep a Changelog and follows Semantic Versioning.
 ## [1.1.0] - 2026-03-27
 
 ### Added
-- Added a new `cli run` command to execute evaluation experiments directly from the CLI.
-- Added static dashboard export support through `cli dashboard --static`.
+- Added a new `t2s run` command to execute evaluation experiments directly from the CLI.
+- Added static dashboard export support through `t2s dashboard --static`.
 - Added parallel experiment execution support for running multiple evaluation files.
 
 ### Changed

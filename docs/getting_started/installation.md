@@ -16,7 +16,7 @@ pip install t2s-metrics
 Check the CLI:
 
 ```bash
-cli --help
+t2s --help
 ```
 
 ## Install for development

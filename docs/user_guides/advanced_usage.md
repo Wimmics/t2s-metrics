@@ -5,7 +5,7 @@
 Use `__all__` to compute all registered metrics:
 
 ```bash
-cli run -d ck25 -j ./datasets/ck25/eval/ -m __all__ -ee http://localhost:8886/
+t2s run -d ck25 -j ./datasets/ck25/eval/ -m __all__ -ee http://localhost:8886/
 ```
 
 Or run focused subsets depending on your evaluation question:
@@ -19,7 +19,7 @@ Or run focused subsets depending on your evaluation question:
 Enable multiprocessing across systems/files:
 
 ```bash
-cli run -d ck25 -j ./datasets/ck25/eval/ -m query_execution answerset_f1 -ee http://localhost:8886/ -p
+t2s run -d ck25 -j ./datasets/ck25/eval/ -m query_execution answerset_f1 -ee http://localhost:8886/ -p
 ```
 
 ## Export controls
@@ -33,7 +33,7 @@ Useful flags:
 Example:
 
 ```bash
-cli run \
+t2s run \
   -d ck25 \
   -s AIFB DBPEDIA-CG \
   -j ./datasets/ck25/eval/AIFB.jsonl ./datasets/ck25/eval/DBPEDIA-CG.jsonl \
@@ -48,5 +48,5 @@ cli run \
 If selected metrics require LLM support, configure the Ollama model:
 
 ```bash
-cli run -d ck25 -j ./datasets/ck25/eval/ -m llm_judge -ee http://localhost:8886/ -lo gemma3:4b
+t2s run -d ck25 -j ./datasets/ck25/eval/ -m llm_judge -ee http://localhost:8886/ -lo gemma3:4b
 ```

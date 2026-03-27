@@ -38,6 +38,7 @@ SPARQL endpoints.</em>
 - A SPARQL endpoint only if you use execution metrics with a remote KG (for example QLever/Corese).
 - [Ollama](http://ollama.com/) only if you enable LLM-based metrics.
 - QCan jar only if you use qcan-related metrics. The repository includes it under [third_party_lib](https://github.com/Wimmics/t2s-metrics/tree/main/third_party_lib).
+- [NLTK data](https://www.nltk.org/data.html) only if you use BLEU and METEOR realated metrics. 
 
 ## Installation
 
@@ -51,8 +52,12 @@ pip install t2s-metrics
 After installation, the CLI entry point is available as:
 
 ```bash
-cli --help
+t2s --help
 ```
+
+> [!TIP]
+> If you would like to follow the examples below, you may wish to check the [GitHub repository](https://github.com/Wimmics/t2s-metrics) to obtain the evaluation datasets and knowledge graphs in the `datasets` folder. These files are not included in the PyPI package.
+
 
 ### For development (editable install):
 
@@ -60,6 +65,8 @@ cli --help
 ```bash
 git clone https://github.com/Wimmics/t2s-metrics.git
 ```
+
+
 
 2. Navigate to the project directory:
 ```bash
@@ -82,6 +89,11 @@ pip install -e .
 
 # With dev dependencies (pytest, ruff, twine)
 pip install -e ".[dev]"
+```
+
+#### Adding NLTK data (check Prerequisites)
+```bash
+python -c "import nltk; nltk.download('punkt_tab'); nltk.download('wordnet')"
 ```
 
 ## Usage
@@ -109,8 +121,8 @@ Example (from [datasets/ck25/eval/AIFB.jsonl](https://github.com/Wimmics/t2s-met
 
 You must provide one execution backend when running execution-aware metrics:
 
-- Local graph file with `--execution_backend_graph_path`.
-- SPARQL endpoint URL with `--execution_backend_endpoint_url`.
+- Local graph file with `--execution_backend_graph_path` or `-eg`.
+- SPARQL endpoint URL with `--execution_backend_endpoint_url` or `-ee`.
 
 Python examples:
 
@@ -177,14 +189,35 @@ datasets/ck25/results/ck25-YYYYMMDD-HHMMSS.json
 Show command help:
 
 ```bash
-cli --help
-cli run --help
+t2s --help
+t2s run --help
 ```
 
-Example command (as requested):
+Here is an example command with specific metrics, a SPARQL endpoint, verbosity and parallel processing:
 
 ```bash
-cli run -d ck25 -j ./datasets/ck25/eval/ -m 'hit@1' 'answerset_f1' 'answerset_precision' 'answerset_recall' 'bleu' 'codebleu' 'cosine_sim' 'euclidean' 'f1_qald' 'f1_spinach' 'jaccard' 'levenshtein' 'meteor' 'mrr' 'ndcg' 'p@1' 'precision_qald' 'query_exact_match' 'recall_qald' 'rouge_4' 'sp-bleu' 'sp-f1' 'token_f1' 'token_precision' 'token_recall' 'uri_hallucination' 'query_execution' -ee http://localhost:8886/ -v -p
+t2s run -d ck25 -j ./datasets/ck25/eval/ -m 'hit@1' 'answerset_f1' 'answerset_precision' 'answerset_recall' 'bleu' 'codebleu' 'cosine_sim' 'euclidean' 'f1_qald' 'f1_spinach' 'jaccard' 'levenshtein' 'meteor' 'mrr' 'ndcg' 'p@1' 'precision_qald' 'query_exact_match' 'recall_qald' 'rouge_4' 'sp-bleu' 'sp-f1' 'token_f1' 'token_precision' 'token_recall' 'uri_hallucination' 'query_execution' -ee http://localhost:8886/ -v -p
+```
+
+> [!NOTE]
+> By default, the results are automatically exported to the directory `./datasets/{dataset}/results/`. You can change this behaviour by using the -ep flag.
+
+Here is an example with all metrics, a local TTL backend, an explicit export path, and detailed output per request instead:
+
+```bash
+t2s run -d ck25 -j ./datasets/ck25/eval/ \
+  -m __all__ \
+  -eg ./datasets/ck25/kg/dataset.ttl \
+  -ep ./custom_results_folder \
+  -eq -v -p
+```
+
+> [!IMPORTANT]
+> If you use the LLM as the judge metric, either directly or via the `__all__` keyword, you will need to have Ollama running with either the requested model or the `gemma3:4b` model, as this is the default. After installing Ollama, you can use the following commands:
+
+```bash
+ollama serve          # run the server
+ollama pull gemma3:4b # default model used by t2s-metrics
 ```
 
 Common useful flags:
@@ -200,13 +233,16 @@ Common useful flags:
 Auto-discover results under `datasets/*/results/*.json`:
 
 ```bash
-cli dashboard
+t2s dashboard
 ```
+
+> [!IMPORTANT]
+> The results are discovered automatically relative to the folder in which the command is executed. If you are not in the root directory of the cloned GitHub project, use the `-f` flag to avoid a `FileNotFoundError`.
 
 Load explicit result files:
 
 ```bash
-cli dashboard -f \
+t2s dashboard -f \
   datasets/ck25/results/ck25-20260306-133227.json \
   datasets/db25/results/db25-20260306-132100.json
 ```
@@ -214,7 +250,7 @@ cli dashboard -f \
 Generate a static dashboard snapshot:
 
 ```bash
-cli dashboard --static --output static_dashboard_snapshot
+t2s dashboard --static --output static_dashboard_snapshot
 ```
 
 Then open:

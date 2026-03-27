@@ -48,7 +48,7 @@ dependencies = [
 ]
 
 [project.scripts]
-cli = "t2smetrics.cli:main"
+t2s = "t2smetrics.cli:main"
 
 [project.optional-dependencies]
 dev = [
