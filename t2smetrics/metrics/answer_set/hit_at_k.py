@@ -8,7 +8,7 @@ class HitAtK(AnswerSetMeasure):
         if k <= 0:
             raise ValueError("k must be a positive integer.")
 
-        self.name = f"Hit@{k}"
+        self.name = f"hit@{k}"
         self.k = k
 
     def compute(self, case, context: EvaluationContext = None):

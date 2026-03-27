@@ -25,6 +25,12 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+*.pyc
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -98,7 +104,7 @@ ipython_config.py
 #   Similar to Pipfile.lock, it is generally recommended to include uv.lock in version control.
 #   This is especially recommended for binary packages to ensure reproducibility, and is more
 #   commonly ignored for libraries.
-#uv.lock
+uv.lock
 
 # poetry
 #   Similar to Pipfile.lock, it is generally recommended to include poetry.lock in version control.
@@ -229,4 +235,7 @@ datasets/example/results/
 
 t2smetrics/run_*
 !t2smetrics/run_example.py
-!datasets/run_text2sparql.py
+!t2smetrics/run_text2sparql.py
+!t2smetrics/run_experiments.py
+
+static_dashboard_snapshot/

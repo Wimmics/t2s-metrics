@@ -1,12 +1,11 @@
 import re
 import subprocess
-from typing import Callable
-import logging
+from collections.abc import Callable
+
+from loguru import logger
 
 from t2smetrics.core.eval import QueryCase
 from t2smetrics.representation.sparql_query import SparqlQuery
-
-logger = logging.getLogger(__name__)
 
 
 class Preprocessor:
@@ -26,6 +25,9 @@ class Preprocessor:
             order_matters=case.order_matters,
         )
         return processed_case
+
+
+qcan_library_path = "./third_party_lib/qcan-1.1-jar-with-dependencies.jar"
 
 
 def normalize_whitespace(q: str) -> str:
@@ -56,7 +58,7 @@ def normalize_qcan(q: str) -> str:
     command = [
         "java",
         "-jar",
-        "./third_party_lib/qcan-1.1-jar-with-dependencies.jar",
+        qcan_library_path,
         "easy",
         "-q",
         f"{q}",
@@ -71,7 +73,9 @@ def normalize_qcan(q: str) -> str:
     )
 
     if result.stderr:
-        logger.warning(f"QCan normalization error falling back to original: {result.stderr}")
+        logger.warning(
+            f"QCan normalization error falling back to original: {result.stderr}"
+        )
         return q
 
     result = result.stdout

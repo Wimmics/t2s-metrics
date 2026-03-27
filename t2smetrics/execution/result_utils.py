@@ -1,6 +1,5 @@
 def normalize_answer_set_basic(result):
-    """
-    Normalize execution results to a set of tuples.
+    """Normalize execution results to a set of tuples.
     Handles ASK and SELECT queries.
     """
     if isinstance(result, bool):
@@ -11,8 +10,7 @@ def normalize_answer_set_basic(result):
 
 
 def normalize_answer_set_list(result):
-    """
-    Normalize execution results to a set of strings.
+    """Normalize execution results to a set of strings.
     Handles ASK and SELECT queries.
     """
     if isinstance(result, bool):
@@ -49,9 +47,7 @@ def normalize_query_response(response, return_type="tuples"):
     else:
         for binding in response["results"]["bindings"]:
             # Some SPARQL endpoints e.g. Qlever return [None] for empty results.
-            if binding is None:
-                continue
-            elif len(binding) == 0:
+            if binding is None or len(binding) == 0:
                 continue
             row = tuple(
                 binding[var]["value"] if var in binding else None for var in vars_

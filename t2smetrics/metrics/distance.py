@@ -1,9 +1,10 @@
+from Levenshtein import distance as levenshtein
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics import jaccard_score
 from sklearn.metrics.pairwise import cosine_similarity, euclidean_distances
-from Levenshtein import distance as levenshtein
-from t2smetrics.metrics.base import Metric
+
 from t2smetrics.core.result import EvaluationResult
+from t2smetrics.metrics.base import Metric
 
 
 class LevenshteinDistance(Metric):
@@ -12,10 +13,9 @@ class LevenshteinDistance(Metric):
     def compute(self, case, context=None):
         dist = levenshtein(case.golden.raw, case.generated.raw)
         max_len = max(len(case.golden.raw), len(case.generated.raw))
-        if max_len == 0:
-            score = 1.0  # both empty → identical
-        else:
-            score = 1 - (dist / max_len)
+
+        # both empty → identical
+        score = 1.0 if max_len == 0 else 1 - dist / max_len
 
         return EvaluationResult(case.id, self.name, score)
 

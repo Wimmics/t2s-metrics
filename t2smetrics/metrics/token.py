@@ -1,6 +1,7 @@
 from collections import Counter
-from t2smetrics.metrics.base import Metric
+
 from t2smetrics.core.result import EvaluationResult
+from t2smetrics.metrics.base import Metric
 from t2smetrics.representation.preprocessing import SP_NORMALIZER_PREPROCESSOR
 
 

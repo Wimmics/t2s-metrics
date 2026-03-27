@@ -1,50 +1,50 @@
 f1_simple_em:
-  F1Spinach: 1.0
+  f1_spinach: 1.0
 
 f1_simple_no_label:
-  F1Spinach: 1.0
+  f1_spinach: 1.0
 
 f1_2_em:
-  F1Spinach: 1.0
+  f1_spinach: 1.0
 
 f1_2_em_2:
-  F1Spinach: 1.0
+  f1_spinach: 1.0
 
 f1_5_items_fp:
-  F1Spinach: 0.333 # 2 / (2 + 0 + 4)
+  f1_spinach: 0.333 # 2 / (2 + 0 + 4)
 
 f1_5_items_fn:
-  F1Spinach: 0.333 # 2 / (2 + 0 + 4)
+  f1_spinach: 0.333 # 2 / (2 + 0 + 4)
 
 f1_5_items_2fn:
-  F1Spinach: 0.571 # 2 * 2 / (2 * 2 + 3)
+  f1_spinach: 0.571 # 2 * 2 / (2 * 2 + 3)
 
 f1_5_items_2fn_1fp:
-  F1Spinach: 0.5 # 2 * 2 / (2 * 2 + 1 + 3)
+  f1_spinach: 0.5 # 2 * 2 / (2 * 2 + 1 + 3)
 
 f1_2_em_2_all_half:
-  F1Spinach: 0.666 # 2 / (2 + 1)
+  f1_spinach: 0.666 # 2 / (2 + 1)
 
 f1_2_em_2_all_half_w_2fp:
-  F1Spinach: 0.4 # 2 / (2 + 1 + 2)
+  f1_spinach: 0.4 # 2 / (2 + 1 + 2)
 
 f1_2_em_2_all_one_third_w_2fp:
-  F1Spinach: 0.285 #  ((1 / 3) * 2 * 2) / ((1 / 3) * 2 * 2 + (2 / 3) * 2 + 2)
+  f1_spinach: 0.285 #  ((1 / 3) * 2 * 2) / ((1 / 3) * 2 * 2 + (2 / 3) * 2 + 2)
 
 f1_2_em_2_all_two_third_w_2fp:
-  F1Spinach: 0.5 # ((2 / 3) * 2 * 2) / ((2 / 3) * 2 * 2 + (1 / 3) * 2 + 2)
+  f1_spinach: 0.5 # ((2 / 3) * 2 * 2) / ((2 / 3) * 2 * 2 + (1 / 3) * 2 + 2)
 
 f1_2_em_2_all_two_third_w_2fp_duplicate_gold_should_not_matter:
-  F1Spinach: 0.5 # ((2 / 3) * 2 * 2) / ((2 / 3) * 2 * 2 + (1 / 3) * 2 + 2)
+  f1_spinach: 0.5 # ((2 / 3) * 2 * 2) / ((2 / 3) * 2 * 2 + (1 / 3) * 2 + 2)
 
 ask_true_true:
-  F1Spinach: 1.0
+  f1_spinach: 1.0
 
 ask_true_false:
-  F1Spinach: 0.0
+  f1_spinach: 0.0
 
 ask_false_false:
-  F1Spinach: 1.0
+  f1_spinach: 1.0
 
 ask_false_true:
-  F1Spinach: 0.0
+  f1_spinach: 0.0

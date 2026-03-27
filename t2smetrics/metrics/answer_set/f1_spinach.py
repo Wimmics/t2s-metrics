@@ -1,18 +1,22 @@
-import logging
-import numpy as np
-from scipy.optimize import linear_sum_assignment
 from collections import Counter
 
-from t2smetrics.metrics.answer_set.base import AnswerSetMeasure
-from t2smetrics.core.result import EvaluationResult
-from t2smetrics.metrics.answer_set.f1 import AnswerSetF1
+import numpy as np
+from loguru import logger
+from scipy.optimize import linear_sum_assignment
 
-logger = logging.getLogger(__name__)
+from t2smetrics.core.result import EvaluationResult
+from t2smetrics.metrics.answer_set.base import AnswerSetMeasure
+from t2smetrics.metrics.answer_set.f1 import AnswerSetF1
 
 
 # The official implementation at: https://github.com/stanford-oval/spinach/blob/8bb2d9cfa7f54b7b63ba5e6acd8264fdb7f8ecf9/eval.py#L108
 class F1Spinach(AnswerSetMeasure):
-    name = "f1_spinach"
+    def __init__(self, maximal_comparisons=1000000):
+        if maximal_comparisons <= 0:
+            raise ValueError("maximal_comparisons must be a positive integer.")
+
+        self.name = "f1_spinach"
+        self.maximal_comparisons = maximal_comparisons
 
     def compute(self, case, context):
         # gold, pred = self._get_answer_lists(case, context)
@@ -22,10 +26,9 @@ class F1Spinach(AnswerSetMeasure):
             f1 = int(pred == gold)
             return EvaluationResult(case.id, self.name, f1)
 
-        if len(pred) * len(gold) > 1000000:
+        if len(pred) * len(gold) > self.maximal_comparisons:
             logger.warning(
-                "The number of comparisons for F1Spinach is %d, which may lead to long computation time.",
-                len(pred) * len(gold),
+                f"The number of comparisons for F1Spinach is {len(pred) * len(gold)}, which may lead to long computation time."
             )
             logger.warning(
                 "Falling back to a simpler F1 computation without maximal matching."
@@ -36,9 +39,7 @@ class F1Spinach(AnswerSetMeasure):
         return EvaluationResult(case.id, self.name, f1)
 
     def f1(self, predicted_results, gold_results, maximal_matching=True):
-        """
-        Calculates a row-major F1 score for each example.
-        """
+        """Calculates a row-major F1 score for each example."""
         if predicted_results is None:
             return 0
 
@@ -78,10 +79,7 @@ class F1Spinach(AnswerSetMeasure):
                 len(gold_results) - len(col_ind)
             )
 
-            if (2 * tp + fp_or_fn) == 0:
-                res = 0
-            else:
-                res = 2 * tp / (2 * tp + fp_or_fn)
+            res = 0 if 2 * tp + fp_or_fn == 0 else 2 * tp / (2 * tp + fp_or_fn)
 
         else:
             # an older implmentation with greedy matching
@@ -123,17 +121,16 @@ class F1Spinach(AnswerSetMeasure):
                     fn += 1 - match_ratio
 
             fn += len(list(filter(lambda x: not x[1], gold_result_mapping)))
-            
+
             res = 2 * tp / (2 * tp + fp + fn)
 
-        assert 0 <= res
+        assert res >= 0
         assert res <= 1
 
         return res
 
     def _compute_match_ratio(self, predicted, gold):
-        """
-        Example `predicted` or `gold`:
+        """Example `predicted` or `gold`:
         {
             "item": {
             "type": "uri",

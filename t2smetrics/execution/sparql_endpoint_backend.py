@@ -1,10 +1,12 @@
-from SPARQLWrapper import QueryResult, SPARQLWrapper, JSON
+from loguru import logger
+from SPARQLWrapper import JSON, QueryResult, SPARQLWrapper
+
 from t2smetrics.execution.base import ExecutionBackend
+from t2smetrics.execution.result_utils import normalize_query_response
 
 
 class SparqlEndpointBackend(ExecutionBackend):
-    """
-    Generic SPARQL 1.1 HTTP endpoint backend.
+    """Generic SPARQL 1.1 HTTP endpoint backend.
     Works with Corese, QLever, GraphDB, Fuseki, Virtuoso, Blazegraph, etc.
     """
 
@@ -19,6 +21,7 @@ class SparqlEndpointBackend(ExecutionBackend):
         self.timeout = timeout
         self.default_graph = default_graph
         self.headers = headers or {}
+        self.test_connection()
 
     def execute(self, query: str) -> "QueryResult.ConvertResult":
 
@@ -39,3 +42,18 @@ class SparqlEndpointBackend(ExecutionBackend):
             return None
 
         return response
+
+    def test_connection(self):
+        test_query = "ASK { ?s ?p ?o }"
+        try:
+            response = self.execute(test_query)
+            if response is None:
+                raise ConnectionError(
+                    f"Failed to connect to SPARQL endpoint at {self.endpoint_url}"
+                )
+            normalize_query_response(response)
+        except Exception as e:
+            logger.error(f"Failed when testing connection to SPARQL endpoint: {e}")
+            raise ConnectionError(
+                f"Failed to connect to SPARQL endpoint at {self.endpoint_url}"
+            ) from e

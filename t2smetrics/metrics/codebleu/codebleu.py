@@ -1,15 +1,14 @@
-from nltk.translate.bleu_score import sentence_bleu, SmoothingFunction
+from nltk.translate.bleu_score import SmoothingFunction, sentence_bleu
 
-from t2smetrics.metrics.base import Metric
 from t2smetrics.core.result import EvaluationResult
-from t2smetrics.metrics.codebleu.weighted_bleu import weighted_precision
-from t2smetrics.metrics.codebleu.syntax import syntax_score
+from t2smetrics.metrics.base import Metric
 from t2smetrics.metrics.codebleu.dataflow import dataflow_match
+from t2smetrics.metrics.codebleu.syntax import syntax_score
+from t2smetrics.metrics.codebleu.weighted_bleu import weighted_precision
 
 
 class CodeBLEU(Metric):
-    """
-    CodeBLEU = avg(
+    """CodeBLEU = avg(
         BLEU,
         weighted BLEU,
         syntax score,

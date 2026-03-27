@@ -1,4 +1,5 @@
 from collections import Counter
+
 from t2smetrics.metrics.codebleu.sparql_keywords import SPARQL_KEYWORDS
 
 

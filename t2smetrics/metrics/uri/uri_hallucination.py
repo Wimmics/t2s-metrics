@@ -1,7 +1,7 @@
 from t2smetrics.core.eval import QueryCase
+from t2smetrics.core.result import EvaluationResult
 from t2smetrics.execution.result_utils import normalize_query_response
 from t2smetrics.metrics.base import Metric
-from t2smetrics.core.result import EvaluationResult
 from t2smetrics.representation.uri_utils import extract_uris
 
 
