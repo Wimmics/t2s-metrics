@@ -75,6 +75,7 @@ def run(
     cache_results: bool = True,
     per_query: bool = False,
     parallel: bool = False,
+    safe_limit: int = 0,
 ):
 
     if systems_name is None:
@@ -137,7 +138,9 @@ def run(
             logger.warning(f"Invalid path: {jsonl_eval_path}. Skipping.")
 
     if execution_backend_endpoint_url:
-        execution_backend = SparqlEndpointBackend(execution_backend_endpoint_url)
+        execution_backend = SparqlEndpointBackend(
+            endpoint_url=execution_backend_endpoint_url, safe_limit=safe_limit
+        )
 
         if execution_backend_graph_path and execution_backend_endpoint_url:
             logger.warning(
@@ -145,7 +148,9 @@ def run(
             )
 
     elif execution_backend_graph_path:
-        execution_backend = RDFLibBackend(execution_backend_graph_path)
+        execution_backend = RDFLibBackend(
+            execution_backend_graph_path, safe_limit=safe_limit
+        )
 
     else:
         raise ValueError(

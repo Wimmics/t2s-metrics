@@ -49,6 +49,8 @@ dependencies = [
 
 [project.scripts]
 t2s = "t2smetrics.cli:main"
+t2s_docs_build = "t2smetrics.cli:docs_build_html"
+t2s_docs_clean = "t2smetrics.cli:docs_clean"
 
 [project.optional-dependencies]
 dev = [
@@ -58,6 +60,11 @@ dev = [
 ]
 test = [
     "pytest>=7.2.0",
+]
+docs = [
+    "sphinx>=8.0.0",
+    "sphinx-rtd-theme>=3.0.0",
+    "myst-parser>=3.0.0",
 ]
 
 [project.urls]

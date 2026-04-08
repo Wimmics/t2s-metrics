@@ -1,5 +1,10 @@
+import shutil
+import subprocess
 import sys
 from argparse import ArgumentParser, _SubParsersAction
+from pathlib import Path
+
+from loguru import logger
 
 from t2smetrics.metrics.metrics_utils import get_metric_mapping
 
@@ -158,6 +163,35 @@ def get_dashboard_parser(
     return dashboard_parser
 
 
+def docs_build_html():
+    """Build HTML documentation with Sphinx."""
+    docs_dir = Path(__file__).parent.parent / "docs"
+    build_dir = docs_dir / "_build" / "html"
+
+    # Ensure docs directory exists
+    if not docs_dir.exists():
+        logger.error("Error: docs directory not found")
+        sys.exit(1)
+
+    # Run sphinx-build
+    cmd = ["sphinx-build", "-b", "html", str(docs_dir), str(build_dir)]
+    logger.info(f"Running command: {' '.join(cmd)}")
+    result = subprocess.run(cmd)
+    sys.exit(result.returncode)
+
+
+def docs_clean():
+    """Clean built documentation."""
+    docs_dir = Path(__file__).parent.parent / "docs"
+    build_dir = docs_dir / "_build"
+
+    if build_dir.exists():
+        shutil.rmtree(build_dir)
+        logger.info(f"Removed {build_dir}")
+    else:
+        logger.warning("No build directory found")
+
+
 def main():
     parser = ArgumentParser(
         description="T2S Metrics CLI",
@@ -201,6 +235,7 @@ def main():
             llm_backend_ollama_model=args.llm_backend_ollama_model,
             parallel=args.parallel,
         )
+
     else:
         parser.print_help()
         sys.exit(1)
