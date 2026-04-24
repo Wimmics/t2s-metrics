@@ -1,0 +1,53 @@
+q1:
+  exact_match_spinach: 1.0
+
+q2:
+  exact_match_spinach: 0.0
+
+q3:
+  exact_match_spinach: 1.0
+
+q4:
+  exact_match_spinach: 1.0
+
+q5:
+  exact_match_spinach: 0.0
+
+q6:
+  exact_match_spinach: 0.0
+
+q7:
+  exact_match_spinach: 0.0
+
+q8:
+  exact_match_spinach: 0.0
+
+q9:
+  exact_match_spinach: 0.0
+
+q10:
+  exact_match_spinach: 0.0
+
+q11:
+  exact_match_spinach: 0.0
+
+q12:
+  exact_match_spinach: 0.0
+
+q13:
+  exact_match_spinach: 0.0
+
+q14:
+  exact_match_spinach: 1.0
+
+ask_true_true:
+  exact_match_spinach: 1.0
+
+ask_true_false:
+  exact_match_spinach: 0.0
+
+ask_false_false:
+  exact_match_spinach: 1.0
+
+ask_false_true:
+  exact_match_spinach: 0.0

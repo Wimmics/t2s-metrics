@@ -17,7 +17,7 @@ only-include = [
 
 [project]
 name = "t2s-metrics"
-version = "1.1.0"
+version = "1.1.1"
 description = "T2S-Metrics provides a modular abstraction layer that decouples metric specification from implementation, enabling consistent, transparent, and reproducible evaluation of SPARQL-based QA systems"
 authors = [
     { name = "Yousouf Taghzouti", email = "yousouf.taghzouti@inria.fr" }

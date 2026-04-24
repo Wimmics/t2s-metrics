@@ -1,0 +1,18 @@
+{  "id": "q1",  "golden": "SELECT ?item ?itemLabel WHERE {  VALUES (?item ?itemLabel) {    (<a> \"Northern Tsou\"@en)  }}",  "generated": "SELECT ?item ?itemLabel WHERE {  VALUES (?item ?itemLabel) {    (<a> \"Northern Tsou\"@en)  }}", "order_matters": false}
+{  "id": "q2",  "golden": "SELECT ?item ?itemLabel WHERE {  VALUES (?item ?itemLabel) {    (<a> \"Northern Tsou\"@en)  }}",  "generated": "SELECT ?item WHERE {  VALUES ?item { <a> }}", "order_matters": false}
+{  "id": "q3",  "golden": "SELECT ?item WHERE {  VALUES ?item { <a> <a> }}",  "generated": "SELECT ?item WHERE {  VALUES ?item { <a> <a> }}", "order_matters": false}
+{  "id": "q4",  "golden": "SELECT ?item WHERE {  VALUES ?item { <b> <a> }}",  "generated": "SELECT ?item WHERE {  VALUES ?item { <a> <b> }}", "order_matters": false}
+{  "id": "q5",  "golden": "SELECT ?item WHERE {   VALUES ?item { <a> }}",  "generated": "SELECT ?item WHERE {   VALUES ?item { <a> <a> <c> <d> <f> }}", "order_matters": false}
+{  "id": "q6",  "golden": "SELECT ?item WHERE {   VALUES ?item { <a> <a> <c> <d> <f> }}",  "generated": "SELECT ?item WHERE {   VALUES ?item { <a> }}", "order_matters": false}
+{  "id": "q7",  "golden": "SELECT ?item WHERE {   VALUES ?item { <a> <a> <c> <d> <f> }}",  "generated": "SELECT ?item WHERE {   VALUES ?item { <a> <c> }}", "order_matters": false}
+{  "id": "q8",  "golden": "SELECT ?item WHERE {   VALUES ?item { <a> <a> <c> <d> <f> }}",  "generated": "SELECT ?item WHERE {   VALUES ?item { <a> <c> <surprise> }}", "order_matters": false}
+{  "id": "q9",  "golden": "SELECT ?item ?surprise WHERE {  VALUES (?item ?surprise) {    (<b> <c>)    (<a> <c>)  }}",  "generated": "SELECT ?item WHERE {   VALUES ?item { <a> <b> }}", "order_matters": false}
+{  "id": "q10",  "golden": "SELECT ?item ?surprise WHERE {  VALUES (?item ?surprise) {    (<b> <c>)    (<a> <c>)  }}",  "generated": "SELECT ?item WHERE {  VALUES ?item { <a> <b> <surprise> <surprise_2> }}", "order_matters": false}
+{  "id": "q11",  "golden": "SELECT ?item ?surprise ?surprise_2 WHERE {  VALUES (?item ?surprise ?surprise_2) {    (<b> <c> <c>)    (<a> <c> <c>)  }}",  "generated": "SELECT ?item WHERE {  VALUES ?item { <a> <b> <surprise> <surprise_2> }}", "order_matters": false}
+{  "id": "q12",  "golden": "SELECT ?item ?surprise ?surprise_2 WHERE {   VALUES (?item ?surprise ?surprise_2) {    (<b> <c> <abc>)    (<a> <c> <abc>)  }}",  "generated": "SELECT ?item ?surprise WHERE {  VALUES (?item ?surprise) {    (<b> <c>)    (<a> <c>)    (<surprise> <c>)    (<surprise_2> <c>)  }}", "order_matters": false}
+{  "id": "q13",  "golden": "SELECT ?item ?surprise ?surprise_2 WHERE {  VALUES (?item ?surprise ?surprise_2) {    (<b> <c> <c>)    (<a> <c> <c>)  }}",  "generated": "SELECT ?item ?surprise WHERE {  VALUES (?item ?surprise) {    (<b> <c>)    (<a> <c>)    (<surprise> <c>)    (<surprise_2> <c>)  }}", "order_matters": false}
+{  "id": "q14",  "golden": "SELECT ?item WHERE { VALUES ?item { <a> <b> } }",  "generated": "SELECT ?item ?extra WHERE { VALUES (?item ?extra) { (<a> <x>) (<b> <y>) } }", "order_matters": false}
+{  "id": "ask_true_true",  "golden": "ASK { FILTER(1 = 1) }",  "generated": "ASK { FILTER(1 = 1) }", "order_matters": false}
+{  "id": "ask_true_false",  "golden": "ASK { FILTER(1 = 1) }",  "generated": "ASK { FILTER(1 = 0) }", "order_matters": false}
+{  "id": "ask_false_false",  "golden": "ASK { FILTER(1 = 0) }",  "generated": "ASK { FILTER(1 = 0) }", "order_matters": false}
+{  "id": "ask_false_true",  "golden": "ASK { FILTER(1 = 0) }",  "generated": "ASK { FILTER(1 = 1) }", "order_matters": false}

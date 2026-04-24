@@ -1,5 +1,6 @@
 """Module providing Text-to-SPARQL evaluation metrics, including ROUGE, BLEU, Levenshtein distance, and related utilities for natural language and semantic analysis."""
 
+from t2smetrics.metrics.answer_set.exact_match_spinach import ExactMatchSpinach
 from t2smetrics.metrics.answer_set.f1 import AnswerSetF1
 from t2smetrics.metrics.answer_set.f1_qald import F1QALD
 from t2smetrics.metrics.answer_set.f1_spinach import F1Spinach
@@ -44,6 +45,7 @@ __all__ = [
     "TokenRecall",
     "URIHallucination",
     "F1QALD",
+    "ExactMatchSpinach",
     "F1Spinach",
     "HitAtK",
     "MRR",
@@ -55,4 +57,5 @@ __all__ = [
     "RecallQALD",
     "CodeBLEU",
     "QCanBleu",
+    "ExactMatchSpinach",
 ]
