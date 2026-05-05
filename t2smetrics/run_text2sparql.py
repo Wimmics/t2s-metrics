@@ -31,6 +31,7 @@ from t2smetrics.metrics import (
     TokenRecall,
     URIHallucination,
 )
+from t2smetrics.metrics.answer_set.exact_match_spinach import ExactMatchSpinach
 
 setup_third_party_logging(logging.WARNING)
 
@@ -61,6 +62,7 @@ metrics = [
     CodeBLEU(),
     CosineSimilarity(),
     EuclideanDistance(),
+    ExactMatchSpinach(),
     F1QALD(),
     SPBleu(),
     SPF1(),

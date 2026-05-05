@@ -3,6 +3,18 @@
 All notable changes to this project are documented in this file.
 
 The format is inspired by Keep a Changelog and follows Semantic Versioning.
+ 
+## [1.1.1] - 2026-05-05
+
+### Added
+- Added QCan BLEU metric with strict/flex mode calculation.
+- Added QCan ROUGE metric with strict/flex mode calculation.
+- Added Exact-Match SPINACH metric.
+- Added safe_limit parameter to experiments to limit the query results.
+
+
+### Fixed
+- Minor fixes and documentation updates.
 
 ## [1.1.0] - 2026-03-27
 

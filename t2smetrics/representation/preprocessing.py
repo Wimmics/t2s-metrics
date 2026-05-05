@@ -30,6 +30,10 @@ class Preprocessor:
 qcan_library_path = "./third_party_lib/qcan-1.1-jar-with-dependencies.jar"
 
 
+class QCanCanonicalizationError(RuntimeError):
+    pass
+
+
 def normalize_whitespace(q: str) -> str:
     return " ".join(q.split())
 
@@ -53,7 +57,7 @@ def normalize_mask_iris(q: str) -> str:
     return re.sub(r"<[^>]+>", "<IRI>", q)
 
 
-def normalize_qcan(q: str) -> str:
+def normalize_qcan(q: str, fallback_to_original: bool = True) -> str:
 
     command = [
         "java",
@@ -73,10 +77,12 @@ def normalize_qcan(q: str) -> str:
     )
 
     if result.stderr:
-        logger.warning(
-            f"QCan normalization error falling back to original: {result.stderr}"
-        )
-        return q
+        if fallback_to_original:
+            logger.warning(
+                f"QCan normalization error falling back to original: {result.stderr}"
+            )
+            return q
+        raise QCanCanonicalizationError(result.stderr.strip())
 
     result = result.stdout
 
@@ -94,6 +100,10 @@ def normalize_qcan(q: str) -> str:
     return result.strip()
 
 
+def normalize_qcan_strict(q: str) -> str:
+    return normalize_qcan(q, fallback_to_original=False)
+
+
 SP_NORMALIZER_PREPROCESSOR = Preprocessor(
     [
         normalize_whitespace,
@@ -104,5 +114,11 @@ SP_NORMALIZER_PREPROCESSOR = Preprocessor(
 QCAN_NORMALIZER_PREPROCESSOR = Preprocessor(
     [
         normalize_qcan,
+    ]
+)
+
+QCAN_NORMALIZER_PREPROCESSOR_STRICT = Preprocessor(
+    [
+        normalize_qcan_strict,
     ]
 )

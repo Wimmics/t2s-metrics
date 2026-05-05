@@ -1,3 +1,6 @@
+import re
+
+
 def normalize_answer_set_basic(result):
     """Normalize execution results to a set of tuples.
     Handles ASK and SELECT queries.
@@ -55,3 +58,32 @@ def normalize_query_response(response, return_type="tuples"):
             rows.append(row)
 
         return rows
+
+
+def safe_append_limit(query, limit_value=25000) -> str:
+    """Safely append LIMIT to a SPARQL query if it doesn't already have one.
+
+    Args:
+        query (str): SPARQL query string
+        limit_value (int): LIMIT value to append (default: 25000)
+
+    Returns:
+        str: SPARQL query string with LIMIT appended if it was not already present
+    """
+    # Don't add LIMIT to ASK queries
+    if re.match(r"^\s*ASK\b", query, re.IGNORECASE):
+        return query
+
+    # Check if LIMIT already exists (case insensitive)
+    if re.search(r"\bLIMIT\s+\d+", query, re.IGNORECASE):
+        return query
+
+    # Remove trailing whitespace and add LIMIT
+    query = query.rstrip()
+
+    # Add semicolon if needed (some SPARQL endpoints require it before LIMIT)
+    if not query.endswith(";") and not query.endswith("}"):
+        query += " "
+
+    query += f" LIMIT {limit_value}"
+    return query
