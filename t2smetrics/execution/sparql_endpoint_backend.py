@@ -30,7 +30,6 @@ class SparqlEndpointBackend(ExecutionBackend):
         if self.safe_limit != 0:
             query = safe_append_limit(query)
 
-        logger.debug(f"Executing query:\n{query}")
         sparql = SPARQLWrapper(self.endpoint_url)
         sparql.setQuery(query)
         sparql.setReturnFormat(JSON)

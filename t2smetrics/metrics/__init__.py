@@ -22,7 +22,14 @@ from t2smetrics.metrics.distance import (
 from t2smetrics.metrics.exact import QueryExactMatch
 from t2smetrics.metrics.llm_judge import LLMJudge
 from t2smetrics.metrics.query_execution import QueryExecution
-from t2smetrics.metrics.text_metrics import Bleu, Meteor, QCanBleu, RougeN, SPBleu
+from t2smetrics.metrics.text_metrics import (
+    Bleu,
+    Meteor,
+    QCanBleu,
+    QCanRougeN,
+    RougeN,
+    SPBleu,
+)
 from t2smetrics.metrics.token import SPF1, TokenF1, TokenPrecision, TokenRecall
 from t2smetrics.metrics.uri.uri_hallucination import URIHallucination
 
@@ -57,5 +64,6 @@ __all__ = [
     "RecallQALD",
     "CodeBLEU",
     "QCanBleu",
+    "QCanRougeN",
     "ExactMatchSpinach",
 ]

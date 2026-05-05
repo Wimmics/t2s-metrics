@@ -32,6 +32,18 @@ SPARQL endpoints.</em>
 - CLI to run evaluations and launch dashboards.
 - Static dashboard export support for sharing reports without running a server.
 
+## Demo video ⏯️
+
+### Teaser
+
+[![T2S-Metrics teaser video](https://raw.githubusercontent.com/Wimmics/t2s-metrics/main/img/teaser_t2smetrics_thumbnail.png)](https://youtu.be/w5nm7Rg5EeM)
+
+
+### Full tutorial
+
+[![T2S-Metrics full video](https://raw.githubusercontent.com/Wimmics/t2s-metrics/main/img/full_t2smetrics_thumbnail.png)](https://youtu.be/ETmzMsnYEqY)
+
+
 ## Prerequisites
 - [Python](https://www.python.org/) 3.12 or later.
 - [uv](https://docs.astral.sh/uv/) (recommended for local development) or pip.
@@ -302,3 +314,21 @@ The modified version is redistributed in directory [datasets/ck25](https://githu
 t2s-metrics reuses the [QCan software for canonicalising SPARQL queries](https://github.com/RittoShadow/QCan).
 
 QCan is written in Java. In this repository, we distribute the compiled jar of QCan v1.1, [third_party_lib/qcan-1.1-jar-with-dependencies.jar](https://github.com/Wimmics/t2s-metrics/blob/main/third_party_lib/qcan-1.1-jar-with-dependencies.jar), under the terms of the [Apache 2.0 license](https://github.com/Wimmics/t2s-metrics/blob/main/LICENSES/Apache-2.0.txt).
+
+## Cite this work
+
+Yousouf Taghzouti, et al. T2S-Metrics: Unified Library for Evaluating SPARQL Queries Generated From Natural Language. ELMKE 2026: The Third International Workshop on Evaluation of Language Models in Knowledge Engineering, co-located with ESWC 2026, May 2026, Dubrovnik, Croatia. ⟨hal-05598018⟩
+
+<details>
+<summary>See BibTex</summary>
+@inproceedings{taghzouti:hal-05598018,
+  TITLE = {{T2S-Metrics: Unified Library for Evaluating SPARQL Queries Generated From Natural Language}},
+  AUTHOR = {Taghzouti, Yousouf and Jiang, Tao and Juign{\'e}, Camille and Navet, Benjamin and Gandon, Fabien and Michel, Franck and Nothias, Louis-Felix},
+  URL = {https://inria.hal.science/hal-05598018},
+  BOOKTITLE = {{Proceedings of the Third International Workshop on Evaluation of Language Models in Knowledge Engineering (ELMKE 2026) co-located with the 23rd European Semantic Web Conference (ESWC 2026)}},
+  ADDRESS = {Dubrovnik, Croatia},
+  EDITOR = {CEUR},
+  YEAR = {2026},
+  MONTH = May
+}
+</details>

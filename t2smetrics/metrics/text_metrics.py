@@ -104,7 +104,7 @@ class QCanBleu(Bleu):
 
 
 class RougeN(Metric):
-    def __init__(self, n: int):
+    def __init__(self, n: int = 4):
         self.n = n
         self.name = f"rouge_{n}"
         self.scorer = rouge_scorer.RougeScorer([f"rouge{n}"], use_stemmer=False)
@@ -125,3 +125,42 @@ class Meteor(Metric):
         cand = case.generated.tokens
         score = meteor_score(ref, cand)
         return EvaluationResult(case.id, self.name, score)
+
+
+class QCanRougeN(RougeN):
+    def __init__(
+        self,
+        n: int = 4,
+        calculation_type: Literal["strict", "flex"] = "strict",
+    ):
+        super().__init__(n)
+        if calculation_type not in {"strict", "flex"}:
+            raise ValueError("calculation_type must be either 'strict' or 'flex'.")
+        self.name = "qcan-rouge-" + str(self.n) + "-" + calculation_type
+        if calculation_type == "strict":
+            self.preprocessor = QCAN_NORMALIZER_PREPROCESSOR_STRICT
+        else:
+            self.preprocessor = QCAN_NORMALIZER_PREPROCESSOR
+        self.check_library_exists()
+        self.calculation_type = calculation_type
+
+    def run(self, case, context=None):
+        try:
+            return super().run(case, context)
+        except QCanCanonicalizationError as error:
+            logger.warning(
+                f"QCan canonicalization failed in strict mode for case {case.id}. Returning 0.0. Error: {error}"
+            )
+            return EvaluationResult(case.id, self.name, 0.0)
+
+    def check_library_exists(self):
+        if not os.path.isfile(qcan_library_path):
+            logger.error(
+                f"QCan library not found at {qcan_library_path}. Please ensure the JAR file is present. You can download it from https://github.com/Wimmics/t2s-metrics/tree/main/third_party_lib"
+            )
+            raise FileNotFoundError(
+                f"QCan library not found at {qcan_library_path}. Please ensure the JAR file is present. You can download it from https://github.com/Wimmics/t2s-metrics/tree/main/third_party_lib"
+            )
+
+    def compute(self, case, context=None):
+        return super().compute(case, context)
