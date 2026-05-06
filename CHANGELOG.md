@@ -4,6 +4,14 @@ All notable changes to this project are documented in this file.
 
 The format is inspired by Keep a Changelog and follows Semantic Versioning.
  
+## [1.1.2] - 2026-05-06
+
+### Added
+- Added QCan Family Metrics to the dashboard.
+
+### Fixed
+- Fix video thumnails in PyPI.
+
 ## [1.1.1] - 2026-05-05
 
 ### Added

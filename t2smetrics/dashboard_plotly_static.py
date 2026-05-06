@@ -9,32 +9,64 @@ parent_folder = Path("datasets")
 
 # Metric categories (kept aligned with the Dash dashboard)
 metric_categories = {
-    "Answer Similarity": [
+    "Execution Based Metrics": [
         "answerset_precision",
         "answerset_recall",
         "answerset_f1",
+        "exact_match_spinach",
         "f1_qald",
+        "f1_spinach",
+        "hit@1",
+        "mrr",
+        "ndcg",
+        "p@1",
         "precision_qald",
+        "query_exact_match",
+        "query_execution",
         "recall_qald",
+        "uri_hallucination",
     ],
-    "Text Similarity": [
+    "String Based Metrics": [
         "bleu",
         "codebleu",
+        "cosine_sim",
+        "euclidean",
+        "jaccard",
+        "levenshtein",
+        "llm_judge",
         "meteor",
+        "qcan-bleu-strict",
+        "qcan-bleu-flex",
+        "qcan-rouge-4-strict",
+        "qcan-rouge-4-flex",
+        "query_exact_match",
         "rouge_4",
         "sp-bleu",
-        "qcan-bleu",
-    ],
-    "Ranking Metrics": ["p@1", "hit@1", "mrr", "ndcg"],
-    "Structural Metrics": [
         "sp-f1",
         "token_f1",
         "token_precision",
         "token_recall",
-        "jaccard",
     ],
-    "Distance Metrics": ["cosine_sim", "euclidean", "levenshtein"],
-    "Execution Metrics": ["query_execution", "query_exact_match", "uri_hallucination"],
+    "Standard Execution Based Metrics": [
+        "answerset_f1",
+        "answerset_precision",
+        "answerset_recall",
+    ],
+    "Standard NLP Metrics (String Based)": [
+        "bleu",
+        "cosine_sim",
+        "euclidean",
+        "levenshtein",
+        "meteor",
+        "jaccard",
+        "rouge_4",
+    ],
+    "Ranking Metrics (Execution-Based)": [
+        "hit@1",
+        "mrr",
+        "ndcg",
+        "p@1",
+    ],
 }
 
 
