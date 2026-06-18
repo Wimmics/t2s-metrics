@@ -10,7 +10,7 @@ The format is inspired by Keep a Changelog and follows Semantic Versioning.
 - Added QCan Family Metrics to the dashboard.
 
 ### Fixed
-- Fix video thumnails in PyPI.
+- Fix video thumbnails in PyPI.
 
 ## [1.1.1] - 2026-05-05
 
