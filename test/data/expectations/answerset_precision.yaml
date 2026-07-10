@@ -1,0 +1,32 @@
+empty_empty:
+  answerset_precision: 1.0
+
+empty_non_empty:
+  answerset_precision: 0.0
+
+non_empty_empty:
+  answerset_precision: 0.0
+
+non_empty_non_empty:
+  answerset_precision: 0.5
+
+q1:
+  answerset_precision: 0.0
+
+q2:
+  answerset_precision: 1.0
+
+q3:
+  answerset_precision: 0.0
+
+ask_true_true:
+  answerset_precision: 1.0
+
+ask_true_false:
+  answerset_precision: 0.0
+
+ask_false_false:
+  answerset_precision: 1.0
+
+ask_false_true:
+  answerset_precision: 0.0

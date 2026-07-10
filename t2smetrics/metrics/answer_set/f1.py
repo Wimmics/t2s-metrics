@@ -8,7 +8,16 @@ class AnswerSetF1(AnswerSetMeasure):
     def compute(self, case, context):
         gold, pred = self._get_answer_sets(case, context)
 
-        if not self._validate(gold, pred):
+        if gold is None or pred is None:
+            return EvaluationResult(case.id, self.name, 0.0)
+
+        if len(gold) == 0 and len(pred) == 0:
+            return EvaluationResult(case.id, self.name, 1.0)
+
+        if len(gold) > 0 and len(pred) == 0:
+            return EvaluationResult(case.id, self.name, 0.0)
+
+        if len(gold) == 0 and len(pred) > 0:
             return EvaluationResult(case.id, self.name, 0.0)
 
         tp = len(gold & pred)
@@ -17,6 +26,8 @@ class AnswerSetF1(AnswerSetMeasure):
 
         precision = tp / (tp + fp) if (tp + fp) else 0
         recall = tp / (tp + fn) if (tp + fn) else 0
-        f1 = 2 * precision * recall / (precision + recall) if (precision + recall) else 0
+        f1 = (
+            2 * precision * recall / (precision + recall) if (precision + recall) else 0
+        )
 
         return EvaluationResult(case.id, self.name, f1)

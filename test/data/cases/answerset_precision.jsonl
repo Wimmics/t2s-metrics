@@ -1,3 +1,7 @@
+{  "id": "empty_empty",  "golden": "SELECT ?x WHERE { VALUES ?x { } }",  "generated": "SELECT ?x WHERE { VALUES ?x { } }", "order_matters": false}
+{  "id": "empty_non_empty",  "golden": "SELECT ?x WHERE { VALUES ?x { } }",  "generated": "SELECT ?x WHERE { VALUES ?x { <http://example.org/a> } }", "order_matters": false}
+{  "id": "non_empty_empty",  "golden": "SELECT ?x WHERE { VALUES ?x { <http://example.org/a> } }",  "generated": "SELECT ?x WHERE { VALUES ?x { } }", "order_matters": false}
+{  "id": "non_empty_non_empty",  "golden": "SELECT ?x WHERE { VALUES ?x { <http://example.org/a> <http://example.org/b> } }",  "generated": "SELECT ?x WHERE { VALUES ?x { <http://example.org/a> <http://example.org/c> } }", "order_matters": false}
 {  "id": "q1",  "golden": "SELECT ?x WHERE { ?x a <http://example.org/Person> }",  "generated": "", "order_matters": false}
 {  "id": "q2",  "golden": "SELECT ?x WHERE { ?x <http://example.org/age> 30 }",  "generated": "SELECT ?x WHERE { ?x <http://example.org/age> 30 }", "order_matters": false}
 {  "id": "q3",  "golden": "SELECT ?x WHERE { ?x <http://example.org/age> 30 }",  "generated": "SELECT ?x WHERE { ?x <http://example.org/age> 40 }", "order_matters": false}
