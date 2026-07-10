@@ -1,0 +1,11 @@
+empty_empty:
+  precision_qald: 1.0
+
+empty_non_empty:
+  precision_qald: 0.0
+
+non_empty_empty:
+  precision_qald: 1.0
+
+non_empty_non_empty:
+  precision_qald: 0.5

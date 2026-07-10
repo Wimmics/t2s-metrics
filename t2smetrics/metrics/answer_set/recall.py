@@ -8,7 +8,18 @@ class AnswerSetRecall(AnswerSetMeasure):
     def compute(self, case, context):
         gold, pred = self._get_answer_sets(case, context)
 
-        # convention: perfectly recalled empty set
-        score = 1.0 if not gold else len(gold & pred) / len(gold)
+        if gold is None or pred is None:
+            return EvaluationResult(case.id, self.name, 0.0)
 
-        return EvaluationResult(case.id, self.name, score)
+        if len(gold) == 0 and len(pred) == 0:
+            return EvaluationResult(case.id, self.name, 1.0)
+
+        if len(gold) > 0 and len(pred) == 0:
+            return EvaluationResult(case.id, self.name, 0.0)
+
+        tp = len(gold & pred)
+        fn = len(gold - pred)
+
+        recall = tp / (tp + fn) if (tp + fn) else 0
+
+        return EvaluationResult(case.id, self.name, recall)

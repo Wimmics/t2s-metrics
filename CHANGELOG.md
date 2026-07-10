@@ -3,7 +3,11 @@
 All notable changes to this project are documented in this file.
 
 The format is inspired by Keep a Changelog and follows Semantic Versioning.
- 
+
+## [1.2.0] - 2026-07-10
+- Added test cases for Answerset and QALD Precision, Recall and F1.
+- Updated the implementation of Answerset and QALD Precision, Recall and F1 for some edge cases.
+
 ## [1.1.2] - 2026-05-06
 
 ### Added
