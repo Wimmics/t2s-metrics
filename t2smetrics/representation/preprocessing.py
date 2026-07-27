@@ -104,6 +104,80 @@ def normalize_qcan_strict(q: str) -> str:
     return normalize_qcan(q, fallback_to_original=False)
 
 
+def _outside(q, func):
+    """Apply func only to the parts of q outside IRIs and string literals."""
+    # IRIs and string literals are "shielded": transformations never touch them.
+    SHIELD = re.compile(r'(<[^>]*>|"(?:[^"\\]|\\.)*"|\'(?:[^\'\\]|\\.)*\')')
+
+    parts = SHIELD.split(q)
+    return "".join(func(p) if i % 2 == 0 else p for i, p in enumerate(parts))
+
+
+def normalize_naive_can(q: str) -> str:
+    KEYWORDS = {
+        "SELECT",
+        "CONSTRUCT",
+        "ASK",
+        "DESCRIBE",
+        "WHERE",
+        "FILTER",
+        "OPTIONAL",
+        "UNION",
+        "GRAPH",
+        "SERVICE",
+        "BIND",
+        "VALUES",
+        "ORDER",
+        "GROUP",
+        "BY",
+        "HAVING",
+        "LIMIT",
+        "OFFSET",
+        "DISTINCT",
+        "REDUCED",
+        "NOT",
+        "EXISTS",
+        "MINUS",
+        "AS",
+        "IN",
+        "FROM",
+        "NAMED",
+        "UNDEF",
+        "TRUE",
+        "FALSE",
+    }
+
+    q = _outside(q, lambda p: re.sub(r"#[^\n]*", "", p))  # 1. strip comments
+    prefixes = dict(re.findall(r"(?i)\bPREFIX\s+([\w.-]*):\s*<([^>]*)>", q))
+    q = re.sub(r"(?i)\b(?:PREFIX\s+[\w.-]*:\s*<[^>]*>|BASE\s*<[^>]*>)", " ", q)
+
+    def expand(m):  # 2. pref:local -> <iri>
+        return f"<{prefixes[m[1]]}{m[2]}>" if m[1] in prefixes else m[0]
+
+    q = _outside(q, lambda p: re.sub(r"([\w.-]*):([\w.-]*)", expand, p))
+    q = _outside(
+        q,
+        lambda p: re.sub(  # 3. uppercase keywords
+            r"\b[a-zA-Z]+\b",
+            lambda m: m[0].upper() if m[0].upper() in KEYWORDS else m[0],
+            p,
+        ),
+    )
+    renaming = {}  # 4. ?foo/$foo -> ?v1...
+
+    def rename(m):
+        return renaming.setdefault(m[1], f"?v{len(renaming) + 1}")
+
+    q = _outside(q, lambda p: re.sub(r"[?$](\w+)", rename, p))
+    q = _outside(
+        q, lambda p: re.sub(r"\s*([{}()\[\],;])\s*", r" \1 ", p)
+    )  # 5. token spacing
+    q = _outside(
+        q, lambda p: re.sub(r"\s*\.(\s|$)", r" . ", p)
+    )  # triple-final dots only
+    return re.sub(r"\s+", " ", q).strip()  # 6. collapse whitespace
+
+
 SP_NORMALIZER_PREPROCESSOR = Preprocessor(
     [
         normalize_whitespace,
@@ -120,5 +194,11 @@ QCAN_NORMALIZER_PREPROCESSOR = Preprocessor(
 QCAN_NORMALIZER_PREPROCESSOR_STRICT = Preprocessor(
     [
         normalize_qcan_strict,
+    ]
+)
+
+NAIVE_CAN_PREPROCESSOR = Preprocessor(
+    [
+        normalize_naive_can,
     ]
 )

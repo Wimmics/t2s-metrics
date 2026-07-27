@@ -35,6 +35,8 @@ metric_categories = {
         "levenshtein",
         "llm_judge",
         "meteor",
+        "naive-can-bleu",
+        "naive-can-rouge-4",
         "qcan-bleu-strict",
         "qcan-bleu-flex",
         "qcan-rouge-4-strict",
@@ -66,6 +68,15 @@ metric_categories = {
         "mrr",
         "ndcg",
         "p@1",
+    ],
+    "Canonicalization Based Metrics": [
+        "naive-can-bleu",
+        "naive-can-rouge-4",
+        "qcan-bleu-strict",
+        "qcan-bleu-flex",
+        "qcan-rouge-4-strict",
+        "qcan-rouge-4-flex",
+        "sp-bleu",
     ],
 }
 
