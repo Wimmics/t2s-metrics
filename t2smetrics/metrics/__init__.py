@@ -25,6 +25,8 @@ from t2smetrics.metrics.query_execution import QueryExecution
 from t2smetrics.metrics.text_metrics import (
     Bleu,
     Meteor,
+    NaiveCanBleu,
+    NaiveCanRougeN,
     QCanBleu,
     QCanRougeN,
     RougeN,
@@ -46,6 +48,8 @@ __all__ = [
     "LLMJudge",
     "QueryExecution",
     "Meteor",
+    "NaiveCanBleu",
+    "NaiveCanRougeN",
     "RougeN",
     "SPBleu",
     "SPF1",

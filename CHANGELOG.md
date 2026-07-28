@@ -4,6 +4,12 @@ All notable changes to this project are documented in this file.
 
 The format is inspired by Keep a Changelog and follows Semantic Versioning.
  
+## [1.1.3] - 2026-07-27
+
+### Added
+- Added NaiveCan Familly metrics
+- Added NaiveCan Family Metrics to the dashboard.
+
 ## [1.1.2] - 2026-05-06
 
 ### Added

@@ -18,6 +18,8 @@ from t2smetrics.metrics import (
     LevenshteinDistance,
     LLMJudge,
     Meteor,
+    NaiveCanBleu,
+    NaiveCanRougeN,
     PrecisionAtK,
     PrecisionQALD,
     QueryExactMatch,
@@ -67,6 +69,8 @@ metrics = [
     TokenPrecision(),
     TokenRecall(),
     URIHallucination(),
+    NaiveCanBleu(),
+    NaiveCanRougeN(n=4),
 ]
 
 run_experiments.run(

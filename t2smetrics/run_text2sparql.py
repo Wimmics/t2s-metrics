@@ -19,6 +19,8 @@ from t2smetrics.metrics import (
     JaccardSimilarity,
     LevenshteinDistance,
     Meteor,
+    NaiveCanBleu,
+    NaiveCanRougeN,
     PrecisionAtK,
     PrecisionQALD,
     QueryExactMatch,
@@ -83,6 +85,8 @@ metrics = [
     TokenRecall(),
     URIHallucination(),
     F1Spinach(),
+    NaiveCanBleu(),
+    NaiveCanRougeN(n=4),
 ]
 
 run_experiments.run(

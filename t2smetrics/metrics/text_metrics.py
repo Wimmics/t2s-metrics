@@ -10,6 +10,7 @@ from rouge_score import rouge_scorer
 from t2smetrics.core.result import EvaluationResult
 from t2smetrics.metrics.base import Metric
 from t2smetrics.representation.preprocessing import (
+    NAIVE_CAN_PREPROCESSOR,
     QCAN_NORMALIZER_PREPROCESSOR,
     QCAN_NORMALIZER_PREPROCESSOR_STRICT,
     SP_NORMALIZER_PREPROCESSOR,
@@ -161,6 +162,26 @@ class QCanRougeN(RougeN):
             raise FileNotFoundError(
                 f"QCan library not found at {qcan_library_path}. Please ensure the JAR file is present. You can download it from https://github.com/Wimmics/t2s-metrics/tree/main/third_party_lib"
             )
+
+    def compute(self, case, context=None):
+        return super().compute(case, context)
+
+
+class NaiveCanBleu(Bleu):
+    def __init__(self, n: int = 0, weights: tuple = None):
+        super().__init__(n, weights)
+        self.name = "naive-can-bleu"
+        self.preprocessor = NAIVE_CAN_PREPROCESSOR
+
+    def compute(self, case, context=None):
+        return super().compute(case, context)
+
+
+class NaiveCanRougeN(RougeN):
+    def __init__(self, n: int = 4):
+        super().__init__(n)
+        self.name = "naive-can-rouge-" + str(self.n)
+        self.preprocessor = NAIVE_CAN_PREPROCESSOR
 
     def compute(self, case, context=None):
         return super().compute(case, context)
