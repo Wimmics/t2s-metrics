@@ -1,17 +1,82 @@
 from t2smetrics import run_experiments
-from t2smetrics.metrics import AnswerSetF1, NaiveCanRougeN
+from t2smetrics.metrics import (
+    F1QALD,
+    MRR,
+    NDCG,
+    SPF1,
+    AnswerSetF1,
+    AnswerSetPrecision,
+    AnswerSetRecall,
+    Bleu,
+    CodeBLEU,
+    CosineSimilarity,
+    EuclideanDistance,
+    ExactMatchSpinach,
+    F1Spinach,
+    HitAtK,
+    JaccardSimilarity,
+    LevenshteinDistance,
+    LLMJudge,
+    Meteor,
+    NaiveCanBleu,
+    NaiveCanRougeN,
+    PrecisionAtK,
+    PrecisionQALD,
+    QueryExactMatch,
+    QueryExecution,
+    RecallQALD,
+    RougeN,
+    SPBleu,
+    TokenF1,
+    TokenPrecision,
+    TokenRecall,
+    URIHallucination,
+)
 
-dataset_name = "prob"
-graph_endpoint = "http://localhost:8887/"
-jsonl_paths = ["./datasets/prob/eval/prob.jsonl"]
-metrics = [AnswerSetF1(), NaiveCanRougeN(n=4)]
+dataset_name = "example"
+graph_path = "./datasets/example/kg/example.ttl"
+jsonl_paths = ["./datasets/example/eval/example.jsonl"]
+metrics = [
+    AnswerSetPrecision(),
+    AnswerSetRecall(),
+    AnswerSetF1(),
+    Bleu(),
+    SPBleu(),
+    CodeBLEU(),
+    CosineSimilarity(),
+    EuclideanDistance(),
+    ExactMatchSpinach(),
+    F1QALD(),
+    PrecisionQALD(),
+    RecallQALD(),
+    F1Spinach(),
+    HitAtK(k=5),
+    JaccardSimilarity(),
+    LLMJudge(),
+    LevenshteinDistance(),
+    MRR(),
+    Meteor(),
+    NDCG(),
+    PrecisionAtK(k=1),
+    QueryExecution(),
+    QueryExactMatch(),
+    RougeN(1),
+    RougeN(2),
+    RougeN(3),
+    RougeN(4),
+    TokenF1(),
+    SPF1(),
+    TokenPrecision(),
+    TokenRecall(),
+    URIHallucination(),
+    NaiveCanBleu(),
+    NaiveCanRougeN(n=4),
+]
 
 run_experiments.run(
     dataset=dataset_name,
     jsonl_evals=jsonl_paths,
     metrics_list=metrics,
-    execution_backend_endpoint_url=graph_endpoint,
+    execution_backend_graph_path=graph_path,
     verbose=True,
-    per_query=True,
-    safe_limit=3000,
 )
