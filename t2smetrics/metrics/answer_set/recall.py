@@ -8,7 +8,7 @@ class AnswerSetRecall(AnswerSetMeasure):
     def compute(self, case, context):
         gold, pred = self._get_answer_sets(case, context)
 
-        if gold is None or pred is None:
+        if case.golden_response is None or case.generated_response is None:
             return EvaluationResult(case.id, self.name, 0.0)
 
         if len(gold) == 0 and len(pred) == 0:

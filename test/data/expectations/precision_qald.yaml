@@ -9,3 +9,6 @@ non_empty_empty:
 
 non_empty_non_empty:
   precision_qald: 0.5
+
+syntax_error:
+  precision_qald: 0.0
