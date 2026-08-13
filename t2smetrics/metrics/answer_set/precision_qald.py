@@ -11,6 +11,9 @@ class PrecisionQALD(AnswerSetMeasure):
         if gold is None or pred is None:
             return EvaluationResult(case.id, self.name, 0.0)
 
+        if len(gold) == 0 and len(pred) == 0:
+            return EvaluationResult(case.id, self.name, 1.0)
+
         if len(gold) > 0 and len(pred) == 0:
             return EvaluationResult(case.id, self.name, 1.0)
 
