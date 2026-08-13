@@ -143,6 +143,9 @@ class F1Spinach(AnswerSetMeasure):
             }
         }
         """
+        if predicted is None or gold is None:
+            return 0
+
         gold_values = [
             tuple(sorted(gold_value.items()))
             for gold_key, gold_value in gold.items()

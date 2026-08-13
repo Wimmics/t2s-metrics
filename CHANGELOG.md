@@ -4,6 +4,16 @@ All notable changes to this project are documented in this file.
 
 The format is inspired by Keep a Changelog and follows Semantic Versioning.
  
+## [1.2.0] - 2026-08-13
+
+### Added
+- Added test cases for Answerset and QALD Precision, Recall and F1.
+
+### Fixed
+- Fix the implementation of Answerset and QALD Precision, Recall and F1 for some edge cases.
+- Fix an edge case in F1-Spinach.
+- Fix a bug that occurred when adding a safe_limit to an ASK query.
+
 ## [1.1.3] - 2026-07-27
 
 ### Added
