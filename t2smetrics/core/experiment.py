@@ -10,6 +10,7 @@ from t2smetrics.metrics.base import Metric
 class Experiment:
     results: set[EvaluationResult] = None
     summary: dict[str, float] = None
+    cases: list = None
 
     def __init__(
         self,
@@ -49,6 +50,7 @@ class Experiment:
     def run(
         self, max_workers: int = 1
     ) -> tuple[set[EvaluationResult], dict[str, float]]:
-        self.results = self.engine.evaluate(self.jsonl_eval, max_workers=max_workers)
+        self.cases = list(self.jsonl_eval)
+        self.results = self.engine.evaluate(self.cases, max_workers=max_workers)
         self.summary = self.aggregator.aggregate(self.results)
         return self.results, self.summary

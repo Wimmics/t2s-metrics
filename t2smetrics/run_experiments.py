@@ -76,6 +76,7 @@ def run(
     per_query: bool = False,
     parallel: bool = False,
     safe_limit: int = 0,
+    export_results: bool = True,
 ):
 
     if systems_name is None:
@@ -206,6 +207,9 @@ def run(
         end_time = time.time()
         logger.info(f"Execution time: {int(end_time - start_time)} seconds")
 
-    export_experiment_runs(
-        experiment_runs, export_path=export_path, per_query=per_query
-    )
+    if export_results:
+        export_experiment_runs(
+            experiment_runs, export_path=export_path, per_query=per_query
+        )
+
+    return experiment_runs
