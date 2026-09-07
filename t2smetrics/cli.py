@@ -115,6 +115,14 @@ def get_run_experiments_parser(
         help="Run experiments in parallel using multiprocessing (default: False)",
     )
 
+    run_experiments_parser.add_argument(
+        "-sl",
+        "--safe_limit",
+        type=int,
+        default=0,
+        help="Add Limit to the queries (default: 0)",
+    )
+
     return run_experiments_parser
 
 
@@ -198,6 +206,19 @@ def get_lint_parser(
         type=str,
         help="Path to save the lint results JSON-LD file (default: './datasets/{dataset}/lint/')",
     )
+    lint_parser.add_argument(
+        "-c",
+        "--convert",
+        choices=["label-studio"],
+        help="Convert the exported lint results to an additional format (currently supported: 'label-studio')",
+    )
+    lint_parser.add_argument(
+        "-sl",
+        "--safe_limit",
+        type=int,
+        default=0,
+        help="Add Limit to the queries (default: 0)",
+    )
     return lint_parser
 
 
@@ -274,10 +295,11 @@ def main():
             execution_backend_endpoint_url=args.execution_backend_endpoint_url,
             llm_backend_ollama_model=args.llm_backend_ollama_model,
             parallel=args.parallel,
+            safe_limit=args.safe_limit,
         )
 
     elif args.command == "lint":
-        from t2smetrics import linter
+        from t2smetrics.core import linter
 
         linter.run_lint(
             dataset=args.dataset,
@@ -291,6 +313,8 @@ def main():
             execution_backend_endpoint_url=args.execution_backend_endpoint_url,
             llm_backend_ollama_model=args.llm_backend_ollama_model,
             parallel=args.parallel,
+            convert=args.convert,
+            safe_limit=args.safe_limit,
         )
 
     else:

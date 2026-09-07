@@ -95,6 +95,7 @@ def run(
     Execution backend endpoint URL: {execution_backend_endpoint_url}
     LLM backend Ollama model: {llm_backend_ollama_model}
     Parallel execution: {parallel}
+    Safe limit: {safe_limit}
 """)
 
     experiment_runs = []

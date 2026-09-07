@@ -8,7 +8,13 @@ import uuid
 from dataclasses import dataclass
 from typing import Any
 
+from loguru import logger
+
 from t2smetrics import run_experiments
+from t2smetrics.core.converter import (
+    LABEL_STUDIO_TEMPLATE,
+    transform_jsonld_to_labelstudio,
+)
 from t2smetrics.metrics.metrics_utils import get_metric_mapping
 
 
@@ -73,7 +79,9 @@ class _RuleParser:
 
         metric_match = self._metric.match(self.text, self.position)
         if not metric_match:
-            raise ValueError(f"Expected metric at position {self.position}")
+            raise ValueError(
+                f"Expected metric at position {self.position} found: {self.text[self.position :]}"
+            )
         metric = metric_match.group()
         self.position = metric_match.end()
         self._spaces()
@@ -138,7 +146,10 @@ def evaluate_rule(ast, values: dict[str, float]) -> bool:
     """Evaluate a parsed rule against per-query metric values."""
     if isinstance(ast, Comparison):
         if ast.metric not in values:
-            raise ValueError(f"Metric {ast.metric!r} was not computed")
+            logger.warning(
+                f"Metric {ast.metric!r} was not computed for the ast {ast!r} returning False"
+            )
+            return False
         return ast.evaluate(values[ast.metric])
     left = evaluate_rule(ast[1], values)
     right = evaluate_rule(ast[2], values)
@@ -211,6 +222,48 @@ def export_wadm_annotations(annotations: list[dict], export_path: str, dataset: 
     return path
 
 
+def export_labelstudio_annotations(
+    source_path: str,
+    export_path: str | None,
+    dataset: str,
+) -> str:
+    """Read a WADM JSON-LD export and convert it to Label Studio JSON."""
+    with open(source_path, encoding="utf-8") as source:
+        jsonld_content = source.read()
+
+    converted = transform_jsonld_to_labelstudio(jsonld_content)
+
+    if export_path:
+        if os.path.splitext(export_path)[1].lower() in {".json", ".jsonld"}:
+            target = export_path
+            if os.path.splitext(target)[1].lower() == ".jsonld":
+                target = os.path.splitext(target)[0] + ".json"
+        else:
+            os.makedirs(export_path, exist_ok=True)
+            basename = os.path.splitext(os.path.basename(source_path))[0]
+            target = os.path.join(export_path, f"{basename}-label-studio.json")
+    else:
+        directory = f"./datasets/{dataset}/label-studio"
+        os.makedirs(directory, exist_ok=True)
+        basename = os.path.splitext(os.path.basename(source_path))[0]
+        target = os.path.join(directory, f"{basename}-label-studio.json")
+
+    os.makedirs(os.path.dirname(target) or ".", exist_ok=True)
+
+    # Write the converted Label Studio JSON file
+    with open(target, "w", encoding="utf-8") as output:
+        output.write(converted)
+
+    # Write the Label Studio template XML file alongside the converted JSON
+    with open(
+        os.path.splitext(target)[0] + "-template.xml",
+        "w",
+        encoding="utf-8",
+    ) as output:
+        output.write(LABEL_STUDIO_TEMPLATE)
+    return target
+
+
 def run_lint(
     *,
     dataset,
@@ -224,6 +277,8 @@ def run_lint(
     execution_backend_endpoint_url=None,
     llm_backend_ollama_model="gemma3:4b",
     parallel=False,
+    convert=None,
+    safe_limit=0,
 ):
     """Compute metrics, flag matching cases, and export a WADM report."""
     ast = parse_rule(rule)
@@ -246,6 +301,7 @@ def run_lint(
         parallel=parallel,
         per_query=True,
         export_results=False,
+        safe_limit=safe_limit,
     )
     annotations = []
     for experiment in experiments:
@@ -259,4 +315,7 @@ def run_lint(
                     _annotation(experiment, cases[query_id], values, rule)
                 )
     path = export_wadm_annotations(annotations, export_path, dataset)
+    if convert == "label-studio":
+        converted_path = export_labelstudio_annotations(path, export_path, dataset)
+        return converted_path
     return path

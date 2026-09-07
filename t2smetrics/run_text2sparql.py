@@ -98,4 +98,5 @@ run_experiments.run(
     per_query=False,
     parallel=True,
     verbose=True,
+    safe_limit=10000,
 )
