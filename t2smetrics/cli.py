@@ -116,7 +116,6 @@ def get_run_experiments_parser(
     )
 
     run_experiments_parser.add_argument(
-        "-sl",
         "--safe_limit",
         type=int,
         default=0,
