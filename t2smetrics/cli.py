@@ -1,3 +1,4 @@
+import json
 import shutil
 import subprocess
 import sys
@@ -66,20 +67,23 @@ def get_run_experiments_parser(
         required=True,
     )
     run_experiments_parser.add_argument(
-        "-eg",
+        "--eg",
         "--execution_backend_graph_path",
         type=str,
+        dest="execution_backend_graph_path",
         help="Path to the execution backend graph (e.g., './datasets/ck25/kg/dataset.ttl')",
     )
     run_experiments_parser.add_argument(
-        "-ee",
+        "--ee",
         "--execution_backend_endpoint_url",
         type=str,
+        dest="execution_backend_endpoint_url",
         help="SPARQL endpoint URL for the execution backend (e.g., 'http://localhost:3030/dataset/sparql')",
     )
     run_experiments_parser.add_argument(
-        "-lo",
+        "--lo",
         "--llm_backend_ollama_model",
+        dest="llm_backend_ollama_model",
         default="gemma3:4b",
         type=str,
         help="LLM model name for Ollama backend (e.g., 'gemma3:4b')",
@@ -91,21 +95,24 @@ def get_run_experiments_parser(
         help="Enable verbose output during experiment execution (default: False)",
     )
     run_experiments_parser.add_argument(
-        "-ncr",
+        "--ncr",
         "--no_cache_results",
         action="store_false",
         help="Do not cache query execution results (default: cache results)",
+        dest="no_cache_results",
     )
     run_experiments_parser.add_argument(
-        "-ep",
+        "--ep",
         "--export_path",
         type=str,
+        dest="export_path",
         help="Path to save the experiment results JSON file (default: './datasets/{dataset}/results/')",
     )
     run_experiments_parser.add_argument(
-        "-eq",
+        "--eq",
         "--export_per_query",
         action="store_true",
+        dest="export_per_query",
         help="Include per-query results in the exported JSON file (default: False)",
     )
     run_experiments_parser.add_argument(
@@ -116,10 +123,28 @@ def get_run_experiments_parser(
     )
 
     run_experiments_parser.add_argument(
+        "--sl",
         "--safe_limit",
+        dest="safe_limit",
         type=int,
         default=0,
         help="Add Limit to the queries (default: 0)",
+    )
+    run_experiments_parser.add_argument(
+        "--pp",
+        "--add_popular_prefixes",
+        dest="add_popular_prefixes",
+        action="store_true",
+        help="Add popular prefixes from prefix.cc (default: False)",
+    )
+    run_experiments_parser.add_argument(
+        "--cp",
+        "--add_custom_prefixes",
+        dest="add_custom_prefixes",
+        type=json.loads,
+        default=None,
+        metavar="JSON",
+        help='Custom prefix mapping as JSON, e.g. \'{"ex":"http://example.org/"}\'',
     )
 
     return run_experiments_parser
@@ -187,21 +212,38 @@ def get_lint_parser(
         + ", ".join(sorted(get_metric_mapping())),
     )
     lint_parser.add_argument("-s", "--systems_name", nargs="+")
-    lint_parser.add_argument("-eg", "--execution_backend_graph_path")
-    lint_parser.add_argument("-ee", "--execution_backend_endpoint_url")
-    lint_parser.add_argument("-lo", "--llm_backend_ollama_model", default="gemma3:4b")
+    lint_parser.add_argument(
+        "--eg",
+        "--execution_backend_graph_path",
+        help="Path to the execution backend graph",
+        dest="execution_backend_graph_path",
+    )
+    lint_parser.add_argument(
+        "--ee",
+        "--execution_backend_endpoint_url",
+        help="URL of the execution backend endpoint",
+        dest="execution_backend_endpoint_url",
+    )
+    lint_parser.add_argument(
+        "--lo",
+        "--llm_backend_ollama_model",
+        default="gemma3:4b",
+        help="LLM model name for Ollama backend (e.g., 'gemma3:4b')",
+        dest="llm_backend_ollama_model",
+    )
     lint_parser.add_argument("-v", "--verbose", action="store_true")
     lint_parser.add_argument(
-        "-ncr",
+        "--ncr",
         "--no_cache_results",
         action="store_false",
-        dest="cache_results",
+        dest="no_cache_results",
         default=True,
     )
     lint_parser.add_argument("-p", "--parallel", action="store_true")
     lint_parser.add_argument(
-        "-ep",
+        "--ep",
         "--export_path",
+        dest="export_path",
         type=str,
         help="Path to save the lint results JSON-LD file (default: './datasets/{dataset}/lint/')",
     )
@@ -212,11 +254,28 @@ def get_lint_parser(
         help="Convert the exported lint results to an additional format (currently supported: 'label-studio')",
     )
     lint_parser.add_argument(
-        "-sl",
+        "--sl",
         "--safe_limit",
+        dest="safe_limit",
         type=int,
         default=0,
         help="Add Limit to the queries (default: 0)",
+    )
+    lint_parser.add_argument(
+        "--pp",
+        "--add_popular_prefixes",
+        dest="add_popular_prefixes",
+        action="store_true",
+        help="Add popular prefixes from prefix.cc (default: False)",
+    )
+    lint_parser.add_argument(
+        "--cp",
+        "--add_custom_prefixes",
+        dest="add_custom_prefixes",
+        type=json.loads,
+        default=None,
+        metavar="JSON",
+        help='Custom prefix mapping as JSON, e.g. \'{"ex":"http://example.org/"}\'',
     )
     return lint_parser
 
@@ -295,6 +354,8 @@ def main():
             llm_backend_ollama_model=args.llm_backend_ollama_model,
             parallel=args.parallel,
             safe_limit=args.safe_limit,
+            add_popular_prefixes=args.add_popular_prefixes,
+            add_custom_prefixes=args.add_custom_prefixes,
         )
 
     elif args.command == "lint":
@@ -307,13 +368,15 @@ def main():
             jsonl_evals=args.jsonl_evals,
             export_path=args.export_path,
             verbose=args.verbose,
-            cache_results=args.cache_results,
+            cache_results=args.no_cache_results,
             execution_backend_graph_path=args.execution_backend_graph_path,
             execution_backend_endpoint_url=args.execution_backend_endpoint_url,
             llm_backend_ollama_model=args.llm_backend_ollama_model,
             parallel=args.parallel,
             convert=args.convert,
             safe_limit=args.safe_limit,
+            add_popular_prefixes=args.add_popular_prefixes,
+            add_custom_prefixes=args.add_custom_prefixes,
         )
 
     else:

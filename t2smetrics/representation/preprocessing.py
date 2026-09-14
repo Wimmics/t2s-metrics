@@ -1,11 +1,13 @@
 import re
 import subprocess
 from collections.abc import Callable
+from functools import partial
 
 from loguru import logger
 
 from t2smetrics.core.eval import QueryCase
 from t2smetrics.representation.sparql_query import SparqlQuery
+from t2smetrics.utils.prefix_utils import add_known_prefixes
 
 
 class Preprocessor:
@@ -25,6 +27,22 @@ class Preprocessor:
             order_matters=case.order_matters,
         )
         return processed_case
+
+
+def prefix_preprocessor(
+    add_popular_prefixes: bool = False,
+    add_custom_prefixes: dict = None,
+) -> Preprocessor:
+    """Create a preprocessor that adds prefixes used by a query."""
+    return Preprocessor(
+        [
+            partial(
+                add_known_prefixes,
+                add_popular_prefixes=add_popular_prefixes,
+                add_custom_prefixes=add_custom_prefixes,
+            )
+        ]
+    )
 
 
 qcan_library_path = "./third_party_lib/qcan-1.1-jar-with-dependencies.jar"

@@ -279,6 +279,8 @@ def run_lint(
     parallel=False,
     convert=None,
     safe_limit=0,
+    add_popular_prefixes=False,
+    add_custom_prefixes=None,
 ):
     """Compute metrics, flag matching cases, and export a WADM report."""
     ast = parse_rule(rule)
@@ -302,6 +304,8 @@ def run_lint(
         per_query=True,
         export_results=False,
         safe_limit=safe_limit,
+        add_popular_prefixes=add_popular_prefixes,
+        add_custom_prefixes=add_custom_prefixes,
     )
     annotations = []
     for experiment in experiments:

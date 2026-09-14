@@ -27,6 +27,8 @@ def _run_one_experiment(
     verbose: bool,
     cache_results: bool,
     per_query: bool,
+    add_popular_prefixes: bool,
+    add_custom_prefixes: dict,
     max_workers_metrics: int = 1,
 ):
     jsonl_eval = JsonlEval(eval_path)
@@ -46,6 +48,8 @@ def _run_one_experiment(
         llm_backend=llm_backend,
         verbose=verbose,
         cache_result_sets=cache_results,
+        add_popular_prefixes=add_popular_prefixes,
+        add_custom_prefixes=add_custom_prefixes,
     )
 
     results, summary = experiment.run(max_workers_metrics)
@@ -77,6 +81,8 @@ def run(
     parallel: bool = False,
     safe_limit: int = 0,
     export_results: bool = True,
+    add_popular_prefixes: bool = False,
+    add_custom_prefixes: dict = None,
 ):
 
     if systems_name is None:
@@ -96,6 +102,8 @@ def run(
     LLM backend Ollama model: {llm_backend_ollama_model}
     Parallel execution: {parallel}
     Safe limit: {safe_limit}
+    Add popular prefixes: {add_popular_prefixes}
+    Add custom prefixes: {add_custom_prefixes}
 """)
 
     experiment_runs = []
@@ -180,6 +188,8 @@ def run(
                         verbose=verbose,
                         cache_results=cache_results,
                         per_query=per_query,
+                        add_popular_prefixes=add_popular_prefixes,
+                        add_custom_prefixes=add_custom_prefixes,
                         max_workers_metrics=max_workers_metrics,
                     )
                 )
@@ -201,6 +211,8 @@ def run(
                 verbose=verbose,
                 cache_results=cache_results,
                 per_query=per_query,
+                add_popular_prefixes=add_popular_prefixes,
+                add_custom_prefixes=add_custom_prefixes,
             )
             experiment_runs.append(experiment)
 
