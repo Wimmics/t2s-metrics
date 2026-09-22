@@ -4,14 +4,42 @@ import json
 import os
 import time
 
+from rdflib import Graph, Literal, Namespace, URIRef
+from rdflib.namespace import RDF, RDFS, XSD
+
 from t2smetrics.core.experiment import Experiment
+
+T2S = Namespace("http://ns.inria.fr/t2s/ontology#")
+T2SI = Namespace("http://ns.inria.fr/t2s/instance#")
+LSQ = Namespace("http://lsq.aksw.org/vocab#")
+SD = Namespace("http://www.w3.org/ns/sparql-service-description#")
 
 
 def export_experiment_runs(
+    experiment_runs: list[Experiment],
+    export_path: str = None,
+    per_query=False,
+    export_format: str = "json",
+):
+    """Export the results of multiple experiment runs to a file in the specified format (JSON or Turtle)."""
+    if export_format == "json":
+        export_experiment_runs_json(
+            experiment_runs, export_path=export_path, per_query=per_query
+        )
+    elif export_format == "ttl":
+        export_experiment_runs_turtle(
+            experiment_runs, export_path=export_path, per_query=per_query
+        )
+    else:
+        raise ValueError(
+            f"Unsupported export format: {export_format}. Supported formats are 'json' and 'ttl'."
+        )
+
+
+def export_experiment_runs_json(
     experiment_runs: list[Experiment], export_path: str = None, per_query=False
 ):
     """Export the results of multiple experiment runs to a JSON file."""
-
     check_coherence_of_results(experiment_runs)
 
     if export_path is None:
@@ -39,7 +67,9 @@ def export_experiment_runs(
 
 
 def check_coherence_of_results(experiment_runs: list[Experiment], per_query=False):
-    """Check the coherence of results across multiple experiment runs. This function checks if:
+    """Check the coherence of results across multiple experiment runs.
+
+    This function checks if:
     - the same dataset is present in all experiment runs.
     - if a summary of results is present for all experiment runs.
     - if per_query is True, check that per-query results are present for all experiment runs
@@ -51,7 +81,6 @@ def check_coherence_of_results(experiment_runs: list[Experiment], per_query=Fals
         experiment_runs: A list of Experiment instances to check for coherence.
         per_query: A boolean flag indicating whether to check for the presence of per-query results.
     """
-
     if experiment_runs is None or len(experiment_runs) == 0:
         raise ValueError("No experiment runs to export.")
 
@@ -69,3 +98,159 @@ def check_coherence_of_results(experiment_runs: list[Experiment], per_query=Fals
             raise ValueError(
                 f"Experiment run for system {experiment.system_name} does not have per-query results. Run the experiment to compute the per-query results before exporting."
             )
+
+
+def export_experiment_runs_turtle(
+    experiment_runs: list[Experiment],
+    export_path: str = None,
+    base_url: str = "https://example.org/experiments",
+) -> str:
+    """Export experiment results using the T2S vocabulary.
+
+    The exported graph follows the structure Dataset -> Case -> Query and
+    Dataset -> System -> Response -> Score used by ``v1/t2s-vocab.ttl``.
+    """
+    check_coherence_of_results(experiment_runs)
+
+    if export_path is None:
+        export_path = f"./datasets/{experiment_runs[0].dataset}/results"
+
+    current_time = time.strftime("%Y%m%d-%H%M%S")
+    experiment_id = f"{experiment_runs[0].dataset}-{current_time}"
+    export_path += f"/{experiment_id}.ttl"
+
+    base_uri = URIRef(f"{base_url.rstrip('/')}/{experiment_id}")
+    dataset_uri = URIRef(f"{base_uri}/dataset")
+    system_uris = {
+        experiment.system_name: URIRef(
+            f"{base_uri}/system/{_uri_component(experiment.system_name)}"
+        )
+        for experiment in experiment_runs
+    }
+
+    g = Graph()
+    g.bind("t2s", T2S)
+    g.bind("t2si", T2SI)
+    g.bind("lsq", LSQ)
+    g.bind("sd", SD)
+    g.bind("xsd", XSD)
+    g.bind("rdfs", RDFS)
+    g.bind("", base_uri)
+
+    g.add((dataset_uri, RDF.type, T2S.Dataset))
+    g.add((dataset_uri, RDFS.label, Literal(experiment_runs[0].dataset)))
+
+    for run_index, experiment in enumerate(experiment_runs):
+        system_uri = system_uris[experiment.system_name]
+        experiment_uri = URIRef(f"{base_uri}/experiment/{run_index}")
+        g.add((system_uri, RDF.type, T2S.System))
+        g.add((system_uri, RDFS.label, Literal(experiment.system_name)))
+        g.add((system_uri, T2S.participatesIn, experiment_uri))
+        g.add((experiment_uri, RDF.type, T2S.Experiment))
+        g.add((experiment_uri, T2S.evaluatedOn, dataset_uri))
+
+        for metric_name, metric_value in experiment.summary.items():
+            score_uri = URIRef(f"{experiment_uri}/score/{_uri_component(metric_name)}")
+            metric_uri = _metric_uri(metric_name)
+            g.add((metric_uri, RDF.type, T2S.Metric))
+            g.add((metric_uri, RDFS.label, Literal(metric_name)))
+            g.add((experiment_uri, T2S.hasScore, score_uri))
+            g.add((score_uri, RDF.type, T2S.Score))
+            g.add((score_uri, T2S.forMetric, metric_uri))
+            g.add(
+                (score_uri, T2S.scoreValue, Literal(metric_value, datatype=XSD.decimal))
+            )
+
+        for case_index, case in enumerate(experiment.cases or []):
+            case_uri = URIRef(f"{base_uri}/case/{_uri_component(case.id)}")
+            g.add((dataset_uri, T2S.hasCase, case_uri))
+            g.add((case_uri, RDF.type, T2S.Case))
+            g.add((case_uri, T2S.caseID, Literal(case.id)))
+            # TODO add appropriate language tag if available
+            g.add((case_uri, T2S.question, Literal(case.question.raw, lang="en")))
+            g.add((case_uri, T2S.hasGoldQuery, _query_uri(base_uri, case.id, "gold")))
+            _add_query(g, base_uri, case.id, "gold", case.golden, case.golden_response)
+
+            response_uri = URIRef(
+                f"{base_uri}/response/{_uri_component(experiment.system_name)}/{_uri_component(case.id)}"
+            )
+            generated_query_uri = _query_uri(
+                base_uri, f"{experiment.system_name}/{case.id}", "generated"
+            )
+            g.add((system_uri, T2S.providedResponse, response_uri))
+            g.add((response_uri, RDF.type, T2S.Response))
+            g.add((response_uri, T2S.isResponseTo, case_uri))
+            g.add((response_uri, T2S.hasGeneratedQuery, generated_query_uri))
+            _add_query(
+                g,
+                base_uri,
+                f"{experiment.system_name}/{case.id}",
+                "generated",
+                case.generated,
+                case.generated_response,
+            )
+
+            for result in experiment.results or []:
+                if result.id != case.id:
+                    continue
+                score_uri = URIRef(
+                    f"{response_uri}/score/{_uri_component(result.metric)}"
+                )
+                metric_uri = _metric_uri(result.metric)
+                g.add((metric_uri, RDF.type, T2S.Metric))
+                g.add((metric_uri, RDFS.label, Literal(result.metric)))
+                g.add((response_uri, T2S.hasScore, score_uri))
+                g.add((score_uri, RDF.type, T2S.Score))
+                g.add((score_uri, T2S.forMetric, metric_uri))
+                g.add(
+                    (
+                        score_uri,
+                        T2S.scoreValue,
+                        Literal(result.score, datatype=XSD.decimal),
+                    )
+                )
+
+    # Serialize to Turtle
+    turtle_output = g.serialize(format="turtle", encoding="utf-8").decode("utf-8")
+
+    # Save to file if path provided
+    if export_path:
+        os.makedirs(os.path.dirname(export_path), exist_ok=True)
+        with open(export_path, "w", encoding="utf-8") as f:
+            f.write(turtle_output)
+
+    return turtle_output
+
+
+def _uri_component(value: str) -> str:
+    """Return a stable URI component for dataset, system, case, or metric names."""
+    return "".join(
+        character if character.isalnum() or character in "-_" else "_"
+        for character in str(value)
+    )
+
+
+def _metric_uri(metric_name: str) -> URIRef:
+    normalized_name = _uri_component(metric_name.lower())
+    return URIRef(T2SI[normalized_name])
+
+
+def _query_uri(base_uri: URIRef, case_id: str, query_kind: str) -> URIRef:
+    return URIRef(f"{base_uri}/query/{_uri_component(case_id)}/{query_kind}")
+
+
+def _add_query(graph, base_uri, case_id, query_kind, query, response):
+    query_uri = _query_uri(base_uri, case_id, query_kind)
+    graph.add((query_uri, RDF.type, T2S.Query))
+    graph.add((query_uri, T2S.queryText, Literal(str(query))))
+    if response != "__NOT_CACHED__":
+        result_set_uri = URIRef(f"{query_uri}/result-set")
+        graph.add((query_uri, T2S.hasResultSet, result_set_uri))
+        graph.add((result_set_uri, RDF.type, T2S.ResultSet))
+        graph.add(
+            (
+                result_set_uri,
+                T2S.resultSetValueJSON,
+                Literal(json.dumps(response, default=str, sort_keys=True)),
+            )
+        )

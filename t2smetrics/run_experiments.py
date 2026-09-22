@@ -70,6 +70,7 @@ def run(
     jsonl_evals: list[str],
     metrics_list: list[str] | list[Metric],
     export_path: str = None,
+    export_format: str = "json",
     llm_backend_ollama_model: str = "gemma3:4b",
     execution_backend_graph_path: str = None,
     execution_backend_endpoint_url: str = None,
@@ -96,6 +97,7 @@ def run(
     Verbose mode: {verbose}
     Cache results: {cache_results}
     Export path: {export_path}
+    Export format: {export_format}
     Export per query: {per_query}
     Execution backend graph path: {execution_backend_graph_path}
     Execution backend endpoint URL: {execution_backend_endpoint_url}
@@ -222,7 +224,10 @@ def run(
 
     if export_results:
         export_experiment_runs(
-            experiment_runs, export_path=export_path, per_query=per_query
+            experiment_runs=experiment_runs,
+            export_path=export_path,
+            per_query=per_query,
+            export_format=export_format,
         )
 
     return experiment_runs
