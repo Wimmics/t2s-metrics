@@ -22,6 +22,7 @@ class Preprocessor:
 
         processed_case = QueryCase(
             id=case.id,
+            question=case.question,
             golden=SparqlQuery(processed_golden),
             generated=SparqlQuery(processed_generated),
             order_matters=case.order_matters,

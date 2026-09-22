@@ -90,11 +90,13 @@ LABEL_STUDIO_TEMPLATE = """
   <View style="margin-top: 20px; border-top: 2px solid #ccc; padding-top: 16px;">
     <Header value="Human Evaluator Decision"/>
     <Choices name="human_verification" toName="question" required="true">
-      <Choice value="1" html="True Positive Error (Benchmark issue confirmed)"/>
-      <Choice value="2" html="False Positive (Benchmark query is correct, lint false alarm)"/>
-      <Choice value="3" html="Ambiguous / Needs Domain Expert Review"/>
+      <Choice value="1" html="The golden query is wrong (it is completely incorrect)."/>
+      <Choice value="2" html="The pair consisting of the NL question and the golden query is ambiguous."/>
+      <Choice value="3" html="The F1 metric is unsuitable: it does not reflect the quality of the generated query."/>
+      <Choice value="4" html="The golden query is taking a short cut e.g. using directly a URI instead of a additional triples."/>
+      <Choice value="5" html="The error profiling tool should not have flagged this case."/>
+      <Choice value="6" html="Ambiguous case (needs discussion)"/>
     </Choices>
-    <TextArea name="optional_explanation" toName="optional_explanation" placeholder="Add optional explanation..." rows="5"/>
   </View>
   
   

@@ -43,6 +43,9 @@ class F1Spinach(AnswerSetMeasure):
         if predicted_results is None:
             return 0
 
+        if len(predicted_results) == 0 and len(gold_results) == 0:
+            return 1
+
         if type(predicted_results) is bool or type(gold_results) is bool:
             return int(predicted_results == gold_results)
 

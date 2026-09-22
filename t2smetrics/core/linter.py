@@ -267,7 +267,7 @@ def export_labelstudio_annotations(
 def run_lint(
     *,
     dataset,
-    systems_name,
+    systems_name=None,
     rule,
     jsonl_evals=None,
     export_path=None,
