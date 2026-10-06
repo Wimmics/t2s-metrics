@@ -1,4 +1,4 @@
-"""Metric-rule linting and Web Annotation Data Model export."""
+"""Metric-rule filtering and Web Annotation Data Model export."""
 
 import json
 import os
@@ -129,7 +129,7 @@ class _RuleParser:
 
 
 def parse_rule(rule: str):
-    """Parse a lint rule into an AST."""
+    """Parse a filter rule into an AST."""
     if not rule or not rule.strip():
         raise ValueError("Rule must not be empty")
     return _RuleParser(rule).parse()
@@ -200,20 +200,20 @@ def _annotation(experiment, case, metrics, rule):
 
 def export_wadm_annotations(annotations: list[dict], export_path: str, dataset: str):
     """Write annotations as a WADM Annotation Collection."""
-    directory = export_path or f"./datasets/{dataset}/lint"
+    directory = export_path or f"./datasets/{dataset}/filter"
     if os.path.splitext(directory)[1].lower() in {".json", ".jsonld"}:
         path = directory
     else:
         os.makedirs(directory, exist_ok=True)
         current_time = time.strftime("%Y%m%d-%H%M%S")
-        path = os.path.join(directory, f"lint-{dataset}-{current_time}.jsonld")
+        path = os.path.join(directory, f"filter-{dataset}-{current_time}.jsonld")
     os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
     document = {
         "@context": [
             "http://www.w3.org/ns/anno.jsonld",
             {"t2s": "https://wimmics.github.io/t2s-vocab/"},
         ],
-        "id": f"urn:t2s:lint:{dataset}:{uuid.uuid4()}",
+        "id": f"urn:t2s:filter:{dataset}:{uuid.uuid4()}",
         "type": "AnnotationCollection",
         "items": annotations,
     }
@@ -264,7 +264,7 @@ def export_labelstudio_annotations(
     return target
 
 
-def run_lint(
+def run_filter(
     *,
     dataset,
     systems_name=None,

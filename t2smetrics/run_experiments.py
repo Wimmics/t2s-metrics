@@ -220,7 +220,7 @@ def run(
 
     if verbose:
         end_time = time.time()
-        logger.info(f"Execution time: {int(end_time - start_time)} seconds")
+        logger.info(f"Execution time: {end_time - start_time:.3f} seconds")
 
     if export_results:
         export_experiment_runs(
@@ -228,6 +228,7 @@ def run(
             export_path=export_path,
             per_query=per_query,
             export_format=export_format,
+            endpoint_url=execution_backend_endpoint_url,
         )
 
     return experiment_runs

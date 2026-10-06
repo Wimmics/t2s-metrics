@@ -195,65 +195,65 @@ def get_dashboard_parser(
     return dashboard_parser
 
 
-def get_lint_parser(
+def get_filter_parser(
     subparsers: "_SubParsersAction[ArgumentParser]",
 ) -> ArgumentParser:
-    """Add the lint command and its evaluation options."""
-    lint_parser = subparsers.add_parser(
-        "lint", help="Evaluate a boolean metric rule and export a WADM report"
+    """Add the filter command and its evaluation options."""
+    filter_parser = subparsers.add_parser(
+        "filter", help="Evaluate a boolean metric rule and export a WADM report"
     )
-    lint_parser.add_argument("-d", "--dataset", required=True)
-    lint_parser.add_argument("-j", "--jsonl_evals", nargs="+", required=True)
-    lint_parser.add_argument(
+    filter_parser.add_argument("-d", "--dataset", required=True)
+    filter_parser.add_argument("-j", "--jsonl_evals", nargs="+", required=True)
+    filter_parser.add_argument(
         "-r",
         "--rule",
         required=True,
         help="Boolean metric rule e.g. (answerset_f1[0] && naive-can-rouge-4[0.95,1]) || (answerset_f1[1] && naive-can-rouge-4[0,0.25]). Available metrics: "
         + ", ".join(sorted(get_metric_mapping())),
     )
-    lint_parser.add_argument("-s", "--systems_name", nargs="+")
-    lint_parser.add_argument(
+    filter_parser.add_argument("-s", "--systems_name", nargs="+")
+    filter_parser.add_argument(
         "--eg",
         "--execution_backend_graph_path",
         help="Path to the execution backend graph",
         dest="execution_backend_graph_path",
     )
-    lint_parser.add_argument(
+    filter_parser.add_argument(
         "--ee",
         "--execution_backend_endpoint_url",
         help="URL of the execution backend endpoint",
         dest="execution_backend_endpoint_url",
     )
-    lint_parser.add_argument(
+    filter_parser.add_argument(
         "--lo",
         "--llm_backend_ollama_model",
         default="gemma3:4b",
         help="LLM model name for Ollama backend (e.g., 'gemma3:4b')",
         dest="llm_backend_ollama_model",
     )
-    lint_parser.add_argument("-v", "--verbose", action="store_true")
-    lint_parser.add_argument(
+    filter_parser.add_argument("-v", "--verbose", action="store_true")
+    filter_parser.add_argument(
         "--ncr",
         "--no_cache_results",
         action="store_false",
         dest="no_cache_results",
         default=True,
     )
-    lint_parser.add_argument("-p", "--parallel", action="store_true")
-    lint_parser.add_argument(
+    filter_parser.add_argument("-p", "--parallel", action="store_true")
+    filter_parser.add_argument(
         "--ep",
         "--export_path",
         dest="export_path",
         type=str,
-        help="Path to save the lint results JSON-LD file (default: './datasets/{dataset}/lint/')",
+        help="Path to save the filter results file (default: './datasets/{dataset}/filter/')",
     )
-    lint_parser.add_argument(
+    filter_parser.add_argument(
         "-c",
         "--convert",
         choices=["label-studio"],
-        help="Convert the exported lint results to an additional format (currently supported: 'label-studio')",
+        help="Convert the exported filter results to an additional format (currently supported: 'label-studio')",
     )
-    lint_parser.add_argument(
+    filter_parser.add_argument(
         "--sl",
         "--safe_limit",
         dest="safe_limit",
@@ -261,14 +261,14 @@ def get_lint_parser(
         default=0,
         help="Add Limit to the queries (default: 0)",
     )
-    lint_parser.add_argument(
+    filter_parser.add_argument(
         "--pp",
         "--add_popular_prefixes",
         dest="add_popular_prefixes",
         action="store_true",
         help="Add popular prefixes from prefix.cc (default: False)",
     )
-    lint_parser.add_argument(
+    filter_parser.add_argument(
         "--cp",
         "--add_custom_prefixes",
         dest="add_custom_prefixes",
@@ -277,7 +277,7 @@ def get_lint_parser(
         metavar="JSON",
         help='Custom prefix mapping as JSON, e.g. \'{"ex":"http://example.org/"}\'',
     )
-    return lint_parser
+    return filter_parser
 
 
 def docs_build_html():
@@ -317,7 +317,7 @@ def main():
 
     get_run_experiments_parser(subparsers)
 
-    get_lint_parser(subparsers)
+    get_filter_parser(subparsers)
 
     get_dashboard_parser(subparsers)
 
@@ -358,10 +358,10 @@ def main():
             add_custom_prefixes=args.add_custom_prefixes,
         )
 
-    elif args.command == "lint":
-        from t2smetrics.core import linter
+    elif args.command == "filter":
+        from t2smetrics.core import filterer
 
-        linter.run_lint(
+        filterer.run_filter(
             dataset=args.dataset,
             systems_name=args.systems_name,
             rule=args.rule,

@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from t2smetrics.core.linter import (
+from t2smetrics.core.filterer import (
     Comparison,
     evaluate_rule,
     export_labelstudio_annotations,
@@ -55,7 +55,7 @@ def test_wadm_export_writes_annotation_collection(tmp_path):
 
 
 def test_labelstudio_export_writes_json(tmp_path):
-    source = tmp_path / "lint-example.jsonld"
+    source = tmp_path / "filter-example.jsonld"
     source.write_text(
         json.dumps(
             {
