@@ -36,7 +36,7 @@ def _run_one_experiment(
     qa = (
         systems_name[system_index]
         if system_index < len(systems_name)
-        else f"System with JSONL {eval_path}"
+        else f"{eval_path}"
     )
 
     experiment = Experiment(

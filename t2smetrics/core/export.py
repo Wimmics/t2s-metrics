@@ -13,6 +13,7 @@ from t2smetrics.core.experiment import Experiment
 T2S = Namespace("http://ns.inria.fr/t2s/ontology#")
 T2SI = Namespace("http://ns.inria.fr/t2s/instance#")
 LSQ = Namespace("http://lsq.aksw.org/vocab#")
+OA = Namespace("http://www.w3.org/ns/oa#")
 SD = Namespace("http://www.w3.org/ns/sparql-service-description#")
 
 
@@ -112,7 +113,7 @@ def export_experiment_runs_turtle(
     """Export experiment results using the T2S vocabulary.
 
     The exported graph follows the structure Dataset -> Case -> Query and
-    Dataset -> System -> Response -> Score used by ``v1/t2s-vocab.ttl``.
+    Dataset -> System -> Response -> Score.
     """
     check_coherence_of_results(experiment_runs)
 
@@ -133,6 +134,7 @@ def export_experiment_runs_turtle(
     g.bind("t2s", T2S)
     g.bind("t2si", T2SI)
     g.bind("lsq", LSQ)
+    g.bind("oa", OA)
     g.bind("sd", SD)
     g.bind("xsd", XSD)
     g.bind("rdfs", RDFS)
@@ -150,19 +152,25 @@ def export_experiment_runs_turtle(
         g.add((experiment_uri, RDF.type, T2S.Experiment))
         g.add((experiment_uri, T2S.evaluatedOn, dataset_uri))
         if endpoint_url is not None:
-            g.add((experiment_uri, T2S.usedEndpoint, URIRef(endpoint_url)))
+            g.add(
+                (
+                    experiment_uri,
+                    T2S.usedEndpoint,
+                    Literal(endpoint_url, datatype=XSD.anyURI),
+                )
+            )
 
         for metric_name, metric_value in experiment.summary.items():
             score_uri = _uuid_uri()
             metric_uri = _metric_uri(metric_name)
             g.add((metric_uri, RDF.type, T2S.Metric))
             g.add((metric_uri, RDFS.label, Literal(metric_name)))
-            g.add((experiment_uri, T2S.hasScore, score_uri))
             g.add((score_uri, RDF.type, T2S.Score))
             g.add((score_uri, T2S.forMetric, metric_uri))
             g.add(
                 (score_uri, T2S.scoreValue, Literal(metric_value, datatype=XSD.decimal))
             )
+            _add_score_annotation(g, experiment_uri, score_uri)
 
         for case in experiment.cases or []:
             case_uri = _uuid_uri()
@@ -195,7 +203,6 @@ def export_experiment_runs_turtle(
                 metric_uri = _metric_uri(result.metric)
                 g.add((metric_uri, RDF.type, T2S.Metric))
                 g.add((metric_uri, RDFS.label, Literal(result.metric)))
-                g.add((response_uri, T2S.hasScore, score_uri))
                 g.add((score_uri, RDF.type, T2S.Score))
                 g.add((score_uri, T2S.forMetric, metric_uri))
                 g.add(
@@ -205,6 +212,7 @@ def export_experiment_runs_turtle(
                         Literal(result.score, datatype=XSD.decimal),
                     )
                 )
+                _add_score_annotation(g, response_uri, score_uri)
 
     # Serialize to Turtle
     turtle_output = g.serialize(format="turtle", encoding="utf-8").decode("utf-8")
@@ -245,3 +253,11 @@ def _add_query(graph, query_uri, query, response):
                 Literal(json.dumps(response, default=str, sort_keys=True)),
             )
         )
+
+
+def _add_score_annotation(graph, target_uri, score_uri):
+    annotation_uri = _uuid_uri()
+    graph.add((annotation_uri, RDF.type, T2S.Annotation))
+    graph.add((annotation_uri, OA.motivation, Literal("assessing")))
+    graph.add((annotation_uri, T2S.hasTarget, target_uri))
+    graph.add((annotation_uri, T2S.hasBody, score_uri))
