@@ -15,3 +15,6 @@ Important modules in `t2smetrics/`:
 - `metrics/`: metric implementations and registry
 - `execution/`: local RDFLib and remote endpoint backends
 - `dashboard_plotly.py`: dashboard runtime for result exploration
+- `dashboard_plotly_static.py`: static dashboard snapshot generation
+- `core/filterer.py`: metric-rule filtering and WADM/Label Studio exports
+- `utils/prefix_utils.py`: popular and custom SPARQL prefix handling

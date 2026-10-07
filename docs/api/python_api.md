@@ -14,6 +14,21 @@ Core parameters:
 - `execution_backend_graph_path` or `execution_backend_endpoint_url`
 - `parallel`: run multiple systems in parallel
 - `per_query`: include per-query values in result export
+- `safe_limit`: add a `LIMIT` to queries before execution
+- `add_popular_prefixes`: add popular prefixes from prefix.cc
+- `add_custom_prefixes`: provide a custom prefix-to-namespace mapping
+
+`run_experiments.run(...)` requires either `execution_backend_graph_path` or
+`execution_backend_endpoint_url`. It returns the completed `Experiment` objects;
+set `export_results=False` when another workflow will consume them directly.
+
+## Rule-based filtering
+
+`t2smetrics.core.filterer.run_filter(...)` evaluates the metrics referenced by a
+boolean rule and exports matching cases as WADM Turtle. Set `convert="label-studio"`
+to also produce Label Studio JSON and a template XML file. The filter workflow
+accepts the same execution, Ollama, parallelism, safe-limit, and prefix options
+as the CLI command.
 
 ## Experiment internals
 

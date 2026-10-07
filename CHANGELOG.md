@@ -4,15 +4,19 @@ All notable changes to this project are documented in this file.
 
 The format is inspired by Keep a Changelog and follows Semantic Versioning.
  
-## [1.2.0] - 2026-08-13
+## [1.2.0] - 2026-10-16
 
 ### Added
 - Added test cases for Answerset and QALD Precision, Recall and F1.
+- Added metric-rule filtering through the `t2s filter` command.
+- Added WADM Turtle export and optional Label Studio conversion for filtered cases.
+- Added popular and custom SPARQL prefix insertion options.
 
 ### Fixed
 - Fix the implementation of Answerset and QALD Precision, Recall and F1 for some edge cases.
 - Fix an edge case in F1-Spinach.
 - Fix a bug that occurred when adding a safe_limit to an ASK query.
+- Fixed URI extraction edge cases.
 
 ## [1.1.3] - 2026-07-27
 

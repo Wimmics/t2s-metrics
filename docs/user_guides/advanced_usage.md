@@ -5,7 +5,7 @@
 Use `__all__` to compute all registered metrics:
 
 ```bash
-t2s run -d ck25 -j ./datasets/ck25/eval/ -m __all__ -ee http://localhost:8886/
+t2s run -d ck25 -j ./datasets/ck25/eval/ -m __all__ --ee http://localhost:8886/
 ```
 
 Or run focused subsets depending on your evaluation question:
@@ -19,15 +19,15 @@ Or run focused subsets depending on your evaluation question:
 Enable multiprocessing across systems/files:
 
 ```bash
-t2s run -d ck25 -j ./datasets/ck25/eval/ -m query_execution answerset_f1 -ee http://localhost:8886/ -p
+t2s run -d ck25 -j ./datasets/ck25/eval/ -m query_execution answerset_f1 --ee http://localhost:8886/ -p
 ```
 
 ## Export controls
 
 Useful flags:
 
-- `-eq` to include per-query scores
-- `-ep` to write output to a custom location
+- `--eq` to include per-query scores
+- `--ep` to write output to a custom location
 - `-s` to set explicit system names
 
 Example:
@@ -38,9 +38,9 @@ t2s run \
   -s AIFB DBPEDIA-CG \
   -j ./datasets/ck25/eval/AIFB.jsonl ./datasets/ck25/eval/DBPEDIA-CG.jsonl \
   -m query_execution answerset_f1 \
-  -ee http://localhost:8886/ \
-  -eq \
-  -ep ./datasets/ck25/results/custom-run.json
+  --ee http://localhost:8886/ \
+  --eq \
+  --ep ./datasets/ck25/results/custom-run.json
 ```
 
 ## LLM-based metrics
@@ -48,5 +48,38 @@ t2s run \
 If selected metrics require LLM support, configure the Ollama model:
 
 ```bash
-t2s run -d ck25 -j ./datasets/ck25/eval/ -m llm_judge -ee http://localhost:8886/ -lo gemma3:4b
+t2s run -d ck25 -j ./datasets/ck25/eval/ -m llm_judge --ee http://localhost:8886/ --lo gemma3:4b
 ```
+
+## Query limits and prefixes
+
+Use a safe limit when a query may return a large result set:
+
+```bash
+t2s run -d ck25 -j ./datasets/ck25/eval/ -m query_execution \
+  --ee http://localhost:8886/ --sl 100
+```
+
+Prefix handling can add common prefixes automatically or accept a JSON mapping:
+
+```bash
+t2s run -d ck25 -j ./datasets/ck25/eval/ -m query_exact_match \
+  --eg ./datasets/ck25/kg/dataset.ttl --pp
+
+t2s run -d ck25 -j ./datasets/ck25/eval/ -m query_exact_match \
+  --eg ./datasets/ck25/kg/dataset.ttl \
+  --cp '{"ex":"http://example.org/"}'
+```
+
+## Rule-based filtering
+
+Filter cases with a boolean expression over metric scores. Only referenced
+metrics are computed, and matching cases are exported as WADM Turtle:
+
+```bash
+t2s filter -d ck25 -j ./datasets/ck25/eval/ \
+  -r 'answerset_f1[0.5,1] && f1_spinach[1]' \
+  --ee http://localhost:8886/
+```
+
+Use `-c label-studio` to create a Label Studio JSON export and template XML file.

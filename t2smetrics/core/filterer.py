@@ -237,10 +237,31 @@ def _named_uri(resource_type: str, value: str) -> URIRef:
 def _rule_uri(graph: Graph, rule: str) -> URIRef:
     if rule in {"basicRule", BASIC_RULE_TEXT}:
         return T2SI.basicRule
-    rule_uri = _uuid_uri()
-    graph.add((rule_uri, RDF.type, T2S.RuleExpression))
+    rule_uri = _add_rule_expression(graph, parse_rule(rule))
     graph.add((rule_uri, T2S.ruleText, Literal(rule)))
     return rule_uri
+
+
+def _add_rule_expression(graph: Graph, ast) -> URIRef:
+    expression_uri = _uuid_uri()
+    if isinstance(ast, Comparison):
+        graph.add((expression_uri, RDF.type, T2S.Comparison))
+        graph.add((expression_uri, T2S.hasMetric, _metric_uri(ast.metric)))
+        graph.add(
+            (expression_uri, T2S.minBound, Literal(ast.lower, datatype=XSD.decimal))
+        )
+        graph.add(
+            (expression_uri, T2S.maxBound, Literal(ast.upper, datatype=XSD.decimal))
+        )
+        graph.add((expression_uri, T2S.minInclusive, Literal(ast.include_lower)))
+        graph.add((expression_uri, T2S.maxInclusive, Literal(ast.include_upper)))
+        return expression_uri
+
+    expression_type = T2S.AndExpression if ast[0] == "and" else T2S.OrExpression
+    graph.add((expression_uri, RDF.type, expression_type))
+    graph.add((expression_uri, T2S.hasMember, _add_rule_expression(graph, ast[1])))
+    graph.add((expression_uri, T2S.hasMember, _add_rule_expression(graph, ast[2])))
+    return expression_uri
 
 
 def _metric_uri(metric_name: str) -> URIRef:
