@@ -71,7 +71,7 @@ def safe_append_limit(query, limit_value=25000) -> str:
         str: SPARQL query string with LIMIT appended if it was not already present
     """
     # Don't add LIMIT to ASK queries
-    if re.match(r"^\s*ASK\b", query, re.IGNORECASE):
+    if re.search(r"ASK\b", query, re.IGNORECASE):
         return query
 
     # Check if LIMIT already exists (case insensitive)

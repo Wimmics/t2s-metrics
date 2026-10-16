@@ -15,3 +15,4 @@
 {  "id": "ask_true_false",  "golden": "ASK { FILTER(1 = 1) }",  "generated": "ASK { FILTER(1 = 0) }", "order_matters": false}
 {  "id": "ask_false_false",  "golden": "ASK { FILTER(1 = 0) }",  "generated": "ASK { FILTER(1 = 0) }", "order_matters": false}
 {  "id": "ask_false_true",  "golden": "ASK { FILTER(1 = 0) }",  "generated": "ASK { FILTER(1 = 1) }", "order_matters": false}
+{  "id": "empty_result",  "golden": "SELECT ?item WHERE {  VALUES ?item { } }",  "generated": "SELECT ?item WHERE {  VALUES ?item { } }", "order_matters": false}

@@ -1,0 +1,11 @@
+empty_empty:
+  answerset_recall: 1.0
+
+empty_non_empty:
+  answerset_recall: 0.0
+
+non_empty_empty:
+  answerset_recall: 0.0
+
+non_empty_non_empty:
+  answerset_recall: 0.5

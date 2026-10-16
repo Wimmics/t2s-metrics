@@ -27,6 +27,8 @@ def _run_one_experiment(
     verbose: bool,
     cache_results: bool,
     per_query: bool,
+    add_popular_prefixes: bool,
+    add_custom_prefixes: dict,
     max_workers_metrics: int = 1,
 ):
     jsonl_eval = JsonlEval(eval_path)
@@ -34,7 +36,7 @@ def _run_one_experiment(
     qa = (
         systems_name[system_index]
         if system_index < len(systems_name)
-        else f"System with JSONL {eval_path}"
+        else f"{eval_path}"
     )
 
     experiment = Experiment(
@@ -46,6 +48,8 @@ def _run_one_experiment(
         llm_backend=llm_backend,
         verbose=verbose,
         cache_result_sets=cache_results,
+        add_popular_prefixes=add_popular_prefixes,
+        add_custom_prefixes=add_custom_prefixes,
     )
 
     results, summary = experiment.run(max_workers_metrics)
@@ -66,6 +70,7 @@ def run(
     jsonl_evals: list[str],
     metrics_list: list[str] | list[Metric],
     export_path: str = None,
+    export_format: str = "json",
     llm_backend_ollama_model: str = "gemma3:4b",
     execution_backend_graph_path: str = None,
     execution_backend_endpoint_url: str = None,
@@ -76,6 +81,9 @@ def run(
     per_query: bool = False,
     parallel: bool = False,
     safe_limit: int = 0,
+    export_results: bool = True,
+    add_popular_prefixes: bool = False,
+    add_custom_prefixes: dict = None,
 ):
 
     if systems_name is None:
@@ -89,11 +97,15 @@ def run(
     Verbose mode: {verbose}
     Cache results: {cache_results}
     Export path: {export_path}
+    Export format: {export_format}
     Export per query: {per_query}
     Execution backend graph path: {execution_backend_graph_path}
     Execution backend endpoint URL: {execution_backend_endpoint_url}
     LLM backend Ollama model: {llm_backend_ollama_model}
     Parallel execution: {parallel}
+    Safe limit: {safe_limit}
+    Add popular prefixes: {add_popular_prefixes}
+    Add custom prefixes: {add_custom_prefixes}
 """)
 
     experiment_runs = []
@@ -178,6 +190,8 @@ def run(
                         verbose=verbose,
                         cache_results=cache_results,
                         per_query=per_query,
+                        add_popular_prefixes=add_popular_prefixes,
+                        add_custom_prefixes=add_custom_prefixes,
                         max_workers_metrics=max_workers_metrics,
                     )
                 )
@@ -199,13 +213,22 @@ def run(
                 verbose=verbose,
                 cache_results=cache_results,
                 per_query=per_query,
+                add_popular_prefixes=add_popular_prefixes,
+                add_custom_prefixes=add_custom_prefixes,
             )
             experiment_runs.append(experiment)
 
     if verbose:
         end_time = time.time()
-        logger.info(f"Execution time: {int(end_time - start_time)} seconds")
+        logger.info(f"Execution time: {end_time - start_time:.3f} seconds")
 
-    export_experiment_runs(
-        experiment_runs, export_path=export_path, per_query=per_query
-    )
+    if export_results:
+        export_experiment_runs(
+            experiment_runs=experiment_runs,
+            export_path=export_path,
+            per_query=per_query,
+            export_format=export_format,
+            endpoint_url=execution_backend_endpoint_url,
+        )
+
+    return experiment_runs

@@ -29,7 +29,7 @@ t2s run \
   -d ck25 \
   -j ./datasets/ck25/eval/ \
   -m query_exact_match answerset_f1 query_execution \
-  -ee http://localhost:8886/ \
+  --ee http://localhost:8886/ \
   -p -v
 ```
 

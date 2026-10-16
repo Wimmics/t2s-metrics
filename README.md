@@ -31,6 +31,8 @@ SPARQL endpoints.</em>
 - Simple Python API for research workflows and reproducible experiment scripts.
 - CLI to run evaluations and launch dashboards.
 - Static dashboard export support for sharing reports without running a server.
+- Rule-based filtering that exports matching cases as WADM Turtle or Label Studio data.
+- Optional query limits and automatic or custom prefix insertion for evaluation runs.
 
 ## Demo video ⏯️
 
@@ -133,8 +135,8 @@ Example (from [datasets/ck25/eval/AIFB.jsonl](https://github.com/Wimmics/t2s-met
 
 You must provide one execution backend when running execution-aware metrics:
 
-- Local graph file with `--execution_backend_graph_path` or `-eg`.
-- SPARQL endpoint URL with `--execution_backend_endpoint_url` or `-ee`.
+- Local graph file with `--execution_backend_graph_path` or `--eg`.
+- SPARQL endpoint URL with `--execution_backend_endpoint_url` or `--ee`.
 
 Python examples:
 
@@ -208,20 +210,20 @@ t2s run --help
 Here is an example command with specific metrics, a SPARQL endpoint, verbosity and parallel processing:
 
 ```bash
-t2s run -d ck25 -j ./datasets/ck25/eval/ -m 'hit@1' 'answerset_f1' 'answerset_precision' 'answerset_recall' 'bleu' 'codebleu' 'cosine_sim' 'euclidean' 'f1_qald' 'f1_spinach' 'jaccard' 'levenshtein' 'meteor' 'mrr' 'ndcg' 'p@1' 'precision_qald' 'query_exact_match' 'recall_qald' 'rouge_4' 'sp-bleu' 'sp-f1' 'token_f1' 'token_precision' 'token_recall' 'uri_hallucination' 'query_execution' -ee http://localhost:8886/ -v -p
+t2s run -d ck25 -j ./datasets/ck25/eval/ -m 'hit@1' 'answerset_f1' 'answerset_precision' 'answerset_recall' 'bleu' 'codebleu' 'cosine_sim' 'euclidean' 'f1_qald' 'f1_spinach' 'jaccard' 'levenshtein' 'meteor' 'mrr' 'ndcg' 'p@1' 'precision_qald' 'query_exact_match' 'recall_qald' 'rouge_4' 'sp-bleu' 'sp-f1' 'token_f1' 'token_precision' 'token_recall' 'uri_hallucination' 'query_execution' --ee http://localhost:8886/ -v -p
 ```
 
 > [!NOTE]
-> By default, the results are automatically exported to the directory `./datasets/{dataset}/results/`. You can change this behaviour by using the -ep flag.
+> By default, the results are automatically exported to the directory `./datasets/{dataset}/results/`. You can change this behaviour by using the `--ep` flag.
 
 Here is an example with all metrics, a local TTL backend, an explicit export path, and detailed output per request instead:
 
 ```bash
 t2s run -d ck25 -j ./datasets/ck25/eval/ \
   -m __all__ \
-  -eg ./datasets/ck25/kg/dataset.ttl \
-  -ep ./custom_results_folder \
-  -eq -v -p
+  --eg ./datasets/ck25/kg/dataset.ttl \
+  --ep ./custom_results_folder \
+  --eq -v -p
 ```
 
 > [!IMPORTANT]
@@ -236,11 +238,32 @@ Common useful flags:
 
 - `-s/--systems_name` for explicit system names.
 - `-p/--parallel` for multiprocessing.
-- `-eq/--export_per_query` to include per-query values in output JSON.
-- `-ep/--export_path` to control output location.
-- `-eg/--execution_backend_graph_path` to run on local RDF files instead of endpoint mode.
+- `--eq/--export_per_query` to include per-query values in output JSON.
+- `--ep/--export_path` to control output location.
+- `--eg/--execution_backend_graph_path` to run on local RDF files instead of endpoint mode.
+- `--sl/--safe_limit` to add a `LIMIT` to evaluated queries.
+- `--pp/--add_popular_prefixes` to add popular prefixes from prefix.cc.
+- `--cp/--add_custom_prefixes` to provide a JSON prefix mapping.
 
-### 6. Launch the dashboard
+### 6. Filter cases by metric rules
+
+The `filter` command evaluates only the metrics referenced by a boolean rule and
+exports matching query cases as WADM Turtle annotations. Rules use metric names
+with exact values or inclusive/exclusive ranges, combined with `&&` and `||`.
+
+```bash
+t2s filter \
+  -d ck25 \
+  -j ./datasets/ck25/eval/ \
+  -r 'answerset_f1[0,0.5] && f1_spinach[1]' \
+  --ee http://localhost:8886/
+```
+
+By default, filter output is written under `./datasets/{dataset}/filter/`.
+Use `--ep` to choose a file or directory. Add `-c label-studio` to also create
+Label Studio JSON and an accompanying template XML file.
+
+### 7. Launch the dashboard
 
 Auto-discover results under `datasets/*/results/*.json`:
 

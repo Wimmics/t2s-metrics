@@ -2,6 +2,8 @@
 
 A lightweight evaluation toolkit for Text-to-SPARQL systems.
 
+This documentation describes release **1.2.0**.
+
 ```{toctree}
 :maxdepth: 2
 :caption: Contents
@@ -26,4 +28,5 @@ api/index
 - Installation and local setup: [Getting Started](getting_started/index.md)
 - End-to-end execution flow: [Basic Workflow](user_guides/basic_workflow.md)
 - Parallel runs, custom exports, and backend choices: [Advanced Usage](user_guides/advanced_usage.md)
+- Rule-based case filtering and annotation export: [Advanced Usage](user_guides/advanced_usage.md)
 - How internals fit together: [Architecture](developer_guide/architecture.md)

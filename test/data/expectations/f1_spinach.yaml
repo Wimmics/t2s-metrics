@@ -48,3 +48,6 @@ ask_false_false:
 
 ask_false_true:
   f1_spinach: 0.0
+
+empty_result:
+  f1_spinach: 1.0

@@ -98,4 +98,10 @@ run_experiments.run(
     per_query=False,
     parallel=True,
     verbose=True,
+    safe_limit=10000,
+    add_popular_prefixes=True,
+    add_custom_prefixes={
+        "pi": "http://ld.company.org/prod-instances/",
+        "pv": "http://ld.company.org/prod-vocab/",
+    },
 )

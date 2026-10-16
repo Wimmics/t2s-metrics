@@ -1,46 +1,94 @@
 import re
-from urllib.parse import urljoin
 
 
 def extract_uris(sparql: str) -> set[str]:
-    base = None
-    prefixes = {}
+    """Extract URIs and resolved prefixed names from a SPARQL query."""
+    if not sparql:
+        return set()
 
-    # Normalize whitespace
-    q = sparql.strip()
+    # 1. Map PREFIX declarations
+    prefixes = dict(
+        re.findall(r"PREFIX\s+([a-zA-Z_][\w-]*):\s*<([^>]+)>", sparql, re.IGNORECASE)
+    )
 
-    # --- Extract BASE ---
-    base_match = re.search(r"BASE\s*<([^>]+)>", q, re.IGNORECASE)
-    if base_match:
-        base = base_match.group(1)
+    # 2. Tokenize SPARQL to ignore comments (#..., /*...*/) and strings ('...', "...")
+    # Matches strings or comments as single tokens, or a single '<' character
+    token_pattern = r'#.*|/\*[\s\S]*?\*/|\'(?:\\.|[^\'])*\'|"(?:\\.|[^"])*"|<'
 
-    # --- Extract PREFIX declarations ---
-    for pfx, uri in re.findall(r"PREFIX\s+(\w+):\s*<([^>]+)>", q, re.IGNORECASE):
-        prefixes[pfx] = uri
+    raw_uris = []
+    clean_parts = []
+    i = 0
 
-    uris = set()
+    while i < len(sparql):
+        match = re.search(token_pattern, sparql[i:])
+        if not match:
+            clean_parts.append(sparql[i:])
+            break
 
-    # --- Extract <IRI> tokens ---
-    for iri in re.findall(r"<([^>]+)>", q):
-        if re.match(r"^[a-zA-Z][a-zA-Z0-9+.-]*:", iri):
-            # Already absolute
-            uris.add(iri)
-        elif base:
-            # Relative IRI
-            uris.add(urljoin(base, iri))
+        start_pos = i + match.start()
+        clean_parts.append(sparql[i:start_pos])
 
-    # --- Extract prefixed names ---
-    for pfx, local in re.findall(r"\b(\w+):([A-Za-z_][\w\-]*)", q):
-        if pfx in prefixes and pfx != "xsd":  # Exclude xsd prefix
-            uris.add(prefixes[pfx] + local)
+        # If we hit an unquoted/uncommented '<', scan forward for balanced closing '>'
+        if match.group(0) == "<":
+            depth = 1
+            j = start_pos + 1
+            while j < len(sparql) and depth > 0:
+                if sparql[j] == "\n":  # Malformed URI break
+                    break
+                if sparql[j] == "<":
+                    depth += 1
+                elif sparql[j] == ">":
+                    depth -= 1
+                j += 1
 
-    # --- Remove base and prefix declarations from consideration ---
-    uris_cleaned = set()
-    for uri in uris:
-        if base and uri == base:
+            if depth == 0:
+                uri = sparql[start_pos + 1 : j - 1]
+                raw_uris.append(uri)
+                clean_parts.append(sparql[start_pos:j])
+                i = j
+                continue
+
+        # Skip over matched comment or string
+        i = i + match.end()
+
+    clean = "".join(clean_parts)
+
+    # 3. Filter out prefix target declarations
+    decl_uris = set(prefixes.values()) | {u.rstrip("/") for u in prefixes.values()}
+    uris = {u.strip() for u in raw_uris if u.strip() and u.strip() not in decl_uris}
+
+    # 4. Extract and resolve prefixed names
+    keywords = {
+        "prefix",
+        "select",
+        "where",
+        "from",
+        "limit",
+        "offset",
+        "order",
+        "by",
+        "group",
+        "having",
+        "values",
+        "union",
+        "optional",
+        "filter",
+        "bind",
+        "http",
+        "https",
+        "ftp",
+        "urn",
+        "mailto",
+    }
+
+    for prefix, local in re.findall(r"\b([a-zA-Z_][\w-]*):([\w\-\.%]+)\b", clean):
+        if prefix.lower() in keywords:
             continue
-        if uri in prefixes.values():
-            continue
-        uris_cleaned.add(uri)
 
-    return uris_cleaned
+        full_prefixed = f"{prefix}:{local}"
+        if any(full_prefixed in u for u in uris):
+            continue
+
+        uris.add(f"{prefixes[prefix]}{local}" if prefix in prefixes else full_prefixed)
+
+    return uris
