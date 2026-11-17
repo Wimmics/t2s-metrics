@@ -165,8 +165,12 @@ def run(
         )
 
     else:
-        raise ValueError(
-            "No execution backend provided. Please provide either execution_backend_graph_path or execution_backend_endpoint_url."
+        logger.warning(
+            "No execution backend provided. Make sure each case has a valid endpoint url. Or provide either execution_backend_graph_path or execution_backend_endpoint_url."
+        )
+
+        execution_backend = SparqlEndpointBackend(
+            endpoint_url="", safe_limit=safe_limit
         )
 
     if parallel:

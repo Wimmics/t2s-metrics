@@ -8,7 +8,9 @@ class QueryExecution(Metric):
 
     def compute(self, case, context):
         try:
-            answer = context.execution_backend.execute(case.generated.raw)
+            answer = context.execution_backend.execute(
+                case.generated.raw, case.execution_endpoint
+            )
             score = 1.0 if answer is not None else 0.0
         except Exception:
             score = 0.0

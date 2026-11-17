@@ -18,18 +18,26 @@ class AnswerSetMeasure(Metric):
                 # print("Using cached predicted result for case", case.id)
                 pred_response = case.generated_response
             else:
-                pred_response = context.execution_backend.execute(case.generated.raw)
+                pred_response = context.execution_backend.execute(
+                    case.generated.raw, case.execution_endpoint
+                )
                 case.generated_response = pred_response
 
             if case.golden_response != _NOT_CACHED:
                 # print("Using cached golden result for case", case.id)
                 gold_response = case.golden_response
             else:
-                gold_response = context.execution_backend.execute(case.golden.raw)
+                gold_response = context.execution_backend.execute(
+                    case.golden.raw, case.execution_endpoint
+                )
                 case.golden_response = gold_response
         else:
-            pred_response = context.execution_backend.execute(case.generated.raw)
-            gold_response = context.execution_backend.execute(case.golden.raw)
+            pred_response = context.execution_backend.execute(
+                case.generated.raw, case.execution_endpoint
+            )
+            gold_response = context.execution_backend.execute(
+                case.golden.raw, case.execution_endpoint
+            )
 
         gold_result = normalize_query_response(gold_response, "json")
         pred_result = normalize_query_response(pred_response, "json")
@@ -41,18 +49,26 @@ class AnswerSetMeasure(Metric):
                 # print("Using cached predicted result for case", case.id)
                 pred_response = case.generated_response
             else:
-                pred_response = context.execution_backend.execute(case.generated.raw)
+                pred_response = context.execution_backend.execute(
+                    case.generated.raw, case.execution_endpoint
+                )
                 case.generated_response = pred_response
 
             if case.golden_response != _NOT_CACHED:
                 # print("Using cached golden result for case", case.id)
                 gold_response = case.golden_response
             else:
-                gold_response = context.execution_backend.execute(case.golden.raw)
+                gold_response = context.execution_backend.execute(
+                    case.golden.raw, case.execution_endpoint
+                )
                 case.golden_response = gold_response
         else:
-            pred_response = context.execution_backend.execute(case.generated.raw)
-            gold_response = context.execution_backend.execute(case.golden.raw)
+            pred_response = context.execution_backend.execute(
+                case.generated.raw, case.execution_endpoint
+            )
+            gold_response = context.execution_backend.execute(
+                case.golden.raw, case.execution_endpoint
+            )
 
         gold_list = normalize_answer_set_list(normalize_query_response(gold_response))
         pred_list = normalize_answer_set_list(normalize_query_response(pred_response))

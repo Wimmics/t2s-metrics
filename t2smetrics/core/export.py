@@ -16,6 +16,11 @@ LSQ = Namespace("http://lsq.aksw.org/vocab#")
 OA = Namespace("http://www.w3.org/ns/oa#")
 SD = Namespace("http://www.w3.org/ns/sparql-service-description#")
 
+# Identifiers Prefix URIs
+ID_DATASET = Namespace("http://ns.inria.fr/t2s/id/dataset/")
+ID_CASE = Namespace("http://ns.inria.fr/t2s/id/case/")
+ID_SYSTEM = Namespace("http://ns.inria.fr/t2s/id/system/")
+
 
 def export_experiment_runs(
     experiment_runs: list[Experiment],
@@ -124,10 +129,10 @@ def export_experiment_runs_turtle(
     experiment_id = f"{experiment_runs[0].dataset}-{current_time}"
     export_path += f"/{experiment_id}.ttl"
 
-    base_uri = URIRef(f"urn:uuid:{uuid.uuid4()}")
-    dataset_uri = _uuid_uri()
+    dataset_uri = URIRef(ID_DATASET[experiment_runs[0].dataset])
     system_uris = {
-        experiment.system_name: _uuid_uri() for experiment in experiment_runs
+        experiment.system_name: URIRef(ID_SYSTEM[experiment.system_name])
+        for experiment in experiment_runs
     }
 
     g = Graph()
@@ -138,12 +143,11 @@ def export_experiment_runs_turtle(
     g.bind("sd", SD)
     g.bind("xsd", XSD)
     g.bind("rdfs", RDFS)
-    g.bind("", base_uri)
 
     g.add((dataset_uri, RDF.type, T2S.Dataset))
     g.add((dataset_uri, RDFS.label, Literal(experiment_runs[0].dataset)))
 
-    for run_index, experiment in enumerate(experiment_runs):
+    for experiment in experiment_runs:
         system_uri = system_uris[experiment.system_name]
         experiment_uri = _uuid_uri()
         g.add((system_uri, RDF.type, T2S.System))
@@ -173,10 +177,21 @@ def export_experiment_runs_turtle(
             _add_score_annotation(g, experiment_uri, score_uri)
 
         for case in experiment.cases or []:
-            case_uri = _uuid_uri()
+            case_uri = URIRef(ID_CASE[case.id])
+            endpoint = (
+                case.execution_endpoint if case.execution_endpoint else endpoint_url
+            )
             g.add((dataset_uri, T2S.hasCase, case_uri))
             g.add((case_uri, RDF.type, T2S.Case))
             g.add((case_uri, T2S.caseID, Literal(case.id)))
+            if endpoint:
+                g.add(
+                    (
+                        case_uri,
+                        T2S.executionEndpoint,
+                        Literal(endpoint, datatype=XSD.anyURI),
+                    )
+                )
             # TODO add appropriate language tag if available
             g.add((case_uri, T2S.question, Literal(case.question, lang="en")))
             gold_query_uri = _uuid_uri()

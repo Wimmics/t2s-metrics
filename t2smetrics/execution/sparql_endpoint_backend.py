@@ -24,13 +24,25 @@ class SparqlEndpointBackend(ExecutionBackend):
         self.default_graph = default_graph
         self.headers = headers or {}
         self.safe_limit = safe_limit
-        self.test_connection()
+        if self.endpoint_url and self.endpoint_url != "":
+            self.test_connection()
 
-    def execute(self, query: str) -> "QueryResult.ConvertResult":
+    def execute(
+        self, query: str, endpoint_url: str = None
+    ) -> "QueryResult.ConvertResult":
+
         if self.safe_limit != 0:
             query = safe_append_limit(query)
 
-        sparql = SPARQLWrapper(self.endpoint_url)
+        if endpoint_url is None and self.endpoint_url == "":
+            raise ValueError("No endpoint URL provided for SPARQL execution.")
+
+        elif endpoint_url is not None:
+            sparql = SPARQLWrapper(endpoint_url)
+
+        else:
+            sparql = SPARQLWrapper(self.endpoint_url)
+
         sparql.setQuery(query)
         sparql.setReturnFormat(JSON)
         sparql.setTimeout(self.timeout)

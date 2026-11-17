@@ -1,3 +1,5 @@
+from loguru import logger
+
 from t2smetrics.core.result import EvaluationResult
 from t2smetrics.metrics.answer_set.base import AnswerSetMeasure
 
@@ -12,6 +14,9 @@ class AnswerSetF1(AnswerSetMeasure):
             return EvaluationResult(case.id, self.name, 0.0)
 
         if len(gold) == 0 and len(pred) == 0:
+            logger.warning(
+                f"Both gold and pred answer sets are empty for case {case.id}. Returning F1 score of 1.0."
+            )
             return EvaluationResult(case.id, self.name, 1.0)
 
         if len(gold) > 0 and len(pred) == 0:

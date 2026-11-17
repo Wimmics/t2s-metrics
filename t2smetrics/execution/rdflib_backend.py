@@ -19,7 +19,7 @@ class RDFLibBackend(ExecutionBackend):
                 f"Failed to parse RDF file: {rdf_file}. Please ensure the file exists and is in the correct format ({format})."
             ) from exception
 
-    def execute(self, query: str):
+    def execute(self, query: str, endpoint_url: str = None) -> dict | None:
         try:
             if self.safe_limit != 0:
                 query = safe_append_limit(query)

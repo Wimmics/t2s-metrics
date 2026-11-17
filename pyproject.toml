@@ -17,7 +17,7 @@ only-include = [
 
 [project]
 name = "t2s-metrics"
-version = "1.2.0"
+version = "1.2.1"
 description = "T2S-Metrics provides a modular abstraction layer that decouples metric specification from implementation, enabling consistent, transparent, and reproducible evaluation of SPARQL-based QA systems"
 authors = [
     { name = "Yousouf Taghzouti", email = "yousouf.taghzouti@inria.fr" }
@@ -41,10 +41,12 @@ dependencies = [
     "SPARQLWrapper>=2.0.0",
     "dash>=4.0.0",
     "dash_bootstrap_components>=2.0.4",
-    "pandas>=3.0.1",
+    "pandas",
     "matplotlib>=3.10.8",
     "seaborn>=0.13.2",
     "loguru>=0.7.3",
+    "numpy==1.26.4", # Pinning numpy to 1.26.4 to avoid compatibility issues with other dependencies
+    
 ]
 
 [project.scripts]
@@ -56,7 +58,7 @@ t2s_docs_clean = "t2smetrics.cli:docs_clean"
 dev = [
     "pytest>=7.2.0",
     "ruff>=0.1.0",
-    "twine==6.2.0",
+    "twine==7.0.0",
 ]
 test = [
     "pytest>=7.2.0",

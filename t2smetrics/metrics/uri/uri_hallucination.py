@@ -21,7 +21,9 @@ class URIHallucination(Metric):
             else:
                 ask_query = f"ASK {{ {{ <{uri}> ?p ?o. }} UNION {{ ?s <{uri}> ?o.}} UNION {{ ?s ?p <{uri}> . }} }}"
                 try:
-                    response = context.execution_backend.execute(ask_query)
+                    response = context.execution_backend.execute(
+                        ask_query, case.execution_endpoint
+                    )
                     exists = normalize_query_response(response)
                     if not exists:
                         hallucinated_uri_count += 1

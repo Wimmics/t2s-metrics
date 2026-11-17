@@ -26,6 +26,7 @@ class Preprocessor:
             golden=SparqlQuery(processed_golden),
             generated=SparqlQuery(processed_generated),
             order_matters=case.order_matters,
+            execution_endpoint=case.execution_endpoint,
         )
         return processed_case
 

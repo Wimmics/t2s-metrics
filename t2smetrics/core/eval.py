@@ -17,6 +17,7 @@ class QueryCase:
     generated: SparqlQuery
     order_matters: bool
     question: str = ""
+    execution_endpoint: str = ""
     golden_response: "QueryResult.ConvertResult" = _NOT_CACHED
     generated_response: "QueryResult.ConvertResult" = _NOT_CACHED
     is_uri_hallicinated_map: dict[str, bool] = field(default_factory=dict)
@@ -39,6 +40,7 @@ class JsonlEval:
                         generated=SparqlQuery(row["generated"]),
                         order_matters=row["order_matters"],
                         question=row.get("question", ""),
+                        execution_endpoint=row.get("execution_endpoint", ""),
                     )
                 except Exception as exception:
                     raise ValueError(
